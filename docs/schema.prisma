@@ -1,0 +1,341 @@
+// BodaPesa — Financial Literacy & Inclusion Platform for Nairobi Boda Boda Riders
+// Partners: Stima DT SACCO (savings, credit, investment) & Britam (insurance)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Institutions & staff
+// ---------------------------------------------------------------------------
+
+model Partner {
+  id          String    @id @default(cuid())
+  code        String    @unique // STIMA | BRITAM
+  name        String
+  kind        String // SACCO | INSURER
+  tagline     String?
+  description String?
+  accent      String    @default("#0f766e") // brand colour used in the UI
+  contactMsisdn String?
+  website     String?
+  createdAt   DateTime  @default(now())
+
+  products    Product[]
+  users       User[]
+  leads       Lead[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String // PLATFORM_ADMIN | PARTNER_ADMIN | FIELD_OFFICER
+  partnerId    String?
+  partner      Partner? @relation(fields: [partnerId], references: [id])
+  createdAt    DateTime @default(now())
+
+  campaigns    Campaign[]
+}
+
+// ---------------------------------------------------------------------------
+// Riders & stages
+// ---------------------------------------------------------------------------
+
+model Stage {
+  id          String   @id @default(cuid())
+  name        String
+  subCounty   String
+  ward        String?
+  lat         Float?
+  lng         Float?
+  chairperson String?
+  chairMsisdn String?
+  createdAt   DateTime @default(now())
+
+  riders      Rider[]
+}
+
+model Rider {
+  id            String   @id @default(cuid())
+  msisdn        String   @unique // +2547XXXXXXXX
+  firstName     String
+  lastName      String
+  nationalId    String?
+  gender        String? // M | F | OTHER
+  ageBand       String? // 18-24 | 25-34 | 35-44 | 45+
+  language      String   @default("SW") // EN | SW | SH (Sheng)
+  channelPref   String   @default("SMS") // SMS | USSD | WHATSAPP | APP
+  stageId       String?
+  stage         Stage?   @relation(fields: [stageId], references: [id])
+
+  // Financial-inclusion baseline (captured at onboarding)
+  dailyIncomeBand String? // <500 | 500-1000 | 1000-1500 | >1500
+  ownsMotorbike   Boolean @default(false)
+  hasBankAccount  Boolean @default(false)
+  saccoMember     Boolean @default(false)
+  hasInsurance    Boolean @default(false)
+  usesMobileMoney Boolean @default(true)
+
+  // Programme state
+  status         String   @default("PROSPECT") // PROSPECT | ENROLLED | ACTIVE | ONBOARDED | DORMANT | OPTED_OUT
+  literacyScore  Int      @default(0) // 0-100, recomputed from quiz attempts
+  consent        Boolean  @default(false)
+  consentAt      DateTime?
+  registeredVia  String   @default("FIELD") // FIELD | USSD | SMS | WHATSAPP | APP | IMPORT
+  lastActiveAt   DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  messages       Message[]
+  progress       LessonProgress[]
+  attempts       QuizAttempt[]
+  leads          Lead[]
+  goals          SavingsGoal[]
+  ussdSessions   UssdSession[]
+
+  @@index([status])
+  @@index([stageId])
+}
+
+// ---------------------------------------------------------------------------
+// Financial products
+// ---------------------------------------------------------------------------
+
+model Product {
+  id          String  @id @default(cuid())
+  partnerId   String
+  partner     Partner @relation(fields: [partnerId], references: [id])
+
+  code        String  @unique
+  name        String
+  category    String // SAVINGS | CREDIT | INSURANCE | INVESTMENT | PENSION
+  icon        String  @default("wallet")
+
+  summaryEn   String
+  summarySw   String
+  summarySh   String
+
+  detailsEn   String
+  detailsSw   String
+
+  // Commercials (nullable — not every product has every field)
+  minAmount    Float?
+  maxAmount    Float?
+  interestRate String? // e.g. "12% p.a. reducing balance"
+  premium      String? // e.g. "KSh 50 per week"
+  termLabel    String? // e.g. "Up to 60 months"
+  eligibility  String?
+
+  requiresMembership Boolean @default(false)
+  featured    Boolean @default(false)
+  active      Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  leads       Lead[]
+  campaigns   Campaign[]
+
+  @@index([category])
+}
+
+// ---------------------------------------------------------------------------
+// Financial literacy curriculum
+// ---------------------------------------------------------------------------
+
+model Lesson {
+  id         String  @id @default(cuid())
+  moduleKey  String // SAVINGS | CREDIT | INVESTMENT | INSURANCE
+  order      Int
+  code       String  @unique
+
+  titleEn    String
+  titleSw    String
+  titleSh    String
+
+  bodyEn     String
+  bodySw     String
+  bodySh     String
+
+  // Condensed versions that fit an SMS / USSD screen
+  smsEn      String
+  smsSw      String
+  smsSh      String
+
+  durationMin Int     @default(4)
+  active      Boolean @default(true)
+
+  questions   QuizQuestion[]
+  progress    LessonProgress[]
+  attempts    QuizAttempt[]
+
+  @@index([moduleKey, order])
+}
+
+model QuizQuestion {
+  id          String @id @default(cuid())
+  lessonId    String
+  lesson      Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  order       Int
+
+  promptEn    String
+  promptSw    String
+  promptSh    String
+  optionsJson String // JSON: { en: string[], sw: string[], sh: string[] }
+  correctIndex Int
+  explanationEn String
+  explanationSw String
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  riderId     String
+  rider       Rider    @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  channel     String   @default("APP")
+  completedAt DateTime @default(now())
+
+  @@unique([riderId, lessonId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  riderId   String
+  rider     Rider    @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  channel   String   @default("APP")
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Mass messaging
+// ---------------------------------------------------------------------------
+
+model Campaign {
+  id          String    @id @default(cuid())
+  name        String
+  objective   String // AWARENESS | EDUCATION | PRODUCT_PUSH | REMINDER | SURVEY
+  productId   String?
+  product     Product?  @relation(fields: [productId], references: [id])
+
+  bodyEn      String
+  bodySw      String
+  bodySh      String
+
+  channels    String // CSV: SMS,WHATSAPP,USSD,APP
+  segmentJson String  @default("{}") // audience filter
+  status      String  @default("DRAFT") // DRAFT | SCHEDULED | SENDING | SENT | CANCELLED
+  scheduledAt DateTime?
+  sentAt      DateTime?
+
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  messages    Message[]
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  riderId     String
+  rider       Rider     @relation(fields: [riderId], references: [id], onDelete: Cascade)
+
+  channel     String // SMS | WHATSAPP | USSD | APP
+  language    String
+  body        String
+  direction   String   @default("OUT") // OUT | IN
+
+  status      String   @default("QUEUED") // QUEUED | SENT | DELIVERED | READ | FAILED
+  providerRef String?
+  costKes     Float    @default(0)
+  error       String?
+
+  createdAt   DateTime @default(now())
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  readAt      DateTime?
+
+  @@index([campaignId])
+  @@index([riderId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Conversion: leads handed to the partner institutions
+// ---------------------------------------------------------------------------
+
+model Lead {
+  id         String   @id @default(cuid())
+  riderId    String
+  rider      Rider    @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  partnerId  String
+  partner    Partner  @relation(fields: [partnerId], references: [id])
+
+  status     String   @default("NEW") // NEW | CONTACTED | QUALIFIED | CONVERTED | DECLINED
+  source     String   @default("APP") // channel the interest came from
+  note       String?
+  valueKes   Float?   // premium / deposit / loan value once converted
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status])
+  @@index([partnerId])
+}
+
+// ---------------------------------------------------------------------------
+// Rider savings goals (behaviour-change tool)
+// ---------------------------------------------------------------------------
+
+model SavingsGoal {
+  id           String   @id @default(cuid())
+  riderId      String
+  rider        Rider    @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  title        String
+  targetAmount Float
+  dailyTarget  Float    @default(0)
+  targetDate   DateTime?
+  createdAt    DateTime @default(now())
+
+  deposits     SavingsDeposit[]
+}
+
+model SavingsDeposit {
+  id        String      @id @default(cuid())
+  goalId    String
+  goal      SavingsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  amount    Float
+  note      String?
+  createdAt DateTime    @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// USSD session state machine
+// ---------------------------------------------------------------------------
+
+model UssdSession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  msisdn      String
+  riderId     String?
+  rider       Rider?   @relation(fields: [riderId], references: [id])
+  state       String   @default("MENU")
+  contextJson String   @default("{}")
+  transcript  String   @default("")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

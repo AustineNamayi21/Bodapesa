@@ -1,0 +1,38 @@
+{
+  "name": "bodapesa",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:seed:demo": "tsx scripts/seed.ts --demo",
+    "db:reset": "tsx scripts/seed.ts --reset --demo",
+    "test:providers": "tsx scripts/test-providers.ts",
+    "verify": "node scripts/verify.mjs"
+  },
+  "dependencies": {
+    "next": "16.3.5",
+    "pg": "^8.23.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22.20.4",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "playwright": "^1.63.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
