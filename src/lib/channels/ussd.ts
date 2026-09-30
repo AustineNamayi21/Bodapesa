@@ -66,9 +66,9 @@ const L = {
     SH: "Karibu BodaPesa. Andika jina lako kamili:",
   } as Record<Lang, string>,
   registerDone: {
-    SW: "Umesajiliwa! Utapokea masomo ya pesa bila malipo. Piga *384*7788# wakati wowote.",
-    EN: "You are registered. You will receive free money lessons. Dial *384*7788# any time.",
-    SH: "Umesajiliwa! Utapata masomo ya doo bure. Dial *384*7788# any time.",
+    SW: "Umesajiliwa! Utapokea masomo ya pesa bila malipo. Piga *384*14791# wakati wowote.",
+    EN: "You are registered. You will receive free money lessons. Dial *384*14791# any time.",
+    SH: "Umesajiliwa! Utapata masomo ya doo bure. Dial *384*14791# any time.",
   } as Record<Lang, string>,
   consent: {
     SW: "BodaPesa itahifadhi jina na nambari yako kukutumia masomo ya pesa na ofa za Stima SACCO na Britam. Jibu ACHA wakati wowote.\n1. Nakubali\n2. Sikubali",
@@ -76,9 +76,9 @@ const L = {
     SH: "BodaPesa itaweka jina na number yako ikutumie masomo ya doo na offers za Stima SACCO na Britam. Reply ACHA any time.\n1. Niko sawa\n2. Hapana",
   } as Record<Lang, string>,
   declined: {
-    SW: "Sawa. Hakuna kilichohifadhiwa. Piga *384*7788# ukibadili nia.",
-    EN: "No problem. Nothing has been saved. Dial *384*7788# if you change your mind.",
-    SH: "Sawa. Hakuna kitu imesaviwa. Dial *384*7788# ukichange mind.",
+    SW: "Sawa. Hakuna kilichohifadhiwa. Piga *384*14791# ukibadili nia.",
+    EN: "No problem. Nothing has been saved. Dial *384*14791# if you change your mind.",
+    SH: "Sawa. Hakuna kitu imesaviwa. Dial *384*14791# ukichange mind.",
   } as Record<Lang, string>,
   interested: {
     SW: "Asante! Ombi lako limepokelewa. Afisa atakupigia simu ndani ya siku 2 za kazi.",
@@ -91,9 +91,9 @@ const L = {
     SH: "Huna savings goal. Chagua:\n1. SACCO shares KSh 5,000\n2. Bima ya mwaka KSh 10,000\n3. Emergency fund KSh 15,000",
   } as Record<Lang, string>,
   invalid: {
-    SW: "Chaguo si sahihi. Piga tena *384*7788#",
-    EN: "Invalid choice. Please dial *384*7788# again.",
-    SH: "Choice si sahihi. Dial tena *384*7788#",
+    SW: "Chaguo si sahihi. Piga tena *384*14791#",
+    EN: "Invalid choice. Please dial *384*14791# again.",
+    SH: "Choice si sahihi. Dial tena *384*14791#",
   } as Record<Lang, string>,
 };
 
@@ -104,10 +104,10 @@ function langFromChoice(choice: string): Lang | null {
   return null;
 }
 
-/** Removes the "dial *384*7788#" tail that SMS copy carries but USSD does not need. */
+/** Removes the "dial *384*14791#" tail that SMS copy carries but USSD does not need. */
 function stripCallToAction(s: string): string {
   return s
-    .replace(/\b(Piga|Dial|Reply|Jibu)\b[^.]*\*384\*7788#[^.]*\.?/gi, "")
+    .replace(/\b(Piga|Dial|Reply|Jibu)\b[^.]*\*384\*\d+#[^.]*\.?/gi, "")
     .replace(/^BodaPesa:?\s*/i, "")
     .replace(/\s+/g, " ")
     .trim();
@@ -295,10 +295,10 @@ async function route(
       await recomputeLiteracy(rider.id);
       return END(
         lang === "EN"
-          ? `You scored ${score}/${questions.length}. Dial *384*7788# for the next lesson.`
+          ? `You scored ${score}/${questions.length}. Dial *384*14791# for the next lesson.`
           : lang === "SH"
-            ? `Umepata ${score}/${questions.length}. Dial *384*7788# kwa lesson inayofuata.`
-            : `Umepata ${score}/${questions.length}. Piga *384*7788# kwa somo linalofuata.`,
+            ? `Umepata ${score}/${questions.length}. Dial *384*14791# kwa lesson inayofuata.`
+            : `Umepata ${score}/${questions.length}. Piga *384*14791# kwa somo linalofuata.`,
       );
     }
 

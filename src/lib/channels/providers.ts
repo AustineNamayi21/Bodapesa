@@ -290,7 +290,7 @@ export const appProvider: ChannelProvider = {
  */
 export const ussdProvider: ChannelProvider = {
   channel: "USSD",
-  name: "USSD inbox (*384*7788#)",
+  name: "USSD inbox (*384*14791#)",
   live: true,
   async send() {
     return { status: "SENT", providerRef: ref("ussd"), costKes: 0 };

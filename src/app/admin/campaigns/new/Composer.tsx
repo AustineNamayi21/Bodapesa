@@ -33,7 +33,7 @@ interface LessonOption {
 const CHANNELS = [
   { value: "SMS", label: "SMS", note: "Every handset · KSh 0.80 per part" },
   { value: "WHATSAPP", label: "WhatsApp", note: "Smartphones · KSh 0.50" },
-  { value: "USSD", label: "USSD inbox", note: "Shown on *384*7788# · free" },
+  { value: "USSD", label: "USSD inbox", note: "Shown on *384*14791# · free" },
   { value: "APP", label: "In-app", note: "Rider portal inbox · free" },
 ];
 
@@ -176,9 +176,9 @@ export default function Composer({
   const applyProduct = (productId: string) => {
     const p = products.find((x) => x.id === productId);
     if (!p) return;
-    setBodyEn(`BodaPesa: ${p.name} from ${p.partnerName}. ${p.summaryEn} Reply YES or dial *384*7788#`);
-    setBodySw(`BodaPesa: ${p.name} kutoka ${p.partnerName}. ${p.summarySw} Jibu NDIO au piga *384*7788#`);
-    setBodySh(`BodaPesa: ${p.name} kutoka ${p.partnerName}. ${p.summarySh} Reply YES ama dial *384*7788#`);
+    setBodyEn(`BodaPesa: ${p.name} from ${p.partnerName}. ${p.summaryEn} Reply YES or dial *384*14791#`);
+    setBodySw(`BodaPesa: ${p.name} kutoka ${p.partnerName}. ${p.summarySw} Jibu NDIO au piga *384*14791#`);
+    setBodySh(`BodaPesa: ${p.name} kutoka ${p.partnerName}. ${p.summarySh} Reply YES ama dial *384*14791#`);
   };
 
   return (

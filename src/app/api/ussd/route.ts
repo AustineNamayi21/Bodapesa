@@ -5,7 +5,7 @@ import { ensureSeeded } from "@/lib/seed";
 /**
  * USSD callback endpoint, in the Africa's Talking format.
  *
- * Point the service code (*384*7788#) at this URL in the Africa's Talking
+ * Point the service code (*384*14791#) at this URL in the Africa's Talking
  * dashboard and the live menu works with no further changes. The response is
  * plain text beginning with CON (keep the session open) or END (close it).
  */

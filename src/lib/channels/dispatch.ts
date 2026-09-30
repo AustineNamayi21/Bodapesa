@@ -309,11 +309,11 @@ export async function inboxFor(riderId: string, limit = 20) {
 
 const WELCOME: Record<Lang, (name: string) => string> = {
   EN: (n) =>
-    `BodaPesa: Welcome ${n}! You will get free money lessons and offers from Stima SACCO and Britam. Dial *384*7788# to learn. Reply STOP to opt out.`,
+    `BodaPesa: Welcome ${n}! You will get free money lessons and offers from Stima SACCO and Britam. Dial *384*14791# to learn. Reply STOP to opt out.`,
   SW: (n) =>
-    `BodaPesa: Karibu ${n}! Utapokea masomo ya pesa bure na ofa za Stima SACCO na Britam. Piga *384*7788# kujifunza. Jibu ACHA kujiondoa.`,
+    `BodaPesa: Karibu ${n}! Utapokea masomo ya pesa bure na ofa za Stima SACCO na Britam. Piga *384*14791# kujifunza. Jibu ACHA kujiondoa.`,
   SH: (n) =>
-    `BodaPesa: Karibu ${n}! Utapata masomo ya doo bure na offers za Stima SACCO na Britam. Dial *384*7788# ujifunze. Reply ACHA kuexit.`,
+    `BodaPesa: Karibu ${n}! Utapata masomo ya doo bure na offers za Stima SACCO na Britam. Dial *384*14791# ujifunze. Reply ACHA kuexit.`,
 };
 
 /** Text of the welcome SMS, kept to a single 160-character SMS part. */

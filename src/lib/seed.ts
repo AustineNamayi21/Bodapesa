@@ -3,6 +3,7 @@ import { SEED_PRODUCTS } from "./seed-products";
 import { SEED_LESSONS } from "./seed-lessons";
 import { hashPassword } from "./auth";
 import { env } from "./env";
+import { LEGACY_USSD_CODES, USSD_CODE } from "./ussd-code";
 
 /** Deterministic PRNG so demo data is identical on every machine. */
 function rng(seed: number) {
@@ -371,13 +372,13 @@ export async function seed() {
 
     const bodyEn = lesson
       ? lesson.smsEn
-      : `BodaPesa: ${product!.name} from ${product!.partner === "STIMA" ? "Stima SACCO" : "Britam"} — ${product!.summaryEn.slice(0, 90)} Reply YES or dial *384*7788#`;
+      : `BodaPesa: ${product!.name} from ${product!.partner === "STIMA" ? "Stima SACCO" : "Britam"} — ${product!.summaryEn.slice(0, 90)} Reply YES or dial *384*14791#`;
     const bodySw = lesson
       ? lesson.smsSw
-      : `BodaPesa: ${product!.name} — ${product!.summarySw.slice(0, 90)} Jibu NDIO au piga *384*7788#`;
+      : `BodaPesa: ${product!.name} — ${product!.summarySw.slice(0, 90)} Jibu NDIO au piga *384*14791#`;
     const bodySh = lesson
       ? lesson.smsSh
-      : `BodaPesa: ${product!.name} — ${product!.summarySh.slice(0, 90)} Reply YES ama dial *384*7788#`;
+      : `BodaPesa: ${product!.name} — ${product!.summarySh.slice(0, 90)} Reply YES ama dial *384*14791#`;
 
     const cid = id("cmp");
     const sentAt = daysAgo(spec.days);
@@ -511,9 +512,40 @@ export async function seed() {
 }
 
 /** Called on first request so the demo is always populated. */
+/**
+ * Rewrites an old USSD code to the current one in stored content — lessons,
+ * campaigns and message history were seeded with the code of the day, and a
+ * change of channel number should not leave riders being told to dial a code
+ * that no longer works. Idempotent; runs once per server instance.
+ */
+let ussdCodeChecked = false;
+async function refreshUssdCode() {
+  if (ussdCodeChecked) return;
+  ussdCodeChecked = true;
+  const columns: Record<string, string[]> = {
+    Lesson: ["bodyEn", "bodySw", "bodySh", "smsEn", "smsSw", "smsSh"],
+    Campaign: ["bodyEn", "bodySw", "bodySh"],
+    Message: ["body"],
+  };
+  for (const legacy of LEGACY_USSD_CODES) {
+    if (legacy === USSD_CODE) continue;
+    for (const [table, cols] of Object.entries(columns)) {
+      const set = cols.map((c) => `${c} = REPLACE(${c}, ?, ?)`).join(", ");
+      const where = cols.map((c) => `${c} LIKE ?`).join(" OR ");
+      await run(`UPDATE ${table} SET ${set} WHERE ${where}`, [
+        ...cols.flatMap(() => [legacy, USSD_CODE]),
+        ...cols.map(() => `%${legacy}%`),
+      ]);
+    }
+  }
+}
+
 export async function ensureSeeded() {
   try {
-    if (await isSeeded()) return;
+    if (await isSeeded()) {
+      await refreshUssdCode();
+      return;
+    }
     // Several serverless instances can arrive here at once on first deploy.
     // Only one may seed; the rest wait on the lock, then find the work done.
     await withLock(SEED_LOCK, async () => {

@@ -41,7 +41,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
     setSessionId(sid);
     setPath([]);
     setEnded(false);
-    setLog([{ dir: "in", text: `Dialling *384*7788# from ${phone}` }]);
+    setLog([{ dir: "in", text: `Dialling *384*14791# from ${phone}` }]);
     await post(sid, "");
   };
 
@@ -70,7 +70,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
         <div className="rounded-xl p-3 mb-3" style={{ background: "#0c1410" }}>
           <div className="flex items-center justify-between mb-2 text-[0.6rem]" style={{ color: "#4d8a6b" }}>
             <span>Safaricom</span>
-            <span>*384*7788#</span>
+            <span>*384*14791#</span>
           </div>
           <div className="ussd-screen rounded-lg p-3 min-h-[230px]">
             {screen || (sessionId ? "…" : "Enter a phone number below and press Dial.")}
@@ -89,7 +89,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
               onKeyDown={(e) => e.key === "Enter" && dial()}
             />
             <button className="btn btn-primary w-full" onClick={dial} disabled={busy || !phone.trim()}>
-              Dial *384*7788#
+              Dial *384*14791#
             </button>
           </div>
         ) : (

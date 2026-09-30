@@ -35,7 +35,7 @@ export default async function Home() {
       href: "/ussd",
       eyebrow: "For riders on any handset",
       title: "USSD simulator",
-      body: "The *384*7788# menu exactly as a rider on a feature phone experiences it — register, learn, take a quiz and request a product without data or a smartphone.",
+      body: "The *384*14791# menu exactly as a rider on a feature phone experiences it — register, learn, take a quiz and request a product without data or a smartphone.",
       cta: "Dial the short code",
       tone: "info",
     },

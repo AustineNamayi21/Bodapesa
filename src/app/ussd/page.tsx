@@ -22,7 +22,7 @@ export default async function UssdPage() {
         <Link href="/" className="text-[0.78rem] text-[var(--text-faint)] hover:underline">
           ← BodaPesa
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight mt-1">USSD simulator — *384*7788#</h1>
+        <h1 className="text-xl font-semibold tracking-tight mt-1">USSD simulator — *384*14791#</h1>
         <p className="text-[0.85rem] text-[var(--text-muted)] mt-1 max-w-2xl leading-relaxed">
           This is the channel that reaches every rider. No smartphone, no data bundle, no app — just a number
           dialled on any handset. The simulator runs the same menu engine that the Africa&rsquo;s Talking

@@ -94,10 +94,10 @@ export default async function LearnPage() {
       <Card>
         <p className="text-[0.78rem] text-[var(--text-muted)] leading-relaxed">
           {lang === "EN"
-            ? "Every lesson here is also available by dialling *384*7788# on any phone, with no data bundle."
+            ? "Every lesson here is also available by dialling *384*14791# on any phone, with no data bundle."
             : lang === "SH"
-              ? "Kila lesson hapa unaweza pata kwa kudial *384*7788# kwa simu yoyote, bila bundle."
-              : "Kila somo hapa linapatikana pia kwa kupiga *384*7788# kwa simu yoyote, bila bando."}
+              ? "Kila lesson hapa unaweza pata kwa kudial *384*14791# kwa simu yoyote, bila bundle."
+              : "Kila somo hapa linapatikana pia kwa kupiga *384*14791# kwa simu yoyote, bila bando."}
         </p>
       </Card>
     </div>

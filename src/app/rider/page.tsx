@@ -62,7 +62,7 @@ export default async function RiderEntryPage() {
         ) : null}
 
         <p className="text-center text-[0.75rem] text-[var(--text-faint)] mt-4">
-          Huna simu ya kisasa? Piga <strong className="text-[var(--text)]">*384*7788#</strong> —{" "}
+          Huna simu ya kisasa? Piga <strong className="text-[var(--text)]">*384*14791#</strong> —{" "}
           <Link href="/ussd" className="underline">
             try the USSD menu
           </Link>

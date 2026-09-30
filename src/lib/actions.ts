@@ -254,7 +254,7 @@ export async function riderLoginAction(_prev: RiderLoginState, formData: FormDat
     "SELECT id, language, isSynthetic FROM Rider WHERE msisdn = ?",
     [msisdn],
   );
-  if (!rider) return { error: "That number is not registered. Dial *384*7788# to join, or ask your stage chairperson." };
+  if (!rider) return { error: "That number is not registered. Dial *384*14791# to join, or ask your stage chairperson." };
 
   // Demonstration riders hold no real person's data (their numbers were
   // generated, or typed into the web USSD simulator), so they sign in
@@ -506,5 +506,5 @@ export async function ussdSimulatorAction(sessionId: string, phone: string, text
   const phoneNumber = normaliseMsisdn(phone);
   if (!phoneNumber) return "END Enter a valid Kenyan number, e.g. 0712 345 678.";
   const sid = `web_${String(sessionId).replace(/[^\w-]/g, "").slice(0, 40)}`;
-  return handleUssd({ sessionId: sid, phoneNumber, text: String(text).slice(0, 200), serviceCode: "*384*7788#" }, "web");
+  return handleUssd({ sessionId: sid, phoneNumber, text: String(text).slice(0, 200), serviceCode: "*384*14791#" }, "web");
 }

@@ -195,9 +195,10 @@ into the sandbox app:
 2. Pick an available channel number and give it a name like `BodaPesa`.
 3. Paste the **USSD callback** URL from the Integrations page.
 
-Ask for channel **7788** so the code is `*384*7788#` — the code every
-message, lesson and screen in BodaPesa already quotes. If it is taken, pick
-another and change `*384*7788#` throughout the source (one search-and-replace).
+Pick any free channel number. BodaPesa uses channel **14791**, so the code is
+`*384*14791#`. It is set in one place, `src/lib/ussd-code.ts`; if you ever use a
+different channel, change it there and in the source text (search for
+`*384*14791#`), and stored lessons and messages are updated on the next deploy.
 
 **Consent.** A new rider is asked to agree before anything is stored:
 language → name → stage → *"BodaPesa will keep your name and number… 1. I agree
@@ -208,7 +209,7 @@ language → name → stage → *"BodaPesa will keep your name and number… 1. 
 
 1. Open the simulator at <https://simulator.africastalking.com> and log in with
    any phone number.
-2. **USSD:** dial `*384*7788#`. The BodaPesa menu appears. Register (agree to
+2. **USSD:** dial `*384*14791#`. The BodaPesa menu appears. Register (agree to
    the consent screen), take a lesson, request a product. The **welcome SMS**
    lands in the simulator's inbox a moment after you register.
 3. **SMS:** on BodaPesa's Integrations page, send a test SMS **to the same number
@@ -382,7 +383,7 @@ window" (the template isn't approved yet).
 3. **The rider on a smartphone.** The teammate opens the site on their phone,
    enters their number, receives a **sign-in code by SMS**, and is in — lessons,
    quiz, literacy score going up.
-4. **The rider on a feature phone.** Dial `*384*7788#` on the Africa's Talking
+4. **The rider on a feature phone.** Dial `*384*14791#` on the Africa's Talking
    simulator: agree to the consent screen, take a lesson, request a Britam product.
 5. **The institution sees it.** Sign in as Britam in a second browser — both
    leads are in their pipeline, and they cannot see Stima's.

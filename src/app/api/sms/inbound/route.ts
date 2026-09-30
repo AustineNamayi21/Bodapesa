@@ -39,14 +39,14 @@ const REPLY: Record<string, Record<Lang, string>> = {
     SH: "Hutapata messages za BodaPesa tena. Reply JIUNGE ukitaka kurudi.",
   },
   joined: {
-    EN: "Welcome to BodaPesa. You will get free money lessons. Dial *384*7788# any time.",
-    SW: "Karibu BodaPesa. Utapokea masomo ya pesa bila malipo. Piga *384*7788# wakati wowote.",
-    SH: "Karibu BodaPesa. Utapata masomo ya doo bure. Dial *384*7788# any time.",
+    EN: "Welcome to BodaPesa. You will get free money lessons. Dial *384*14791# any time.",
+    SW: "Karibu BodaPesa. Utapokea masomo ya pesa bila malipo. Piga *384*14791# wakati wowote.",
+    SH: "Karibu BodaPesa. Utapata masomo ya doo bure. Dial *384*14791# any time.",
   },
   interest: {
-    EN: "Thank you. An officer will call you within 2 working days. Dial *384*7788# to see all products.",
-    SW: "Asante. Afisa atakupigia simu ndani ya siku 2 za kazi. Piga *384*7788# kuona bidhaa zote.",
-    SH: "Asante. Officer atakucall ndani ya siku 2 za kazi. Dial *384*7788# uone deals zote.",
+    EN: "Thank you. An officer will call you within 2 working days. Dial *384*14791# to see all products.",
+    SW: "Asante. Afisa atakupigia simu ndani ya siku 2 za kazi. Piga *384*14791# kuona bidhaa zote.",
+    SH: "Asante. Officer atakucall ndani ya siku 2 za kazi. Dial *384*14791# uone deals zote.",
   },
   unknown: {
     EN: "BodaPesa: reply LEARN for a lesson, YES to be contacted, AKIBA for your savings, or STOP to opt out.",
@@ -54,9 +54,9 @@ const REPLY: Record<string, Record<Lang, string>> = {
     SH: "BodaPesa: reply SOMO upate lesson, NDIO ukucalliwe, AKIBA uone savings, ama ACHA kuexit.",
   },
   notRegistered: {
-    EN: "That number is not registered. Reply JOIN or dial *384*7788# to sign up for free.",
-    SW: "Nambari hiyo haijasajiliwa. Jibu JIUNGE au piga *384*7788# kujisajili bila malipo.",
-    SH: "Hiyo number haijasajiliwa. Reply JIUNGE ama dial *384*7788# ujisajili bure.",
+    EN: "That number is not registered. Reply JOIN or dial *384*14791# to sign up for free.",
+    SW: "Nambari hiyo haijasajiliwa. Jibu JIUNGE au piga *384*14791# kujisajili bila malipo.",
+    SH: "Hiyo number haijasajiliwa. Reply JIUNGE ama dial *384*14791# ujisajili bure.",
   },
 };
 
@@ -198,8 +198,8 @@ export async function POST(request: Request) {
       } else {
         reply =
           lang === "EN"
-            ? "You have completed every lesson. Dial *384*7788# to revisit any of them."
-            : "Umekamilisha masomo yote. Piga *384*7788# kurudia lolote.";
+            ? "You have completed every lesson. Dial *384*14791# to revisit any of them."
+            : "Umekamilisha masomo yote. Piga *384*14791# kurudia lolote.";
       }
       break;
     }
@@ -222,8 +222,8 @@ export async function POST(request: Request) {
       } else {
         reply =
           lang === "EN"
-            ? "You have no savings goal yet. Dial *384*7788# and choose option 3 to set one."
-            : "Huna lengo la akiba bado. Piga *384*7788# na uchague 3 kuweka lengo.";
+            ? "You have no savings goal yet. Dial *384*14791# and choose option 3 to set one."
+            : "Huna lengo la akiba bado. Piga *384*14791# na uchague 3 kuweka lengo.";
       }
       break;
     }

@@ -51,11 +51,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Madere wengi husave kile kimebaki end of day. Siku poa kitu inabaki; siku nyingi hakuna kitu. Fix ni kureverse hiyo order.\n\nDecide amount fixed — KSh 100, KSh 150, kitu kinaweza survive siku ya mchezo mbaya — na uitoe kwa mfuko yako immediately unaipata, kabla ya fuel, kabla ya lunch, kabla ya base. Ichukue kama deni unadaiwa na wewe mwenyewe.\n\nKSh 100 kwa siku ni KSh 3,000 kwa mwezi na KSh 36,000 kwa mwaka. Hiyo ni shares kwa SACCO, bima ya mwaka mzima, na mwanzo wa emergency fund. Amount si issue kubwa kama ukweli ati inatoka kwa mkono kabla ujaitumia.\n\nTrick: tumia mpesa account tofauti ama paybill ya SACCO, si ile wallet unanunua fuel nayo. Doo unaiona ni doo utaitumia.",
     smsEn:
-      "BodaPesa tip: Save FIRST, not last. Move KSh 100 out of your pocket before fuel and lunch. That is KSh 36,000 a year. Dial *384*7788# to start.",
+      "BodaPesa tip: Save FIRST, not last. Move KSh 100 out of your pocket before fuel and lunch. That is KSh 36,000 a year. Dial *384*14791# to start.",
     smsSw:
-      "BodaPesa: Weka akiba KWANZA, si mwisho. Toa KSh 100 mfukoni kabla ya mafuta na chakula. Ni KSh 36,000 kwa mwaka. Piga *384*7788#.",
+      "BodaPesa: Weka akiba KWANZA, si mwisho. Toa KSh 100 mfukoni kabla ya mafuta na chakula. Ni KSh 36,000 kwa mwaka. Piga *384*14791#.",
     smsSh:
-      "BodaPesa: Save KWANZA, si last. Toa KSh 100 kabla ya fuel na lunch. Hiyo ni KSh 36,000 kwa year. Dial *384*7788#.",
+      "BodaPesa: Save KWANZA, si last. Toa KSh 100 kabla ya fuel na lunch. Hiyo ni KSh 36,000 kwa year. Dial *384*14791#.",
     questions: [
       {
         promptEn: "When is the best time to put money aside?",
@@ -119,11 +119,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Pancha, faini ya karao, chain kukatika, mtoi kuwa mgonjwa — hakuna ya hizi ni surprise. Ni vitu zitahappen, tu hatujui lini. Question ni kama utazimeet na savings ama na loan.\n\nEmergency fund ni doo umeweka pembeni kwa hizi vitu pekee. Target ya kwanza KSh 10,000 — inatosha kufix breakdown ya kawaida bila kukopa. Halafu jenga hadi expenses za miezi tatu.\n\nIweke mahali iko na friction kiasi lakini si wall: money market fund ama savings account ka Twiga, si wallet ya kila siku na si fixed deposit huwezi break. Unataka uifikie ndani ya siku mbili, si dakika mbili.\n\nDere mwenye KSh 10,000 pembeni na yule hana wanapata doo sawa. Lakini mmoja anapoteza siku tatu za kazi kwa breakdown, mwingine anapoteza siku tatu plus loan ya 1% kwa siku.",
     smsEn:
-      "BodaPesa: A breakdown is not a surprise, it is a date you do not know yet. Build KSh 10,000 you only touch for emergencies. Dial *384*7788#.",
+      "BodaPesa: A breakdown is not a surprise, it is a date you do not know yet. Build KSh 10,000 you only touch for emergencies. Dial *384*14791#.",
     smsSw:
-      "BodaPesa: Hitilafu si mshangao, ni tarehe usiyoijua bado. Jenga KSh 10,000 utakayogusa kwa dharura pekee. Piga *384*7788#.",
+      "BodaPesa: Hitilafu si mshangao, ni tarehe usiyoijua bado. Jenga KSh 10,000 utakayogusa kwa dharura pekee. Piga *384*14791#.",
     smsSh:
-      "BodaPesa: Breakdown si surprise, ni date haujaijua tu. Jenga KSh 10,000 utaitouch kwa emergency pekee. Dial *384*7788#.",
+      "BodaPesa: Breakdown si surprise, ni date haujaijua tu. Jenga KSh 10,000 utaitouch kwa emergency pekee. Dial *384*14791#.",
     questions: [
       {
         promptEn: "Where should an emergency fund be kept?",
@@ -187,11 +187,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Pikipiki ni biashara. Wewe ni mfanyakazi wake. Siku hizo mbili zinachanganyikana ndio siku biz inaanza kupoteza.\n\nKila shilingi inaingia iko na kazi nne kabla iwe yako: fuel, service na maintenance, bima na licence, na loan ama target. Inayobaki baada ya hizo nne ndio mshahara wako. Madere wengi wanaskip service na bima kabisa, ndio maana service inakuwa crisis na accident inakuwa disaster.\n\nWeka pembeni kidogo kila siku kwa service — hata KSh 50 inajenga KSh 1,500 kwa mwezi, karibu bei ya service poa. Fanya same kwa bima ili premium ya mwaka ikuwe iko ready ikifika.\n\nAndika inayoingia na inayotoka kwa wiki mbili tu. Karibu kila dere anafanya hii anadiscover leak hakujua — na anapata savings bila kuongeza shilingi.",
     smsEn:
-      "BodaPesa: Your bike is a business. Fuel, service, insurance and repayment come out first. What is left is your wage. Track it for 2 weeks. *384*7788#",
+      "BodaPesa: Your bike is a business. Fuel, service, insurance and repayment come out first. What is left is your wage. Track it for 2 weeks. *384*14791#",
     smsSw:
-      "BodaPesa: Pikipiki yako ni biashara. Mafuta, huduma, bima na mkopo hutoka kwanza. Kilichobaki ni mshahara wako. Fuatilia wiki 2. *384*7788#",
+      "BodaPesa: Pikipiki yako ni biashara. Mafuta, huduma, bima na mkopo hutoka kwanza. Kilichobaki ni mshahara wako. Fuatilia wiki 2. *384*14791#",
     smsSh:
-      "BodaPesa: Pikipiki yako ni biz. Fuel, service, bima na loan zinatoka kwanza. Inayobaki ni mshahara. Track kwa wiki 2. *384*7788#",
+      "BodaPesa: Pikipiki yako ni biz. Fuel, service, bima na loan zinatoka kwanza. Inayobaki ni mshahara. Track kwa wiki 2. *384*14791#",
     questions: [
       {
         promptEn: "Which cost do riders most often leave out of their daily calculations?",
@@ -257,11 +257,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Loan inaadvertisewa kama \"1% kwa siku\" inasikika ndogo kuliko ya \"12% kwa mwaka\". Ni ghali mara thelathini zaidi.\n\nOne percent kwa siku ni around 30% kwa mwezi na 365% kwa mwaka. Twelve percent kwa mwaka kwa reducing balance ina maana unalipa interest kwa deni iliyobaki pekee, kwa hivyo cost inapungua kila mwezi unalipa. Hizi si majirani. Ni dunia mbili tofauti.\n\nKabla uaccept loan yoyote, uliza question moja: total nitarudisha ni ngapi? Si rate, si monthly instalment — total. KSh 10,000 ya siku 30 kwa 1% kwa siku inarudi kama KSh 13,000. Hiyo hiyo KSh 10,000 kutoka SACCO kwa 12% reducing kwa mwaka inakucost mia chache za interest.\n\nLoan ghali si mbaya kila time. Lakini unafaa kuichagua na number mbele yako, si kuidiscover baadaye.",
     smsEn:
-      "BodaPesa: 1% a day is about 365% a year. Always ask the TOTAL you will repay, not the rate. Compare before you borrow: *384*7788#",
+      "BodaPesa: 1% a day is about 365% a year. Always ask the TOTAL you will repay, not the rate. Compare before you borrow: *384*14791#",
     smsSw:
-      "BodaPesa: Asilimia 1 kwa siku ni takriban 365% kwa mwaka. Uliza JUMLA utakayolipa, si kiwango. Linganisha: *384*7788#",
+      "BodaPesa: Asilimia 1 kwa siku ni takriban 365% kwa mwaka. Uliza JUMLA utakayolipa, si kiwango. Linganisha: *384*14791#",
     smsSh:
-      "BodaPesa: 1% kwa siku ni around 365% kwa mwaka. Uliza TOTAL utarudisha, si rate. Compare kabla ukope: *384*7788#",
+      "BodaPesa: 1% kwa siku ni around 365% kwa mwaka. Uliza TOTAL utarudisha, si rate. Compare kabla ukope: *384*14791#",
     questions: [
       {
         promptEn: "A loan charging 1% per day costs roughly how much per year?",
@@ -325,11 +325,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Kuna aina mbili tu za deni. Moja inanunua kitu inaingiza doo. Ingine inanunua kitu inapotea.\n\nLoan inakuweka kwa pikipiki yako ni ya kwanza. Kama saa hii unalipa KSh 500 kwa siku kukodi, hiyo KSh 500 tayari inakuacha — question ni kama inaenda forever ama inakuwa repayment inaishia na logbook kwa jina lako. Asset finance ya 18% reducing kwa miezi 48 inabadilisha rent kuwa ownership.\n\nLoan ya simu, contribution ya harusi, ama beti ni ya pili. Doo imeisha, deni imebaki. Ndio maana madere wanaishia kukopa app moja kulipa ingine.\n\nTest ni sentence moja: baada ya hii loan kuisha, nitakuwa na kitu bado inaingiza doo? Kama jibu ni hapana, loan iwe ndogo, fupi, na ya nadra.",
     smsEn:
-      "BodaPesa: Ask before you borrow — after I repay, will I own something that still earns? Turn your daily hire into your own logbook. *384*7788#",
+      "BodaPesa: Ask before you borrow — after I repay, will I own something that still earns? Turn your daily hire into your own logbook. *384*14791#",
     smsSw:
-      "BodaPesa: Uliza kabla ya kukopa — nikilipa, nitamiliki kitu kinachoingiza kipato? Badilisha kodi ya kila siku kuwa logbook yako. *384*7788#",
+      "BodaPesa: Uliza kabla ya kukopa — nikilipa, nitamiliki kitu kinachoingiza kipato? Badilisha kodi ya kila siku kuwa logbook yako. *384*14791#",
     smsSh:
-      "BodaPesa: Uliza kabla ukope — nikilipa, nitakuwa na kitu bado inaingiza doo? Badilisha hire ya kila siku kuwa logbook yako. *384*7788#",
+      "BodaPesa: Uliza kabla ukope — nikilipa, nitakuwa na kitu bado inaingiza doo? Badilisha hire ya kila siku kuwa logbook yako. *384*14791#",
     questions: [
       {
         promptEn: "Which of these is productive debt?",
@@ -408,11 +408,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Kila loan unachukua na kila repayment unafanya inarecordiwa. Hiyo record ndio inadecide utaofferiwa nini for the rest ya working life yako.\n\nRecord safi ndio inabadilisha emergency loan ya KSh 15,000 kuwa asset finance approval ya KSh 400,000 miaka mitatu baadaye. Default — hata ya app loan ya KSh 500 — inaweza funga huo mlango kwa miaka. Amount haina maana kwa record; behaviour ndio ina maana.\n\nRules mbili. One, ukijua utamiss payment, ongea na lender kabla ya due date, si baadaye. Loan iliyorestructuriwa inarecordiwa tofauti sana na iliyodefault. Two, usiache balance ndogo umeforget bila kulipa; check na uimalize.\n\nKulistiwa si permanent. Lipa deni, pata clearance certificate, na uendelee na record safi.",
     smsEn:
-      "BodaPesa: Even a KSh 500 unpaid app loan is on your record. If you will be late, call the lender BEFORE the due date. *384*7788#",
+      "BodaPesa: Even a KSh 500 unpaid app loan is on your record. If you will be late, call the lender BEFORE the due date. *384*14791#",
     smsSw:
-      "BodaPesa: Hata mkopo wa KSh 500 usiolipwa uko kwenye rekodi yako. Ukijua utachelewa, piga simu KABLA ya tarehe. *384*7788#",
+      "BodaPesa: Hata mkopo wa KSh 500 usiolipwa uko kwenye rekodi yako. Ukijua utachelewa, piga simu KABLA ya tarehe. *384*14791#",
     smsSh:
-      "BodaPesa: Hata app loan ya KSh 500 haijalipwa iko kwa record yako. Ukijua utachelewa, call lender KABLA ya due date. *384*7788#",
+      "BodaPesa: Hata app loan ya KSh 500 haijalipwa iko kwa record yako. Ukijua utachelewa, call lender KABLA ya due date. *384*14791#",
     questions: [
       {
         promptEn: "You realise you cannot make a repayment on time. What is best?",
@@ -493,11 +493,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Doo iko chini ya mattress haibaki size ile ile. Inapungua — si kwa shilingi, ni kwa vile hizo shilingi zinaweza nunua.\n\nKama bei zinapanda kwa around 6% kwa mwaka, KSh 100,000 ya cash inanunua vitu za thamani ya around KSh 94,000 end ya mwaka. Haukupoteza doo. Ulipoteza value, kimya kimya, bila transaction.\n\nKuinvest ni kuweka doo mahali inapata return angalau inakeep up na bei zinapanda. Dividend ya SACCO, money market fund, fixed deposit — hizi si vitu za ajabu. Ni tools za kawaida zinazuia savings yako kuleak.\n\nOrder ni muhimu: emergency fund kwanza, halafu bima ili accident moja isiharibu kila kitu, halafu investment.",
     smsEn:
-      "BodaPesa: Cash loses value quietly — at 6% inflation, KSh 100,000 buys KSh 94,000 next year. Learn where to put it: *384*7788#",
+      "BodaPesa: Cash loses value quietly — at 6% inflation, KSh 100,000 buys KSh 94,000 next year. Learn where to put it: *384*14791#",
     smsSw:
-      "BodaPesa: Fedha taslimu hupoteza thamani kimya — kwa mfumuko wa 6%, KSh 100,000 hununua KSh 94,000 mwaka ujao. Jifunze: *384*7788#",
+      "BodaPesa: Fedha taslimu hupoteza thamani kimya — kwa mfumuko wa 6%, KSh 100,000 hununua KSh 94,000 mwaka ujao. Jifunze: *384*14791#",
     smsSh:
-      "BodaPesa: Cash inapoteza value kimya — kwa inflation ya 6%, KSh 100,000 inanunua KSh 94,000 next year. Jifunze: *384*7788#",
+      "BodaPesa: Cash inapoteza value kimya — kwa inflation ya 6%, KSh 100,000 inanunua KSh 94,000 next year. Jifunze: *384*14791#",
     questions: [
       {
         promptEn: "Why does cash kept at home lose value over time?",
@@ -576,11 +576,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Investment yoyote ya ukweli inakulipa kwa sababu doo yako inatumika kwa kitu halisi. Kuelewa hicho kitu inakuambia return iko safe aje.\n\nDividend ya SACCO inatoka kwa interest wanachama wengine wanalipa kwa loans zao. Unaown share ya lending business, kwa hivyo unapata share ya inachopata. Money market fund inakopesha serikali na makampuni kubwa kwa muda mfupi na inapitisha interest. Fixed deposit ni taasisi kukulipa ushikilie doo yako kwa muda fulani.\n\nZote tatu ni za wastani, zinaeleweka, na ziko regulated. Hakuna itadouble doo yako kwa mwezi, na hiyo ndio point — return lazima itoke mahali, na return kubwa sana kuexplain mostly inalipwa kutoka deposit ya mtu anayefuata.\n\nAnza na kile unaweza kuacha kwa mwaka.",
     smsEn:
-      "BodaPesa: A real return always has a source — SACCO dividends come from members' loan interest. If nobody can explain it, do not invest. *384*7788#",
+      "BodaPesa: A real return always has a source — SACCO dividends come from members' loan interest. If nobody can explain it, do not invest. *384*14791#",
     smsSw:
-      "BodaPesa: Faida halisi huwa na chanzo — gawio la SACCO hutoka riba ya mikopo ya wanachama. Kama hakuna anayeweza kueleza, usiwekeze. *384*7788#",
+      "BodaPesa: Faida halisi huwa na chanzo — gawio la SACCO hutoka riba ya mikopo ya wanachama. Kama hakuna anayeweza kueleza, usiwekeze. *384*14791#",
     smsSh:
-      "BodaPesa: Return ya ukweli huwa na source — dividend ya SACCO inatoka interest ya loans za members. Kama hakuna anaweza explain, usiinvest. *384*7788#",
+      "BodaPesa: Return ya ukweli huwa na source — dividend ya SACCO inatoka interest ya loans za members. Kama hakuna anaweza explain, usiinvest. *384*14791#",
     questions: [
       {
         promptEn: "Where does a SACCO dividend come from?",
@@ -659,11 +659,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Madere wanatargetiwa kwa makusudi. Mnahandle cash kila siku, mnapatikana kwa simu, na base groups zinaspread message fast — ndio hasa scheme ya ulaghai inahitaji.\n\nSigns tano za warning, moja tu inafaa kukustop: return kubwa ya guarantee; pressure ya kudecide leo; malipo kwa number binafsi badala ya paybill registered; earnings zinadepend na kurecruit madere wengine; na hakuna licence unaweza verify.\n\nKuverify ni dakika mbili na ni free. SACCO ziko licensed na SASRA, insurance na agents na IRA, na funds na investment managers na CMA. Kila register unaweza check, na taasisi ya ukweli itasubiri ucheki.\n\nRule moja zaidi: usiwahi tuma doo kwa number ya mtu binafsi kwa financial product.",
     smsEn:
-      "BodaPesa: Never pay for a financial product to a personal number. SACCOs = SASRA, insurers = IRA, funds = CMA. Verify first. *384*7788#",
+      "BodaPesa: Never pay for a financial product to a personal number. SACCOs = SASRA, insurers = IRA, funds = CMA. Verify first. *384*14791#",
     smsSw:
-      "BodaPesa: Usilipe bidhaa ya kifedha kwa nambari binafsi. SACCO = SASRA, bima = IRA, mifuko = CMA. Thibitisha kwanza. *384*7788#",
+      "BodaPesa: Usilipe bidhaa ya kifedha kwa nambari binafsi. SACCO = SASRA, bima = IRA, mifuko = CMA. Thibitisha kwanza. *384*14791#",
     smsSh:
-      "BodaPesa: Usilipe financial product kwa number binafsi. SACCO = SASRA, bima = IRA, funds = CMA. Verify kwanza. *384*7788#",
+      "BodaPesa: Usilipe financial product kwa number binafsi. SACCO = SASRA, bima = IRA, funds = CMA. Verify kwanza. *384*14791#",
     questions: [
       {
         promptEn: "Which is the clearest warning sign of a fraudulent investment?",
@@ -729,11 +729,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Madere mostly wanasema bima ni doo imetupwa. Hiyo inatoka kwa experience ya ukweli — kulipa kila mwaka bila kupata kitu. Lakini hiyo ni mechanism inafanya kazi, si kufail.\n\nBima ni madere elfu moja kila mmoja analipa kidogo kwa pot moja ili wale kumi wenye accident mbaya mwaka huu wasimalizwe nayo. Haununui return. Unanunua kuondolewa kwa risk inaweza kumaliza biz yako mchana mmoja.\n\nCost ya kukosa ni rahisi kuunderestimate kwa sababu inafika yote mara moja. Claim moja ya injury kubwa inaweza zidi unachopata kwa miaka kadhaa.\n\nIfikirie kama helmet. Huvai helmet ukitegemea kuanguka. Unavaa kwa sababu ile time moja inahitajika, hakuna kingine kitatosha.",
     smsEn:
-      "BodaPesa: Insurance is 1,000 riders paying small so the 10 who crash are not finished. You are buying protection, not a return. *384*7788#",
+      "BodaPesa: Insurance is 1,000 riders paying small so the 10 who crash are not finished. You are buying protection, not a return. *384*14791#",
     smsSw:
-      "BodaPesa: Bima ni waendeshaji 1,000 kulipa kidogo ili wale 10 wanaopata ajali wasiishe. Unanunua ulinzi, si faida. *384*7788#",
+      "BodaPesa: Bima ni waendeshaji 1,000 kulipa kidogo ili wale 10 wanaopata ajali wasiishe. Unanunua ulinzi, si faida. *384*14791#",
     smsSh:
-      "BodaPesa: Bima ni madere 1,000 kulipa kidogo ili wale 10 wanaanguka wasimalizike. Unanunua protection, si return. *384*7788#",
+      "BodaPesa: Bima ni madere 1,000 kulipa kidogo ili wale 10 wanaanguka wasimalizike. Unanunua protection, si return. *384*14791#",
     questions: [
       {
         promptEn: "What are you buying when you pay an insurance premium?",
@@ -812,11 +812,11 @@ export const SEED_LESSONS: SeedLesson[] = [
     bodySh:
       "Kuna bima tano muhimu kwa hii biz, na madere wengi wako na ya kwanza pekee.\n\nThird Party Only inahitajika kisheria kwa pikipiki yoyote inabeba abiria kwa malipo. Inalipa injury ama damage unayocause kwa wengine. Hairepair pikipiki yako na — hii ndio madere wengi wanakosea — mostly hai-cover abiria wako.\n\nPassenger Legal Liability ndio extension inacover mtu yuko kwa seat yako. Ukibeba abiria kumi na watano kwa siku, hii ndio exposure yako kubwa.\n\nPersonal Accident inakucover wewe: medical costs, lump sum kwa disability ama kifo, na mostly weekly benefit wakati huwezi ride. Hakuna employer atakulipa sick leave.\n\nHealth cover inahandle ugonjwa si accident, na micro versions saa hii zinaaccept payments ndogo za weekly kupitia mpesa.\n\nLast expense inalipa funeral benefit fast, ili family isifanye harambee wiki mbaya zaidi ya maisha yao.",
     smsEn:
-      "BodaPesa: Third party does NOT cover your passenger. You need Passenger Legal Liability too. Check your cover: *384*7788#",
+      "BodaPesa: Third party does NOT cover your passenger. You need Passenger Legal Liability too. Check your cover: *384*14791#",
     smsSw:
-      "BodaPesa: Bima ya mtu wa tatu HAIMLINDI abiria wako. Unahitaji pia Dhima ya Abiria. Angalia bima yako: *384*7788#",
+      "BodaPesa: Bima ya mtu wa tatu HAIMLINDI abiria wako. Unahitaji pia Dhima ya Abiria. Angalia bima yako: *384*14791#",
     smsSh:
-      "BodaPesa: Third party HAI-cover abiria wako. Unahitaji pia Passenger Legal Liability. Check bima yako: *384*7788#",
+      "BodaPesa: Third party HAI-cover abiria wako. Unahitaji pia Passenger Legal Liability. Check bima yako: *384*14791#",
     questions: [
       {
         promptEn: "Which cover protects the passenger riding on your bike?",
