@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   // try to resolve. Keeping pg external leaves it to Node's own resolver.
   serverExternalPackages: ["pg"],
 
+  // Photos come from Unsplash's CDN, which resizes on request (see image-loader.ts).
+  images: {
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
+  },
+
   async headers() {
     return [
       {

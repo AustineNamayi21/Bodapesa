@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/plus-jakarta-sans";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,8 +13,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f7f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1411" },
+    { media: "(prefers-color-scheme: light)", color: "#fff7ec" },
+    { media: "(prefers-color-scheme: dark)", color: "#140f0b" },
   ],
 };
 

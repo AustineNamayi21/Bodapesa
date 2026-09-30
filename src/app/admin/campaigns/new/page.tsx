@@ -28,7 +28,7 @@ export default async function NewCampaignPage() {
         <Link href="/admin/campaigns" className="text-[0.78rem] text-[var(--text-faint)] hover:underline">
           ← Campaigns
         </Link>
-        <h1 className="text-xl font-semibold tracking-tight mt-1">Compose a campaign</h1>
+        <h1 className="text-[2rem] leading-tight mt-1">Compose a campaign</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           Write once in three languages, choose who it reaches, and the engine picks each rider&rsquo;s preferred
           channel automatically.

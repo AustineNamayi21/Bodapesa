@@ -37,7 +37,7 @@ export default async function CurriculumPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Financial literacy curriculum</h1>
+        <h1 className="text-[2rem] leading-tight">Financial literacy curriculum</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           Twelve lessons across four modules. Each exists in English, Kiswahili and Sheng, in a full version
           for the rider portal and a condensed version that fits one SMS or USSD screen.

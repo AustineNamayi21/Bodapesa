@@ -25,9 +25,25 @@ const check = (name, ok, detail = "") => {
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 
+// Photos load from Unsplash's CDN. Against a local server (often offline) they
+// are replaced with a placeholder so a missing network is not reported as a
+// page error; against a deployed URL the real images load.
+const STUB_PHOTOS = process.env.STUB_PHOTOS ?? (/localhost|127\.0\.0\.1/.test(BASE) ? "1" : "0");
+const PLACEHOLDER =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc21a"/><stop offset="1" stop-color="#ff5a1f"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>';
+async function newCtx(options) {
+  const ctx = await browser.newContext(options);
+  if (STUB_PHOTOS === "1") {
+    await ctx.route("https://images.unsplash.com/**", (route) =>
+      route.fulfill({ status: 200, contentType: "image/svg+xml", body: PLACEHOLDER }),
+    );
+  }
+  return ctx;
+}
+
 async function run() {
   // ------------------------------------------------------------ admin ----
-  const admin = await browser.newContext({ viewport: { width: 1400, height: 1000 } });
+  const admin = await newCtx({ viewport: { width: 1400, height: 1000 } });
   const page = await admin.newPage();
   const errors = [];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
@@ -122,7 +138,7 @@ async function run() {
   await page.screenshot({ path: `${SHOTS}/08-products.png`, fullPage: true });
 
   // partner-scoped access
-  const britam = await browser.newContext({ viewport: { width: 1400, height: 1000 } });
+  const britam = await newCtx({ viewport: { width: 1400, height: 1000 } });
   const bpage = await britam.newPage();
   await bpage.goto(`${BASE}/login`, { waitUntil: "networkidle" });
   await bpage.fill("#email", "agent@britam.co.ke");
@@ -136,7 +152,7 @@ async function run() {
   await britam.close();
 
   // ------------------------------------------------------ rider portal ----
-  const riderCtx = await browser.newContext({ viewport: { width: 420, height: 900 }, isMobile: true, hasTouch: true });
+  const riderCtx = await newCtx({ viewport: { width: 420, height: 900 }, isMobile: true, hasTouch: true });
   const rp = await riderCtx.newPage();
   rp.on("pageerror", (e) => errors.push(String(e)));
 
@@ -223,7 +239,7 @@ async function run() {
   await up.screenshot({ path: `${SHOTS}/14-ussd.png`, fullPage: true });
 
   // ------------------------------------------------------- dark mode ----
-  const dark = await browser.newContext({ viewport: { width: 1400, height: 1000 }, colorScheme: "dark" });
+  const dark = await newCtx({ viewport: { width: 1400, height: 1000 }, colorScheme: "dark" });
   const dp = await dark.newPage();
   await dp.goto(`${BASE}/login`, { waitUntil: "networkidle" });
   await dp.fill("#email", ADMIN_EMAIL);

@@ -81,7 +81,7 @@ export default async function RiderDetailPage({ params }: { params: Promise<{ id
           ← Rider registry
         </Link>
         <div className="flex flex-wrap items-center gap-3 mt-1">
-          <h1 className="text-xl font-semibold tracking-tight">
+          <h1 className="text-[2rem] leading-tight">
             {rider.firstName} {rider.lastName}
           </h1>
           <Pill tone={STATUS_TONE[rider.status]}>{rider.status.replace("_", " ")}</Pill>

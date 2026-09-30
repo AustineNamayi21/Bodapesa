@@ -73,7 +73,7 @@ export default async function MessagesPage({
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Message log</h1>
+        <h1 className="text-[2rem] leading-tight">Message log</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           Every message the platform has attempted, with its provider reference, cost and delivery outcome.
         </p>

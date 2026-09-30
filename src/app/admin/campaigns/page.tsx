@@ -34,7 +34,7 @@ export default async function CampaignsPage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Campaigns</h1>
+          <h1 className="text-[2rem] leading-tight">Campaigns</h1>
           <p className="text-xs text-[var(--text-faint)] mt-0.5">
             Mass messaging to segmented audiences, in the language and on the channel each rider prefers.
           </p>

@@ -86,7 +86,7 @@ export default async function IntegrationsPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Integrations</h1>
+        <h1 className="text-[2rem] leading-tight">Integrations</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           Channel status, the callback URLs each provider needs, and a live test to prove delivery end to end.
         </p>

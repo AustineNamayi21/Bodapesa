@@ -4,6 +4,8 @@ import { ensureSeeded } from "@/lib/seed";
 import { displayMsisdn } from "@/lib/i18n";
 import { env } from "@/lib/env";
 import Handset from "./Handset";
+import { USSD_CODE } from "@/lib/ussd-code";
+import { Logo, Photo } from "@/components/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -17,27 +19,39 @@ export default async function UssdPage() {
   );
 
   return (
-    <main className="min-h-screen px-4 sm:px-6 py-8">
-      <div className="max-w-5xl mx-auto">
-        <Link href="/" className="text-[0.78rem] text-[var(--text-faint)] hover:underline">
-          ← BodaPesa
-        </Link>
-        <h1 className="text-xl font-semibold tracking-tight mt-1">USSD simulator — *384*14791#</h1>
-        <p className="text-[0.85rem] text-[var(--text-muted)] mt-1 max-w-2xl leading-relaxed">
-          This is the channel that reaches every rider. No smartphone, no data bundle, no app — just a number
-          dialled on any handset. The simulator runs the same menu engine that the Africa&rsquo;s Talking
-          callback at <code className="text-[0.78rem]">/api/ussd</code> uses, so what you see here is exactly what a
-          rider sees on their phone. Riders registered here are marked as demonstration riders and are never sent a
-          real message.
-        </p>
+    <main className="min-h-screen">
+      <section className="relative overflow-hidden border-b-[3px]" style={{ borderColor: "var(--ink)" }}>
+        <Photo name="mirror" priority sizes="100vw" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(26,18,11,0.95) 30%, rgba(26,18,11,0.6) 70%, rgba(16,178,108,0.35))" }} />
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-10">
+          <div className="flex items-center justify-between">
+            <Logo tone="light" />
+            <Link href="/rider" className="btn btn-sm" style={{ background: "rgba(255,243,228,0.12)", color: "var(--cream)", borderColor: "rgba(255,243,228,0.3)" }}>
+              Rider portal →
+            </Link>
+          </div>
+          <span className="sticker mt-8" style={{ background: "var(--mpesa)", color: "#fff" }}>
+            No data · No smartphone · Free
+          </span>
+          <h1 className="mt-4 text-4xl sm:text-6xl leading-[1.02] max-w-3xl" style={{ color: "var(--cream)" }}>
+            Dial <span className="font-mono" style={{ color: "var(--matatu)" }}>{USSD_CODE}</span>
+          </h1>
+          <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: "rgba(255,243,228,0.8)" }}>
+            The channel that reaches every rider — even on a mulika mwizi. This simulator runs the same menu engine as the
+            Africa&rsquo;s Talking callback at <code className="font-mono text-[0.85em]">/api/ussd</code>, so what you see is exactly
+            what a rider sees. Riders registered here are demonstration riders and are never sent a real message.
+          </p>
+        </div>
+      </section>
 
-        <div className="grid gap-6 lg:grid-cols-[320px_1fr] mt-6 items-start">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <div className="grid gap-8 lg:grid-cols-[360px_1fr] items-start">
           <Handset registered={registered.map((r) => ({ ...r, display: displayMsisdn(r.msisdn) }))} />
 
           <div className="space-y-4">
             <div className="card p-5">
-              <h2 className="font-semibold tracking-tight mb-3">The menu</h2>
-              <ul className="space-y-2.5 text-[0.82rem]">
+              <h2 className="text-2xl mb-4">The menu</h2>
+              <ul className="grid sm:grid-cols-2 gap-3 text-[0.82rem]">
                 {[
                   {
                     n: "1",
@@ -58,15 +72,15 @@ export default async function UssdPage() {
                   { n: "5", t: "Wasifu wangu — Profile", d: "Stage, lessons completed and current literacy score." },
                   { n: "6", t: "Badilisha lugha — Language", d: "Switch between Kiswahili, English and Sheng at any time." },
                 ].map((m) => (
-                  <li key={m.n} className="flex gap-3">
+                  <li key={m.n} className="flex gap-3 rounded-2xl p-3 lift" style={{ background: "var(--surface-2)" }}>
                     <span
-                      className="w-5 h-5 rounded grid place-items-center text-[0.7rem] font-bold shrink-0 mt-0.5"
-                      style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}
+                      className="w-8 h-8 rounded-xl grid place-items-center text-[0.9rem] font-extrabold shrink-0 border-2"
+                      style={{ background: ["var(--sunset)", "var(--matatu)", "var(--mpesa)", "var(--sky)", "var(--kanga)", "var(--sunset)"][Number(m.n) - 1], color: "var(--ink)", borderColor: "var(--ink)" }}
                     >
                       {m.n}
                     </span>
                     <span>
-                      <span className="font-medium block">{m.t}</span>
+                      <span className="font-bold block">{m.t}</span>
                       <span className="text-[0.78rem] text-[var(--text-muted)] leading-relaxed">{m.d}</span>
                     </span>
                   </li>
@@ -75,8 +89,8 @@ export default async function UssdPage() {
             </div>
 
             <div className="card p-5">
-              <h2 className="font-semibold tracking-tight mb-2">Try this first</h2>
-              <ol className="space-y-1.5 text-[0.82rem] text-[var(--text-muted)] list-decimal list-inside">
+              <h2 className="text-2xl mb-3">Try this first 👇</h2>
+              <ol className="space-y-2 text-[0.86rem] text-[var(--text-muted)] list-decimal list-inside marker:font-extrabold marker:text-[var(--brand-strong)]">
                 <li>
                   Dial with an <strong className="text-[var(--text)]">unregistered</strong> number — the menu
                   walks you through choosing a language, giving your name and picking your stage, and creates a
@@ -96,9 +110,9 @@ export default async function UssdPage() {
               </ol>
             </div>
 
-            <div className="card p-5">
-              <h2 className="font-semibold tracking-tight mb-2">Going live</h2>
-              <p className="text-[0.82rem] text-[var(--text-muted)] leading-relaxed">
+            <div className="rounded-[var(--radius)] p-5" style={{ background: "var(--ink)", color: "var(--cream)" }}>
+              <h2 className="text-2xl mb-2" style={{ color: "var(--matatu)" }}>Going live</h2>
+              <p className="text-[0.84rem] leading-relaxed" style={{ color: "rgba(255,243,228,0.78)" }}>
                 Register a USSD service code with Africa&rsquo;s Talking and point its callback at{" "}
                 <code className="text-[0.78rem]">https://your-domain/api/ussd</code>. The endpoint already
                 speaks the required format — form-encoded{" "}

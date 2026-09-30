@@ -1,6 +1,10 @@
 import { all } from "@/lib/db";
 import { requireRider } from "@/lib/rider";
-import { Card, CATEGORY_TONE, Pill, formatKes } from "@/components/ui";
+import { BadgeCheck, HeartHandshake } from "lucide-react";
+import { CATEGORY_TONE, Pill, formatKes } from "@/components/ui";
+import { IconBadge } from "@/components/brand";
+import { ModuleIcon } from "@/components/rider";
+import { MODULE_THEME } from "@/lib/photos";
 import { pick, t } from "@/lib/i18n";
 import { expressInterestAction } from "@/lib/actions";
 import type { Lang } from "@/lib/types";
@@ -52,10 +56,10 @@ export default async function RiderProductsPage() {
   const myLeads = new Set(leadRows.map((l) => l.productId));
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight">{t("products", lang)}</h1>
-        <p className="text-[0.78rem] text-[var(--text-muted)] mt-0.5">
+    <div className="space-y-6">
+      <div className="animate-rise">
+        <h1 className="text-[1.9rem] leading-tight">{t("products", lang)} 🛍️</h1>
+        <p className="text-[0.84rem] text-[var(--text-muted)] mt-1">
           {lang === "EN"
             ? "From Stima DT SACCO and Britam. Tap “I'm interested” and an officer will call you."
             : lang === "SH"
@@ -64,74 +68,104 @@ export default async function RiderProductsPage() {
         </p>
       </div>
 
+      <nav className="flex gap-2 overflow-x-auto scroll-thin -mx-4 px-4 pb-1 sticky top-[64px] z-20 py-2" style={{ background: "var(--bg)" }}>
+        {CATEGORIES.filter((c) => products.some((p) => p.category === c)).map((c) => {
+          const th = MODULE_THEME[c] ?? MODULE_THEME.SAVINGS;
+          return (
+            <a
+              key={c}
+              href={`#cat-${c}`}
+              className="pill shrink-0 py-1.5 px-3 border-2 transition-transform hover:-translate-y-0.5"
+              style={{ background: th.soft, color: th.text, borderColor: th.fill }}
+            >
+              <ModuleIcon moduleKey={c} size={13} /> {CAT_LABEL[c]?.[lang]}
+            </a>
+          );
+        })}
+      </nav>
+
       {CATEGORIES.map((category) => {
         const items = products.filter((p) => p.category === category);
         if (!items.length) return null;
+        const th = MODULE_THEME[category] ?? MODULE_THEME.SAVINGS;
         return (
-          <section key={category}>
-            <h2 className="text-[0.88rem] font-semibold tracking-tight mb-2">{CAT_LABEL[category]?.[lang]}</h2>
-            <div className="space-y-2.5">
+          <section key={category} id={`cat-${category}`} className="scroll-mt-32">
+            <h2 className="text-xl mb-3 flex items-center gap-2">
+              <IconBadge fill={th.fill} size={32}>
+                <ModuleIcon moduleKey={category} size={16} />
+              </IconBadge>
+              {CAT_LABEL[category]?.[lang]}
+            </h2>
+            <div className="space-y-3">
               {items.map((p) => {
                 const requested = myLeads.has(p.id);
                 return (
-                  <Card key={p.id} className="scroll-mt-20">
-                    <div id={p.id} />
-                    <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <div className="min-w-0">
-                        <h3 className="text-[0.9rem] font-semibold tracking-tight leading-snug">{p.name}</h3>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.accent }} />
-                          <span className="text-[0.7rem] text-[var(--text-faint)]">{p.partnerName}</span>
+                  <article key={p.id} className="card lift overflow-hidden scroll-mt-32 relative" id={p.id}>
+                    <div className="h-1.5" style={{ background: `linear-gradient(90deg, ${p.accent}, ${th.fill})` }} />
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="min-w-0">
+                          <h3 className="text-[1.1rem] leading-snug">{p.name}</h3>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span
+                              className="w-5 h-5 rounded-md grid place-items-center text-[0.6rem] font-extrabold text-white"
+                              style={{ background: p.accent }}
+                            >
+                              {p.partnerName.charAt(0)}
+                            </span>
+                            <span className="text-[0.74rem] font-semibold text-[var(--text-faint)]">{p.partnerName}</span>
+                          </div>
                         </div>
+                        <Pill tone={CATEGORY_TONE[p.category]}>{CAT_LABEL[p.category]?.[lang]}</Pill>
                       </div>
-                      <Pill tone={CATEGORY_TONE[p.category]}>{CAT_LABEL[p.category]?.[lang]}</Pill>
-                    </div>
 
-                    <p className="text-[0.82rem] leading-relaxed text-[var(--text-muted)]">
-                      {pick(p, "summary", lang)}
-                    </p>
+                      <p className="text-[0.85rem] leading-relaxed text-[var(--text-muted)]">{pick(p, "summary", lang)}</p>
 
-                    {(p.minAmount || p.premium || p.interestRate || p.termLabel) && (
-                      <div className="flex flex-wrap gap-1.5 mt-2.5">
-                        {p.minAmount ? <Pill tone="neutral">{lang === "EN" ? "From" : "Kuanzia"} {formatKes(p.minAmount)}</Pill> : null}
-                        {p.maxAmount ? <Pill tone="neutral">{lang === "EN" ? "Up to" : "Hadi"} {formatKes(p.maxAmount)}</Pill> : null}
-                        {p.premium ? <Pill tone="neutral">{p.premium}</Pill> : null}
-                        {p.interestRate ? <Pill tone="neutral">{p.interestRate}</Pill> : null}
-                        {p.termLabel ? <Pill tone="neutral">{p.termLabel}</Pill> : null}
-                      </div>
-                    )}
-
-                    <details className="mt-2.5">
-                      <summary className="text-[0.76rem] cursor-pointer text-[var(--text-faint)]">
-                        {lang === "EN" ? "Read more" : lang === "SH" ? "Soma zaidi" : "Soma zaidi"}
-                      </summary>
-                      <p className="text-[0.8rem] leading-relaxed text-[var(--text-muted)] mt-2">
-                        {lang === "EN" ? p.detailsEn : p.detailsSw}
-                      </p>
-                      {p.eligibility ? (
-                        <p className="text-[0.72rem] text-[var(--text-faint)] mt-2">
-                          {lang === "EN" ? "Eligibility" : "Sifa"}: {p.eligibility}
-                        </p>
-                      ) : null}
-                    </details>
-
-                    <div className="mt-3">
-                      {requested ? (
-                        <div
-                          className="text-[0.78rem] p-2.5 rounded-lg"
-                          style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}
-                        >
-                          ✓ {t("requestSent", lang)}
+                      {(p.minAmount || p.premium || p.interestRate || p.termLabel) && (
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {p.minAmount ? <Chip>{lang === "EN" ? "From" : "Kuanzia"} {formatKes(p.minAmount)}</Chip> : null}
+                          {p.maxAmount ? <Chip>{lang === "EN" ? "Up to" : "Hadi"} {formatKes(p.maxAmount)}</Chip> : null}
+                          {p.premium ? <Chip>{p.premium}</Chip> : null}
+                          {p.interestRate ? <Chip>{p.interestRate}</Chip> : null}
+                          {p.termLabel ? <Chip>{p.termLabel}</Chip> : null}
                         </div>
-                      ) : (
-                        <form action={expressInterestAction}>
-                          <input type="hidden" name="riderId" value={rider.id} />
-                          <input type="hidden" name="productId" value={p.id} />
-                          <button className="btn btn-accent btn-sm w-full">{t("interested", lang)}</button>
-                        </form>
                       )}
+
+                      <details className="mt-3 group">
+                        <summary className="text-[0.78rem] font-bold cursor-pointer list-none inline-flex items-center gap-1" style={{ color: th.text }}>
+                          <span className="transition-transform group-open:rotate-90">›</span>
+                          {lang === "EN" ? "Read more" : "Soma zaidi"}
+                        </summary>
+                        <p className="text-[0.82rem] leading-relaxed text-[var(--text-muted)] mt-2">
+                          {lang === "EN" ? p.detailsEn : p.detailsSw}
+                        </p>
+                        {p.eligibility ? (
+                          <p className="text-[0.74rem] text-[var(--text-faint)] mt-2">
+                            {lang === "EN" ? "Eligibility" : "Sifa"}: {p.eligibility}
+                          </p>
+                        ) : null}
+                      </details>
+
+                      <div className="mt-4">
+                        {requested ? (
+                          <div
+                            className="text-[0.8rem] p-3 rounded-xl font-semibold flex items-center gap-2 animate-pop"
+                            style={{ background: "var(--success-soft)", color: "var(--success)" }}
+                          >
+                            <BadgeCheck size={17} /> {t("requestSent", lang)}
+                          </div>
+                        ) : (
+                          <form action={expressInterestAction}>
+                            <input type="hidden" name="riderId" value={rider.id} />
+                            <input type="hidden" name="productId" value={p.id} />
+                            <button className="btn btn-accent w-full">
+                              <HeartHandshake size={16} /> {t("interested", lang)}
+                            </button>
+                          </form>
+                        )}
+                      </div>
                     </div>
-                  </Card>
+                  </article>
                 );
               })}
             </div>
@@ -139,11 +173,19 @@ export default async function RiderProductsPage() {
         );
       })}
 
-      <p className="text-[0.7rem] text-[var(--text-faint)] leading-relaxed">
+      <p className="text-[0.72rem] text-[var(--text-faint)] leading-relaxed">
         {lang === "EN"
           ? "Rates, premiums and limits shown are indicative. The institution will confirm the exact terms when they contact you."
           : "Viwango, malipo na mipaka inayoonyeshwa ni ya makadirio. Taasisi itathibitisha masharti kamili itakapokupigia simu."}
       </p>
     </div>
+  );
+}
+
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="pill py-1 border" style={{ background: "var(--surface-2)", color: "var(--text)", borderColor: "var(--border-strong)" }}>
+      {children}
+    </span>
   );
 }

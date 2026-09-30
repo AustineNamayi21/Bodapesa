@@ -23,7 +23,7 @@ export default async function ProductsPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Partner product catalogue</h1>
+        <h1 className="text-[2rem] leading-tight">Partner product catalogue</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           What riders are being onboarded to. Every product carries a plain-language summary in three
           languages, which is what the messaging engine and USSD menu deliver.

@@ -1,6 +1,7 @@
 import { all, run } from "@/lib/db";
 import { requireRider } from "@/lib/rider";
-import { Card, Pill, timeAgo } from "@/components/ui";
+import { timeAgo } from "@/components/ui";
+import { LogoMark } from "@/components/brand";
 import { now } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -32,13 +33,20 @@ export default async function InboxPage() {
     rider.id,
   ]);
 
+  const CHANNEL: Record<string, { fill: string; label: string }> = {
+    SMS: { fill: "var(--matatu)", label: "SMS" },
+    WHATSAPP: { fill: "var(--mpesa)", label: "WhatsApp" },
+    USSD: { fill: "var(--sky)", label: "USSD" },
+    APP: { fill: "var(--sunset)", label: "App" },
+  };
+
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight">
-          {lang === "EN" ? "Messages" : lang === "SH" ? "Messages" : "Ujumbe"}
+    <div className="space-y-5">
+      <div className="animate-rise">
+        <h1 className="text-[1.9rem] leading-tight">
+          {lang === "EN" ? "Messages" : lang === "SH" ? "Messages" : "Ujumbe"} 💬
         </h1>
-        <p className="text-[0.78rem] text-[var(--text-muted)]">
+        <p className="text-[0.84rem] text-[var(--text-muted)]">
           {lang === "EN"
             ? "Everything BodaPesa has sent you, on any channel."
             : "Kila kitu BodaPesa imekutumia, kwa njia yoyote."}
@@ -46,31 +54,49 @@ export default async function InboxPage() {
       </div>
 
       {messages.length ? (
-        <div className="space-y-2.5">
-          {messages.map((m) => (
-            <Card key={m.id}>
-              <div className="flex items-center gap-2 mb-1.5">
-                <Pill tone={m.readAt ? "neutral" : "accent"} dot={!m.readAt}>
-                  {m.channel}
-                </Pill>
-                <span className="text-[0.68rem] text-[var(--text-faint)]">{timeAgo(m.createdAt)}</span>
+        <div className="space-y-3 stagger">
+          {messages.map((m) => {
+            const ch = CHANNEL[m.channel] ?? CHANNEL.SMS;
+            return (
+              <div key={m.id} className="flex items-end gap-2">
+                <LogoMark size={30} className="shrink-0 mb-1" />
+                <div className="min-w-0 flex-1">
+                  <div
+                    className="rounded-2xl rounded-bl-sm p-3.5 border-2 relative"
+                    style={{
+                      background: "var(--surface)",
+                      borderColor: m.readAt ? "var(--border)" : "var(--ink)",
+                      boxShadow: m.readAt ? "var(--shadow)" : `3px 3px 0 ${ch.fill}`,
+                    }}
+                  >
+                    {!m.readAt ? (
+                      <span className="absolute -top-2 -right-2 pill border-2 animate-pop" style={{ background: "var(--sunset)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+                        {lang === "EN" ? "New" : "Mpya"}
+                      </span>
+                    ) : null}
+                    <p className="text-[0.88rem] leading-relaxed">{m.body}</p>
+                    {m.campaignName ? (
+                      <p className="text-[0.68rem] text-[var(--text-faint)] mt-2">
+                        {m.productName ? `${m.productName} · ` : ""}
+                        {m.campaignName}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1 ml-1 text-[0.68rem] text-[var(--text-faint)]">
+                    <span className="w-2 h-2 rounded-full" style={{ background: ch.fill }} />
+                    <span className="font-bold">{ch.label}</span>
+                    <span>· {timeAgo(m.createdAt)}</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-[0.84rem] leading-relaxed">{m.body}</p>
-              {m.campaignName ? (
-                <p className="text-[0.66rem] text-[var(--text-faint)] mt-1.5">
-                  {m.productName ? `${m.productName} · ` : ""}
-                  {m.campaignName}
-                </p>
-              ) : null}
-            </Card>
-          ))}
+            );
+          })}
         </div>
       ) : (
-        <Card>
-          <p className="text-[0.85rem] text-[var(--text-muted)]">
-            {lang === "EN" ? "No messages yet." : "Hakuna ujumbe bado."}
-          </p>
-        </Card>
+        <div className="card p-6 text-center">
+          <div className="text-4xl mb-2">📭</div>
+          <p className="text-[0.88rem] text-[var(--text-muted)]">{lang === "EN" ? "No messages yet." : "Hakuna ujumbe bado."}</p>
+        </div>
       )}
     </div>
   );

@@ -202,7 +202,7 @@ export function BarList({
 }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.value));
-  const colour = tone === "accent" ? "var(--accent)" : tone === "info" ? "var(--info)" : "var(--brand)";
+  const colour = tone === "accent" ? "var(--series-3)" : tone === "info" ? "var(--series-1)" : "var(--series-2)";
 
   if (!data.length) {
     return <p className="text-sm text-[var(--text-faint)] py-4">No data yet.</p>;
@@ -327,7 +327,7 @@ export function Funnel({ data }: { data: { stage: string; value: number }[] }) {
                 className="h-full rounded-[5px] transition-[width] duration-300"
                 style={{
                   width: `${Math.max(3, (d.value / max) * 100)}%`,
-                  background: "var(--brand)",
+                  background: "var(--series-2)",
                   opacity: hover === null || hover === i ? 1 : 0.6,
                 }}
               />

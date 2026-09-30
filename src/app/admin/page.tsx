@@ -1,4 +1,17 @@
 import Link from "next/link";
+import {
+  BookOpen,
+  GraduationCap,
+  HeartHandshake,
+  Megaphone,
+  MessageSquareText,
+  Receipt,
+  Send,
+  UserPlus,
+  Users,
+  Wallet,
+} from "lucide-react";
+import { Photo } from "@/components/brand";
 import { currentUser } from "@/lib/auth";
 import {
   channelBreakdown,
@@ -41,42 +54,64 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Programme dashboard</h1>
-          <p className="text-xs text-[var(--text-faint)] mt-0.5">
-            {user?.partnerName ? `Viewing as ${user.partnerName}` : "Platform-wide view"} · updated{" "}
-            {new Date().toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })}
-          </p>
+      <header
+        className="relative rounded-[28px] overflow-hidden border-[3px] animate-rise"
+        style={{ borderColor: "var(--ink)", background: "var(--ink)", boxShadow: "6px 6px 0 var(--sunset)" }}
+      >
+        <div className="absolute inset-y-0 right-0 w-full md:w-[58%]">
+          <Photo name="matatus" sizes="(max-width: 768px) 100vw, 60vw" priority />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, var(--ink) 0%, rgba(26,18,11,0.75) 35%, rgba(26,18,11,0.2) 100%)" }} />
         </div>
-        <Link href="/admin/campaigns/new" className="btn btn-primary btn-sm">
-          New campaign
-        </Link>
+        <div className="relative p-6 sm:p-8 max-w-2xl" style={{ color: "var(--cream)" }}>
+          <span className="eyebrow" style={{ color: "var(--matatu)" }}>
+            {user?.partnerName ? `Viewing as ${user.partnerName}` : "Platform-wide view"}
+          </span>
+          <h1 className="mt-2 text-3xl sm:text-[2.6rem] leading-[1.05]" style={{ color: "var(--cream)" }}>
+            Habari, {user?.name?.split(" ")[0] ?? "team"} 👋
+          </h1>
+          <p className="mt-2 text-[0.9rem]" style={{ color: "rgba(255,243,228,0.75)" }}>
+            <span className="font-bold" style={{ color: "var(--cream)" }}>
+              {k.riders.toLocaleString()} riders
+            </span>{" "}
+            on the register, <span className="font-bold" style={{ color: "var(--cream)" }}>{k.converted.toLocaleString()}</span> onboarded to a
+            product. Updated {new Date().toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })}.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link href="/admin/campaigns/new" className="btn btn-primary">
+              <Megaphone size={16} /> New campaign
+            </Link>
+            <Link href="/admin/riders/new" className="btn" style={{ background: "rgba(255,243,228,0.1)", color: "var(--cream)", borderColor: "rgba(255,243,228,0.35)" }}>
+              <UserPlus size={16} /> Register a rider
+            </Link>
+          </div>
+        </div>
       </header>
 
       {/* ------------------------------------------------------------ KPIs */}
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Stat label="Riders registered" value={k.riders.toLocaleString()} hint={`${k.consented.toLocaleString()} consented to messaging`} />
-        <Stat label="Riders reached" value={k.reached.toLocaleString()} hint={`${k.deliveryRate}% delivery rate`} tone="brand" />
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 stagger">
+        <Stat label="Riders registered" value={k.riders.toLocaleString()} hint={`${k.consented.toLocaleString()} consented to messaging`} tone="brand" icon={<Users size={16} />} />
+        <Stat label="Riders reached" value={k.reached.toLocaleString()} hint={`${k.deliveryRate}% delivery rate`} tone="success" icon={<Send size={16} />} />
         <Stat
           label="Avg. literacy score"
           value={`${k.avgLiteracy}/100`}
           hint={`${k.proficientShare}% of ${k.learners.toLocaleString()} learners score 50+`}
           tone="accent"
+          icon={<GraduationCap size={16} />}
         />
         <Stat
           label="Onboarded to a product"
           value={k.converted.toLocaleString()}
           hint={`${k.conversionRate}% of ${k.leads.toLocaleString()} enquiries`}
-          tone="brand"
+          tone="pink"
+          icon={<HeartHandshake size={16} />}
         />
       </div>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Stat label="Messages sent" value={k.messagesSent.toLocaleString()} />
-        <Stat label="Messaging spend" value={formatKes(k.costKes)} hint="Sandbox pricing at KSh 0.80/SMS part" />
-        <Stat label="Cost per rider onboarded" value={formatKes(k.costPerOnboard)} />
-        <Stat label="Lessons completed" value={k.lessonsCompleted.toLocaleString()} />
+        <Stat label="Messages sent" value={k.messagesSent.toLocaleString()} tone="info" icon={<MessageSquareText size={16} />} />
+        <Stat label="Messaging spend" value={formatKes(k.costKes)} hint="Sandbox pricing at KSh 0.80/SMS part" icon={<Wallet size={16} />} />
+        <Stat label="Cost per rider onboarded" value={formatKes(k.costPerOnboard)} icon={<Receipt size={16} />} />
+        <Stat label="Lessons completed" value={k.lessonsCompleted.toLocaleString()} icon={<BookOpen size={16} />} />
       </div>
 
       {/* ----------------------------------------------------- trend chart */}

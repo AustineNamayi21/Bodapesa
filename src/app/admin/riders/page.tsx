@@ -59,7 +59,7 @@ export default async function RidersPage({
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Rider registry</h1>
+          <h1 className="text-[2rem] leading-tight">Rider registry</h1>
           <p className="text-xs text-[var(--text-faint)] mt-0.5">
             {total.toLocaleString()} rider{total === 1 ? "" : "s"}
             {q || status || stageId ? " matching your filters" : " registered across all stages"}

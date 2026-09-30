@@ -83,7 +83,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-semibold tracking-tight">{campaign.name}</h1>
+            <h1 className="text-[2rem] leading-tight">{campaign.name}</h1>
             <Pill tone={STATUS_TONE[campaign.status]}>{campaign.status}</Pill>
           </div>
 

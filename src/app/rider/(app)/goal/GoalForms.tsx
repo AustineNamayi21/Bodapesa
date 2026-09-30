@@ -50,9 +50,14 @@ export default function GoalForms({
               key={q}
               type="button"
               onClick={() => setDeposit(String(q))}
-              className="btn btn-ghost btn-sm flex-1 tabular-nums"
+              className="flex-1 rounded-xl py-2 font-extrabold tabular-nums border-2 transition-all hover:-translate-y-0.5"
+              style={{
+                background: deposit === String(q) ? "var(--matatu)" : "var(--surface)",
+                borderColor: deposit === String(q) ? "var(--ink)" : "var(--border-strong)",
+                boxShadow: deposit === String(q) ? "2px 2px 0 var(--ink)" : "none",
+              }}
             >
-              {q}
+              +{q}
             </button>
           ))}
         </div>
@@ -88,13 +93,15 @@ export default function GoalForms({
               setTitle(p.title[lang]);
               setAmount(String(p.amount));
             }}
-            className="w-full flex items-center justify-between gap-2 p-2.5 rounded-lg text-[0.82rem] text-left"
+            className="w-full flex items-center justify-between gap-2 p-3 rounded-2xl text-[0.85rem] text-left border-2 transition-all hover:-translate-y-0.5"
             style={{
-              background: title === p.title[lang] ? "var(--brand-soft)" : "var(--surface-2)",
-              color: title === p.title[lang] ? "var(--brand-strong)" : "var(--text)",
+              background: title === p.title[lang] ? "var(--accent-soft)" : "var(--surface)",
+              borderColor: title === p.title[lang] ? "var(--ink)" : "var(--border)",
+              boxShadow: title === p.title[lang] ? "3px 3px 0 var(--ink)" : "none",
+              color: "var(--text)",
             }}
           >
-            <span>{p.title[lang]}</span>
+            <span className="font-semibold">{p.title[lang]}</span>
             <span className="tabular-nums shrink-0 font-semibold">KSh {p.amount.toLocaleString()}</span>
           </button>
         ))}

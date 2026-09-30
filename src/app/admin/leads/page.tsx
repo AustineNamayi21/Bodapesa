@@ -91,7 +91,7 @@ export default async function LeadsPage({
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Lead pipeline</h1>
+        <h1 className="text-[2rem] leading-tight">Lead pipeline</h1>
         <p className="text-xs text-[var(--text-faint)] mt-0.5">
           {user?.partnerName
             ? `Riders who have asked to be contacted about a ${user.partnerName} product.`
