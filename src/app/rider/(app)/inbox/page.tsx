@@ -34,17 +34,17 @@ export default async function InboxPage() {
   ]);
 
   const CHANNEL: Record<string, { fill: string; label: string }> = {
-    SMS: { fill: "var(--matatu)", label: "SMS" },
-    WHATSAPP: { fill: "var(--mpesa)", label: "WhatsApp" },
-    USSD: { fill: "var(--sky)", label: "USSD" },
-    APP: { fill: "var(--sunset)", label: "App" },
+    SMS: { fill: "var(--green)", label: "SMS" },
+    WHATSAPP: { fill: "var(--green)", label: "WhatsApp" },
+    USSD: { fill: "var(--ink)", label: "USSD" },
+    APP: { fill: "var(--green)", label: "App" },
   };
 
   return (
     <div className="space-y-5">
       <div className="animate-rise">
         <h1 className="text-[1.9rem] leading-tight">
-          {lang === "EN" ? "Messages" : lang === "SH" ? "Messages" : "Ujumbe"} 💬
+          {lang === "EN" ? "Messages" : lang === "SH" ? "Messages" : "Ujumbe"}
         </h1>
         <p className="text-[0.84rem] text-[var(--text-muted)]">
           {lang === "EN"
@@ -65,12 +65,12 @@ export default async function InboxPage() {
                     className="rounded-2xl rounded-bl-sm p-3.5 border-2 relative"
                     style={{
                       background: "var(--surface)",
-                      borderColor: m.readAt ? "var(--border)" : "var(--ink)",
-                      boxShadow: m.readAt ? "var(--shadow)" : `3px 3px 0 ${ch.fill}`,
+                      borderColor: m.readAt ? "var(--border)" : "var(--green)",
+                      boxShadow: "var(--shadow)",
                     }}
                   >
                     {!m.readAt ? (
-                      <span className="absolute -top-2 -right-2 pill border-2 animate-pop" style={{ background: "var(--sunset)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+                      <span className="absolute -top-2 -right-2 pill animate-pop" style={{ background: "var(--green)", color: "#fff" }}>
                         {lang === "EN" ? "New" : "Mpya"}
                       </span>
                     ) : null}
@@ -94,8 +94,7 @@ export default async function InboxPage() {
         </div>
       ) : (
         <div className="card p-6 text-center">
-          <div className="text-4xl mb-2">📭</div>
-          <p className="text-[0.88rem] text-[var(--text-muted)]">{lang === "EN" ? "No messages yet." : "Hakuna ujumbe bado."}</p>
+                    <p className="text-[0.88rem] text-[var(--text-muted)]">{lang === "EN" ? "No messages yet." : "Hakuna ujumbe bado."}</p>
         </div>
       )}
     </div>

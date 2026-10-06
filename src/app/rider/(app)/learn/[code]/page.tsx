@@ -39,15 +39,15 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
   return (
     <div className="space-y-5 -mt-5 -mx-4">
       {/* hero */}
-      <header className="relative h-56 overflow-hidden border-b-2" style={{ borderColor: "var(--ink)" }}>
+      <header className="relative h-56 overflow-hidden">
         <Photo name={MODULE_PHOTO[lesson.moduleKey] ?? "stage"} sizes="448px" priority />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(26,18,11,0.25), rgba(26,18,11,0.88))` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.88))` }} />
         <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.fill }} />
         <div className="absolute inset-0 p-4 flex flex-col justify-between">
           <Link
             href="/rider/learn"
             className="self-start inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[0.75rem] font-bold backdrop-blur-md"
-            style={{ background: "rgba(255,243,228,0.18)", color: "var(--cream)" }}
+            style={{ background: "rgba(255,255,255,0.18)", color: "var(--cream)" }}
           >
             <ArrowLeft size={14} /> {t("learn", lang)}
           </Link>
@@ -65,7 +65,7 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
           </div>
         </div>
         {done ? (
-          <span className="absolute top-4 right-4 sticker animate-pop" style={{ background: "var(--mpesa)", color: "#fff" }}>
+          <span className="absolute top-4 right-4 sticker animate-pop" style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}>
             <BadgeCheck size={15} /> {t("done", lang)}
           </span>
         ) : null}
@@ -79,7 +79,7 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
         </article>
 
         {questions.length ? (
-          <div className="card-pop p-4 relative animate-rise d-3" style={{ boxShadow: `4px 4px 0 ${theme.fill}` }}>
+          <div className="card-pop p-4 relative animate-rise d-3" style={{ boxShadow: "var(--shadow-lg)" }}>
             <Quiz riderId={rider.id} lessonId={lesson.id} questions={questions} lang={lang} />
           </div>
         ) : null}
@@ -96,7 +96,7 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
               </span>
               <span className="block font-display font-bold text-[1.05rem] truncate">{pick(next, "title", lang)}</span>
             </span>
-            <span className="w-10 h-10 rounded-full grid place-items-center shrink-0" style={{ background: "var(--sunset)", color: "var(--ink)" }}>
+            <span className="w-10 h-10 rounded-full grid place-items-center shrink-0" style={{ background: "var(--green)", color: "#fff" }}>
               <ArrowRight size={18} />
             </span>
           </Link>

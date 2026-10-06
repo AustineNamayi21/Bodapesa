@@ -54,7 +54,7 @@ export default function GoalForms({
               style={{
                 background: deposit === String(q) ? "var(--matatu)" : "var(--surface)",
                 borderColor: deposit === String(q) ? "var(--ink)" : "var(--border-strong)",
-                boxShadow: deposit === String(q) ? "2px 2px 0 var(--ink)" : "none",
+                boxShadow: deposit === String(q) ? "var(--shadow-lg)" : "none",
               }}
             >
               +{q}
@@ -97,7 +97,7 @@ export default function GoalForms({
             style={{
               background: title === p.title[lang] ? "var(--accent-soft)" : "var(--surface)",
               borderColor: title === p.title[lang] ? "var(--ink)" : "var(--border)",
-              boxShadow: title === p.title[lang] ? "3px 3px 0 var(--ink)" : "none",
+              boxShadow: title === p.title[lang] ? "var(--shadow-lg)" : "none",
               color: "var(--text)",
             }}
           >

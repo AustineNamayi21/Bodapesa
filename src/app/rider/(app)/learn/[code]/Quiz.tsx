@@ -62,7 +62,7 @@ export default function Quiz({
 
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl flex items-center gap-2">
-          <span className="w-8 h-8 rounded-xl grid place-items-center border-2" style={{ background: "var(--matatu)", borderColor: "var(--ink)" }}>
+          <span className="w-8 h-8 rounded-xl grid place-items-center text-white" style={{ background: "var(--green)" }}>
             ?
           </span>
           {t("quiz", lang)}
@@ -107,7 +107,7 @@ export default function Quiz({
                 <label
                   key={i}
                   className={`relative flex items-center gap-3 p-3 rounded-2xl has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-[var(--brand)] text-[0.86rem] leading-snug border-2 transition-all ${
-                    state ? "" : "cursor-pointer hover:-translate-y-0.5 has-[:checked]:!border-[var(--ink)] has-[:checked]:!bg-[var(--accent-soft)] has-[:checked]:shadow-[3px_3px_0_var(--ink)]"
+                    state ? "" : "cursor-pointer hover:-translate-y-0.5 has-[:checked]:!border-[var(--green)] has-[:checked]:!bg-[var(--green-soft)]"
                   }`}
                   style={{ background, color: colour, borderColor: border }}
                 >
@@ -120,7 +120,7 @@ export default function Quiz({
                     className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-default m-0"
                   />
                   <span
-                    className="w-7 h-7 rounded-lg grid place-items-center text-[0.75rem] font-extrabold shrink-0 border-2 peer-checked:bg-[var(--sunset)] peer-checked:text-[var(--ink)] peer-checked:border-[var(--ink)]"
+                    className="w-7 h-7 rounded-lg grid place-items-center text-[0.75rem] font-extrabold shrink-0 border-2 peer-checked:bg-[var(--green)] peer-checked:text-white peer-checked:border-[var(--green)]"
                     style={{ borderColor: "currentColor" }}
                   >
                     {state && isCorrect ? <Check size={15} strokeWidth={3} /> : state && chosen ? <X size={15} strokeWidth={3} /> : LETTERS[i]}
@@ -145,13 +145,13 @@ export default function Quiz({
       {state ? (
         <div
           className="rounded-2xl p-4 flex items-center gap-3 border-2 animate-pop"
-          style={{ background: "var(--ink)", color: "var(--cream)", borderColor: "var(--ink)" }}
+          style={{ background: "var(--ink)", color: "#fff", borderColor: "var(--ink)" }}
         >
-          <span className="w-12 h-12 rounded-2xl grid place-items-center shrink-0" style={{ background: "var(--matatu)", color: "var(--ink)" }}>
+          <span className="w-12 h-12 rounded-2xl grid place-items-center shrink-0" style={{ background: "var(--green)", color: "#fff" }}>
             <Trophy size={24} />
           </span>
           <div>
-            <div className="text-[0.72rem] font-bold uppercase tracking-wider" style={{ color: "var(--matatu)" }}>
+            <div className="text-[0.72rem] font-bold uppercase tracking-wider" style={{ color: "var(--green-bright)" }}>
               {t("literacyScore", lang)}
             </div>
             <div className="font-display font-extrabold text-2xl leading-tight">{state.literacyScore}/100</div>

@@ -58,7 +58,7 @@ export default async function RiderProductsPage() {
   return (
     <div className="space-y-6">
       <div className="animate-rise">
-        <h1 className="text-[1.9rem] leading-tight">{t("products", lang)} 🛍️</h1>
+        <h1 className="text-[1.9rem] leading-tight">{t("products", lang)}</h1>
         <p className="text-[0.84rem] text-[var(--text-muted)] mt-1">
           {lang === "EN"
             ? "From Stima DT SACCO and Britam. Tap “I'm interested” and an officer will call you."

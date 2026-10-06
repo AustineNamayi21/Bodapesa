@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Hash, PiggyBank, ShieldCheck, BookOpen } from "lucide-react";
+import { Hash, PiggyBank, ShieldCheck, BookOpen, Smartphone } from "lucide-react";
 import { all } from "@/lib/db";
 import { currentRiderId } from "@/lib/auth";
 import { ensureSeeded } from "@/lib/seed";
@@ -31,18 +31,18 @@ export default async function RiderEntryPage() {
         <Photo name="kenyanPlate" priority sizes="(max-width: 1024px) 100vw, 55vw" />
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(180deg, rgba(26,18,11,0.35) 0%, rgba(26,18,11,0.2) 40%, rgba(26,18,11,0.92) 100%)" }}
+          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.92) 100%)" }}
         />
         <div className="relative h-full flex flex-col justify-between p-5 sm:p-8 min-h-[46vh] lg:min-h-screen">
           <Logo tone="light" />
           <div className="pb-6 lg:pb-10 animate-rise">
-            <span className="sticker" style={{ background: "var(--mpesa)" }}>
+            <span className="sticker" style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}>
               Bure kabisa · Free
             </span>
             <h1 className="mt-4 text-[2.5rem] sm:text-6xl leading-[1] max-w-lg" style={{ color: "var(--cream)" }}>
               Karibu, <span style={{ color: "var(--matatu)" }}>rider.</span>
             </h1>
-            <p className="mt-3 text-[0.95rem] sm:text-lg max-w-md" style={{ color: "rgba(255,243,228,0.85)" }}>
+            <p className="mt-3 text-[0.95rem] sm:text-lg max-w-md" style={{ color: "rgba(255,255,255,0.85)" }}>
               Jifunze kuhusu pesa. Jiunge na SACCO na bima.
               <br />
               <span className="opacity-75">Learn about money. Join a SACCO and get insured.</span>
@@ -53,7 +53,7 @@ export default async function RiderEntryPage() {
                 { i: <PiggyBank size={15} />, t: "Savings jar", f: "var(--mpesa)" },
                 { i: <ShieldCheck size={15} />, t: "Real products", f: "var(--kanga)" },
               ].map((b) => (
-                <span key={b.t} className="pill py-1.5 px-3 border-2" style={{ background: "rgba(26,18,11,0.55)", color: "var(--cream)", borderColor: b.f }}>
+                <span key={b.t} className="pill py-1.5 px-3 border-2" style={{ background: "rgba(0,0,0,0.55)", color: "var(--cream)", borderColor: b.f }}>
                   <span style={{ color: b.f }}>{b.i}</span> {b.t}
                 </span>
               ))}
@@ -68,8 +68,8 @@ export default async function RiderEntryPage() {
         <div className="relative w-full max-w-sm -mt-20 lg:mt-0">
           <div className="card-pop p-6 animate-pop">
             <div className="flex items-center gap-3 mb-5">
-              <IconBadge fill="var(--sunset)" size={42} rotate={-6}>
-                <span className="font-display font-extrabold text-lg">📱</span>
+              <IconBadge fill="solid" size={44}>
+                <Smartphone size={20} />
               </IconBadge>
               <div>
                 <h2 className="text-xl leading-tight">Ingia · Sign in</h2>

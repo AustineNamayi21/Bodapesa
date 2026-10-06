@@ -83,7 +83,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
         className="relative mx-auto w-full max-w-[330px] rounded-[44px] p-4 pb-5 animate-pop"
         style={{
           background: "linear-gradient(160deg, #2b3036 0%, #15181b 55%, #0b0d0f 100%)",
-          boxShadow: "0 30px 60px -20px rgba(26,18,11,0.6), inset 0 2px 0 rgba(255,255,255,0.12), 0 0 0 3px var(--ink)",
+          boxShadow: "0 30px 60px -20px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.12), 0 0 0 3px var(--ink)",
         }}
       >
         <div className="mx-auto mb-3 w-16 h-1.5 rounded-full" style={{ background: "#07080a", boxShadow: "inset 0 1px 1px rgba(0,0,0,0.8)" }} />

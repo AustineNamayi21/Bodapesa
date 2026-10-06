@@ -55,21 +55,21 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <header
-        className="relative rounded-[28px] overflow-hidden border-[3px] animate-rise"
-        style={{ borderColor: "var(--ink)", background: "var(--ink)", boxShadow: "6px 6px 0 var(--sunset)" }}
+        className="relative rounded-[28px] overflow-hidden animate-rise"
+        style={{ background: "var(--ink)", boxShadow: "var(--shadow-lg)" }}
       >
         <div className="absolute inset-y-0 right-0 w-full md:w-[58%]">
           <Photo name="matatus" sizes="(max-width: 768px) 100vw, 60vw" priority />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, var(--ink) 0%, rgba(26,18,11,0.75) 35%, rgba(26,18,11,0.2) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, var(--ink) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0.2) 100%)" }} />
         </div>
         <div className="relative p-6 sm:p-8 max-w-2xl" style={{ color: "var(--cream)" }}>
           <span className="eyebrow" style={{ color: "var(--matatu)" }}>
             {user?.partnerName ? `Viewing as ${user.partnerName}` : "Platform-wide view"}
           </span>
           <h1 className="mt-2 text-3xl sm:text-[2.6rem] leading-[1.05]" style={{ color: "var(--cream)" }}>
-            Habari, {user?.name?.split(" ")[0] ?? "team"} 👋
+            Habari, {user?.name?.split(" ")[0] ?? "team"}
           </h1>
-          <p className="mt-2 text-[0.9rem]" style={{ color: "rgba(255,243,228,0.75)" }}>
+          <p className="mt-2 text-[0.9rem]" style={{ color: "rgba(255,255,255,0.75)" }}>
             <span className="font-bold" style={{ color: "var(--cream)" }}>
               {k.riders.toLocaleString()} riders
             </span>{" "}
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
             <Link href="/admin/campaigns/new" className="btn btn-primary">
               <Megaphone size={16} /> New campaign
             </Link>
-            <Link href="/admin/riders/new" className="btn" style={{ background: "rgba(255,243,228,0.1)", color: "var(--cream)", borderColor: "rgba(255,243,228,0.35)" }}>
+            <Link href="/admin/riders/new" className="btn" style={{ background: "rgba(255,255,255,0.1)", color: "var(--cream)", borderColor: "rgba(255,255,255,0.35)" }}>
               <UserPlus size={16} /> Register a rider
             </Link>
           </div>

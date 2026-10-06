@@ -13,8 +13,8 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface-2)" }}>
-      <div className="min-h-screen flex flex-col max-w-md mx-auto relative sm:border-x-2" style={{ background: "var(--bg)", borderColor: "var(--ink)" }}>
-        <header className="sticky top-0 z-30" style={{ background: "var(--ink)", color: "var(--cream)" }}>
+      <div className="min-h-screen flex flex-col max-w-md mx-auto relative sm:border-x" style={{ background: "var(--bg)" }}>
+        <header className="sticky top-0 z-30" style={{ background: "var(--ink)", color: "#fff" }}>
           <div className="px-4 py-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
               <LogoMark size={34} className="shrink-0" />
@@ -27,7 +27,7 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <form action={setRiderLanguageAction} className="flex rounded-full p-0.5" style={{ background: "rgba(255,243,228,0.12)" }}>
+              <form action={setRiderLanguageAction} className="flex rounded-full p-0.5" style={{ background: "rgba(255,255,255,0.12)" }}>
                 <input type="hidden" name="riderId" value={rider.id} />
                 {(["SW", "EN", "SH"] as const).map((l) => (
                   <button
@@ -37,7 +37,7 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
                     className="px-2.5 py-1 rounded-full text-[0.7rem] font-extrabold transition-colors"
                     style={{
                       background: rider.language === l ? "var(--matatu)" : "transparent",
-                      color: rider.language === l ? "var(--ink)" : "rgba(255,243,228,0.7)",
+                      color: rider.language === l ? "var(--ink)" : "rgba(255,255,255,0.7)",
                     }}
                   >
                     {l}

@@ -16,9 +16,9 @@ export default async function LoginPage() {
 
   return (
     <main className="min-h-screen lg:grid lg:grid-cols-[1fr_1.05fr]">
-      <section className="relative hidden lg:block overflow-hidden border-r-[3px]" style={{ borderColor: "var(--ink)" }}>
+      <section className="relative hidden lg:block overflow-hidden">
         <Photo name="skyline" priority sizes="50vw" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(26,18,11,0.2) 0%, rgba(26,18,11,0.85) 75%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 75%)" }} />
         <div className="absolute inset-0 p-10 flex flex-col justify-between">
           <Logo tone="light" />
           <div className="animate-rise">
@@ -31,7 +31,7 @@ export default async function LoginPage() {
                 { i: <Megaphone size={18} />, t: "Campaigns", f: "var(--matatu)" },
                 { i: <HeartHandshake size={18} />, t: "Leads", f: "var(--mpesa)" },
               ].map((b) => (
-                <div key={b.t} className="rounded-2xl p-3 border-2" style={{ background: "rgba(26,18,11,0.55)", borderColor: b.f, color: "var(--cream)" }}>
+                <div key={b.t} className="rounded-2xl p-3 border-2" style={{ background: "rgba(0,0,0,0.55)", borderColor: b.f, color: "var(--cream)" }}>
                   <span style={{ color: b.f }}>{b.i}</span>
                   <div className="text-[0.8rem] font-bold mt-1">{b.t}</div>
                 </div>

@@ -45,7 +45,7 @@ export default async function LearnPage() {
   return (
     <div className="space-y-6">
       <div className="animate-rise">
-        <h1 className="text-[1.9rem] leading-tight">{t("learn", lang)} 📚</h1>
+        <h1 className="text-[1.9rem] leading-tight">{t("learn", lang)}</h1>
         <div className="mt-2 flex items-center gap-3">
           <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
             <div className="h-full rounded-full bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--sunset)" }} />
@@ -66,9 +66,9 @@ export default async function LearnPage() {
 
         return (
           <section key={moduleKey} className="animate-rise" style={{ animationDelay: `${mi * 90}ms` }}>
-            <div className="relative rounded-[20px] overflow-hidden border-2 h-28 photo-zoom" style={{ borderColor: "var(--ink)" }}>
+            <div className="relative rounded-[20px] overflow-hidden h-28 photo-zoom" style={{ boxShadow: "var(--shadow)" }}>
               <Photo name={MODULE_PHOTO[moduleKey]} sizes="420px" />
-              <div className="absolute inset-0" style={{ background: `linear-gradient(95deg, ${theme.fill} 25%, transparent 90%)` }} />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(95deg, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.15) 90%)" }} />
               <div className="absolute inset-0 p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <IconBadge fill="var(--surface)" size={44} rotate={-6}>
@@ -83,7 +83,7 @@ export default async function LearnPage() {
                 </div>
                 <span
                   className="shrink-0 rounded-full px-2.5 py-1 text-[0.72rem] font-extrabold border-2 tabular-nums"
-                  style={{ background: complete ? "var(--matatu)" : "var(--surface)", borderColor: "var(--ink)", color: "var(--ink)" }}
+                  style={{ background: complete ? "var(--green-bright)" : "var(--surface)", borderColor: "transparent", color: "var(--ink)" }}
                 >
                   {complete ? "★ " : ""}
                   {moduleDone}/{items.length}
@@ -101,7 +101,7 @@ export default async function LearnPage() {
                       className="w-8 h-8 rounded-full grid place-items-center text-[0.8rem] font-extrabold shrink-0 border-2 relative z-10"
                       style={{
                         background: isDone ? theme.fill : "var(--surface)",
-                        borderColor: isDone ? "var(--ink)" : theme.fill,
+                        borderColor: theme.fill,
                         color: isDone ? "#fff" : theme.text,
                       }}
                     >

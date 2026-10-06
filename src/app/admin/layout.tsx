@@ -29,15 +29,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {
             background: "var(--ink)",
             color: "var(--cream)",
-            "--nav-fg": "rgba(255,243,228,0.66)",
+            "--nav-fg": "rgba(255,255,255,0.66)",
             "--nav-fg-strong": "var(--cream)",
-            "--nav-hover": "rgba(255,243,228,0.08)",
+            "--nav-hover": "rgba(255,255,255,0.08)",
           } as React.CSSProperties
         }
       >
         <div className="p-5 flex items-center justify-between lg:block">
           <Logo tone="light" size={34} sub={user.partnerName ?? "Programme console"} />
-          <span className="pill lg:hidden" style={{ background: "var(--sunset)", color: "var(--ink)" }}>
+          <span className="pill lg:hidden" style={{ background: "var(--green)", color: "#fff" }}>
             {user.partnerCode ?? "Admin"}
           </span>
         </div>
@@ -45,16 +45,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <NavLinks role={user.role} />
 
         <div className="mt-auto p-3 hidden lg:block">
-          <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: "rgba(255,243,228,0.06)" }}>
+          <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.06)" }}>
             <span
               className="w-10 h-10 rounded-xl grid place-items-center font-display font-extrabold text-sm shrink-0 border-2"
-              style={{ background: "var(--matatu)", color: "var(--ink)", borderColor: "var(--ink)" }}
+              style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}
             >
               {initials}
             </span>
             <div className="min-w-0 flex-1">
               <div className="text-[0.8rem] font-bold truncate">{user.name}</div>
-              <div className="text-[0.68rem] truncate" style={{ color: "rgba(255,243,228,0.55)" }}>
+              <div className="text-[0.68rem] truncate" style={{ color: "rgba(255,255,255,0.55)" }}>
                 {user.partnerName ?? "Platform team"}
               </div>
             </div>
@@ -69,7 +69,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </form>
           </div>
         </div>
-        <div className="absolute right-0 top-0 bottom-0 w-1.5 hidden lg:block stripe" style={{ height: "auto", background: "repeating-linear-gradient(180deg, var(--sunset) 0 40px, var(--matatu) 40px 80px, var(--mpesa) 80px 120px, var(--kanga) 120px 160px, var(--sky) 160px 200px)" }} aria-hidden="true" />
       </aside>
 
       <main className="flex-1 min-w-0 px-4 sm:px-8 py-7 max-w-[1440px]">{children}</main>

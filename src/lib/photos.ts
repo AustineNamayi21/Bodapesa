@@ -115,9 +115,9 @@ export const MODULE_PHOTO: Record<string, PhotoKey> = {
 
 /** Colour identity per module: fill, soft background, readable text. */
 export const MODULE_THEME: Record<string, { fill: string; soft: string; text: string; emoji: string }> = {
-  SAVINGS: { fill: "var(--mpesa)", soft: "var(--success-soft)", text: "var(--success)", emoji: "savings" },
-  CREDIT: { fill: "var(--sunset)", soft: "var(--brand-soft)", text: "var(--brand-strong)", emoji: "credit" },
-  INVESTMENT: { fill: "var(--sky)", soft: "var(--info-soft)", text: "var(--info)", emoji: "investment" },
-  INSURANCE: { fill: "var(--kanga)", soft: "var(--pink-soft)", text: "var(--pink)", emoji: "insurance" },
-  PENSION: { fill: "var(--matatu)", soft: "var(--accent-soft)", text: "var(--accent)", emoji: "pension" },
+  SAVINGS: { fill: "var(--green)", soft: "var(--green-soft)", text: "var(--brand-strong)", emoji: "savings" },
+  CREDIT: { fill: "var(--green)", soft: "var(--green-soft)", text: "var(--brand-strong)", emoji: "credit" },
+  INVESTMENT: { fill: "var(--green)", soft: "var(--green-soft)", text: "var(--brand-strong)", emoji: "investment" },
+  INSURANCE: { fill: "var(--green)", soft: "var(--green-soft)", text: "var(--brand-strong)", emoji: "insurance" },
+  PENSION: { fill: "var(--green)", soft: "var(--green-soft)", text: "var(--brand-strong)", emoji: "pension" },
 };

@@ -81,7 +81,7 @@ export default async function RiderHomePage() {
     <div className="space-y-5">
       <div className="animate-rise">
         <h1 className="text-[1.9rem] leading-tight">
-          {GREETING[lang](rider.firstName)} <span className="inline-block animate-wiggle">👋</span>
+          {GREETING[lang](rider.firstName)}
         </h1>
         <p className="text-[0.85rem] text-[var(--text-muted)]">{t("tagline", lang)}</p>
       </div>
@@ -89,7 +89,7 @@ export default async function RiderHomePage() {
       {/* ───────────────────────────────────────────────── journey card ── */}
       <section
         className="rounded-[24px] p-5 relative overflow-hidden animate-pop"
-        style={{ background: "var(--ink)", color: "var(--cream)", boxShadow: "6px 6px 0 var(--sunset)" }}
+        style={{ background: "var(--ink)", color: "var(--cream)", boxShadow: "var(--shadow-lg)" }}
       >
         <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full opacity-25 blur-2xl" style={{ background: "var(--kanga)" }} aria-hidden="true" />
         <div className="relative flex items-center gap-4">
@@ -113,7 +113,7 @@ export default async function RiderHomePage() {
       {/* ─────────────────────────────────────────────────── next lesson ── */}
       {next && theme ? (
         <Link href={`/rider/learn/${next.code}`} className="card-pop lift block overflow-hidden animate-rise d-2">
-          <div className="relative h-28 photo-zoom overflow-hidden border-b-2" style={{ borderColor: "var(--ink)" }}>
+          <div className="relative h-28 photo-zoom overflow-hidden">
             <Photo name={MODULE_PHOTO[next.moduleKey] ?? "stage"} sizes="420px" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${theme.fill} 0%, transparent 75%)`, opacity: 0.85 }} />
             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -140,7 +140,7 @@ export default async function RiderHomePage() {
         </Link>
       ) : (
         <div className="card p-4 animate-rise d-2">
-          <p className="text-[0.9rem]">🎉 {COPY.allDone[lang]}</p>
+          <p className="text-[0.9rem]">{COPY.allDone[lang]}</p>
         </div>
       )}
 
@@ -213,7 +213,7 @@ export default async function RiderHomePage() {
           </div>
           <div
             className="rounded-2xl rounded-tl-sm p-3.5 text-[0.84rem] leading-relaxed border-2 lift"
-            style={{ background: "var(--surface)", borderColor: "var(--ink)", boxShadow: "3px 3px 0 var(--mpesa)" }}
+            style={{ background: "var(--surface)", borderColor: "var(--border)", boxShadow: "var(--shadow)" }}
           >
             <span className="pill mb-1.5" style={{ background: "var(--success-soft)", color: "var(--success)" }}>
               {latest.channel}

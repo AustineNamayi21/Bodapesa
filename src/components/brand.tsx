@@ -9,22 +9,14 @@ import { PHOTOS, type PhotoKey } from "@/lib/photos";
 export function LogoMark({ size = 36, className = "" }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} aria-hidden="true">
-      <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="var(--sunset)" stroke="var(--ink)" strokeWidth="3" />
-      <g stroke="var(--ink)" strokeWidth="3" strokeLinecap="round">
-        <line x1="8" y1="18" x2="15" y2="18" />
-        <line x1="6" y1="25" x2="13" y2="25" />
-        <line x1="9" y1="32" x2="15" y2="32" />
+      <rect width="48" height="48" rx="12" fill="var(--green)" />
+      <g stroke="#fff" strokeWidth="2.6" strokeLinecap="round" opacity="0.85">
+        <line x1="8" y1="19" x2="14" y2="19" />
+        <line x1="6" y1="25" x2="12" y2="25" />
+        <line x1="8" y1="31" x2="14" y2="31" />
       </g>
-      <circle cx="29" cy="25" r="12" fill="var(--matatu)" stroke="var(--ink)" strokeWidth="3" />
-      <text
-        x="29"
-        y="31"
-        textAnchor="middle"
-        fontFamily="var(--font-display)"
-        fontWeight="800"
-        fontSize="17"
-        fill="var(--ink)"
-      >
+      <circle cx="29" cy="25" r="12" fill="#fff" />
+      <text x="29" y="31" textAnchor="middle" fontFamily="var(--font-display)" fontWeight="800" fontSize="17" fill="var(--green)">
         B
       </text>
     </svg>
@@ -44,18 +36,18 @@ export function Logo({
 }) {
   const body = (
     <span className="inline-flex items-center gap-2.5">
-      <LogoMark size={size} className="shrink-0 transition-transform duration-300 group-hover:rotate-[-8deg]" />
+      <LogoMark size={size} className="shrink-0 transition-transform duration-300 group-hover:scale-105" />
       <span className="leading-none">
         <span
-          className="font-display font-extrabold tracking-tight block"
-          style={{ fontSize: size * 0.52, color: tone === "light" ? "var(--cream)" : "var(--text)" }}
+          className="font-display font-bold tracking-tight block"
+          style={{ fontSize: size * 0.54, color: tone === "light" ? "#fff" : "var(--text)" }}
         >
-          Boda<span style={{ color: "var(--sunset)" }}>Pesa</span>
+          Boda<span style={{ color: tone === "light" ? "var(--green-bright)" : "var(--green)" }}>Pesa</span>
         </span>
         {sub ? (
           <span
             className="block text-[0.66rem] font-semibold mt-1"
-            style={{ color: tone === "light" ? "rgba(255,243,228,0.65)" : "var(--text-faint)" }}
+            style={{ color: tone === "light" ? "rgba(255,255,255,0.6)" : "var(--text-faint)" }}
           >
             {sub}
           </span>
@@ -81,7 +73,7 @@ export function Logo({
 export function BodaRider({
   size = 56,
   moving = true,
-  jacket = "var(--sunset)",
+  jacket = "var(--green)",
   onDark = false,
 }: {
   size?: number;
@@ -110,14 +102,14 @@ export function BodaRider({
       </g>
       {/* frame, tank, seat */}
       <path d="M22 54 L40 38 L64 38 L80 54" fill="none" stroke={line} strokeWidth="4" strokeLinejoin="round" />
-      <path d="M36 40 Q40 30 54 31 L66 33 L62 42 L40 44 Z" fill="var(--kanga)" stroke={line} strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M36 40 Q40 30 54 31 L66 33 L62 42 L40 44 Z" fill="var(--ink)" stroke={line} strokeWidth="2.5" strokeLinejoin="round" />
       <path d="M66 33 L76 22 L82 22" fill="none" stroke={line} strokeWidth="3.5" strokeLinecap="round" />
-      <rect x="78" y="19" width="8" height="5" rx="2" fill="var(--matatu)" stroke={line} strokeWidth="2" />
+      <rect x="78" y="19" width="8" height="5" rx="2" fill="#fff" stroke={line} strokeWidth="2" />
       {/* rider */}
       <path d="M44 32 L50 14 L60 16 L62 30" fill={jacket} stroke={line} strokeWidth="2.5" strokeLinejoin="round" />
       <path d="M58 20 L72 24" stroke={line} strokeWidth="4" strokeLinecap="round" />
       <path d="M47 32 L56 44 L52 50" fill="none" stroke={line} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="55" cy="8" r="7.5" fill="var(--matatu)" stroke={line} strokeWidth="2.5" />
+      <circle cx="55" cy="8" r="7.5" fill="#fff" stroke={line} strokeWidth="2.5" />
       <path d="M52 6 L61 6" stroke={line} strokeWidth="2.5" strokeLinecap="round" />
       {/* speed lines */}
       {moving ? (
@@ -169,8 +161,8 @@ export function Marquee({ items, className = "" }: { items: string[]; className?
       {items.map((t, i) => (
         <span key={i} className="flex items-center">
           <span className="px-5 whitespace-nowrap">{t}</span>
-          <span aria-hidden="true" style={{ color: i % 3 === 0 ? "var(--sunset)" : i % 3 === 1 ? "var(--mpesa)" : "var(--kanga)" }}>
-            ✦
+          <span aria-hidden="true" style={{ color: "var(--green-bright)" }}>
+            ●
           </span>
         </span>
       ))}
@@ -192,45 +184,35 @@ export function Blobs({ className = "" }: { className?: string }) {
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
       <div
-        className="absolute -top-24 -left-20 w-[420px] h-[420px] rounded-full opacity-50 blur-3xl animate-blob"
-        style={{ background: "var(--matatu)" }}
-      />
-      <div
-        className="absolute top-10 right-[-120px] w-[460px] h-[460px] rounded-full opacity-35 blur-3xl animate-blob"
-        style={{ background: "var(--sunset)", animationDelay: "-5s" }}
-      />
-      <div
-        className="absolute bottom-[-160px] left-1/3 w-[380px] h-[380px] rounded-full opacity-25 blur-3xl animate-blob"
-        style={{ background: "var(--kanga)", animationDelay: "-10s" }}
+        className="absolute -top-40 right-[-10%] w-[620px] h-[620px] rounded-full opacity-25 blur-3xl"
+        style={{ background: "radial-gradient(circle, var(--green-bright), transparent 65%)" }}
       />
     </div>
   );
 }
 
-/** Round badge of a coloured icon — the visual anchor on feature cards. */
+/** Icon in a soft green tile — the visual anchor on feature cards. */
 export function IconBadge({
   children,
   fill,
   size = 44,
-  rotate = 0,
 }: {
   children: ReactNode;
-  fill: string;
+  fill?: string;
   size?: number;
   rotate?: number;
 }) {
+  const onWhite = fill === "var(--surface)";
   return (
     <span
       className="inline-grid place-items-center shrink-0"
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.32,
-        background: fill,
-        color: fill === "var(--surface)" ? "var(--text)" : "var(--ink)",
-        border: "2px solid var(--ink)",
-        boxShadow: "2px 2px 0 var(--ink)",
-        transform: `rotate(${rotate}deg)`,
+        borderRadius: size * 0.3,
+        background: onWhite ? "var(--surface)" : fill === "solid" ? "var(--green)" : "var(--green-soft)",
+        color: fill === "solid" ? "#fff" : "var(--brand-strong)",
+        boxShadow: onWhite ? "var(--shadow)" : "none",
       }}
     >
       {children}

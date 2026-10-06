@@ -75,7 +75,7 @@ export function CountUp({
   );
 }
 
-const CONFETTI_COLOURS = ["#ff5a1f", "#ffc21a", "#10b26c", "#e6007e", "#1e6fe8"];
+const CONFETTI_COLOURS = ["#0e7f3f", "#3ad17a", "#111111", "#ffffff", "#22b35e"];
 
 /** A one-off confetti burst, e.g. when a quiz is passed. */
 export function Confetti({ pieces = 36 }: { pieces?: number }) {

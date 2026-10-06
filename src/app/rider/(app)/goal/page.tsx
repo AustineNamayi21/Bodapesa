@@ -35,13 +35,13 @@ export default async function GoalPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[1.9rem] leading-tight animate-rise">{t("myGoals", lang)} 🫙</h1>
+      <h1 className="text-[1.9rem] leading-tight animate-rise">{t("myGoals", lang)}</h1>
 
       {goal ? (
         <>
           <section
             className="rounded-[24px] p-5 relative overflow-hidden animate-pop border-2"
-            style={{ background: "var(--success-soft)", borderColor: "var(--ink)", boxShadow: "5px 5px 0 var(--mpesa)" }}
+            style={{ background: "var(--success-soft)", borderColor: "transparent", boxShadow: "var(--shadow)" }}
           >
             <div className="flex items-center gap-5">
               <SavingsJar pct={pct} size={132} />

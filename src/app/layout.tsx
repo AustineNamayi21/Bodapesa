@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/outfit";
 import "@fontsource-variable/plus-jakarta-sans";
 import "./globals.css";
 
