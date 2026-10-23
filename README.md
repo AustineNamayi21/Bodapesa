@@ -261,3 +261,7 @@ Stated plainly, because examiners will ask:
 - **Data protection.** A live deployment holding real riders' data requires registration with Kenya's
   Office of the Data Protection Commissioner under the Data Protection Act 2019.
 - **Rider data.** The seeded riders, campaigns and message history are synthetic demonstration data.
+
+## Donations
+
+The site has a public **/donate** page (M-Pesa STK Push + card via Flutterwave). Setup and go-live steps: [docs/DONATIONS.md](docs/DONATIONS.md).

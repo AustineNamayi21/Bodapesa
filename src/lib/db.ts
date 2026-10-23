@@ -246,6 +246,29 @@ CREATE TABLE IF NOT EXISTS UssdSession (
   createdAt TEXT NOT NULL,
   updatedAt TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Donation (
+  id TEXT PRIMARY KEY,
+  txRef TEXT UNIQUE NOT NULL,
+  method TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  live INTEGER NOT NULL DEFAULT 0,
+  amountKes REAL_TYPE NOT NULL,
+  donorName TEXT,
+  donorEmail TEXT,
+  donorMsisdn TEXT,
+  note TEXT,
+  anonymous INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'PENDING',
+  providerRef TEXT,
+  receipt TEXT,
+  failureReason TEXT,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+  paidAt TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_donation_status ON Donation(status);
+CREATE INDEX IF NOT EXISTS idx_donation_providerref ON Donation(providerRef);
 `;
 
 /**
@@ -498,7 +521,12 @@ async function createPostgresDriver(url: string): Promise<Driver> {
       // last table exists, all of it does. `to_regclass` takes no locks.
       // Skipping here matters: even a no-op `CREATE INDEX IF NOT EXISTS`
       // takes a table lock, which can deadlock against a seed in progress.
-      const exists = await pool.query("SELECT to_regclass('ussdsession') IS NOT NULL AS ok");
+      // Checks the first AND the most recently added table, so a database
+      // created before a later table existed (e.g. Donation) is topped up —
+      // every statement is CREATE ... IF NOT EXISTS, so re-running is safe.
+      const exists = await pool.query(
+        "SELECT (to_regclass('ussdsession') IS NOT NULL AND to_regclass('donation') IS NOT NULL) AS ok",
+      );
       if (exists.rows[0]?.ok === true) return;
 
       // Migration shares the bootstrap lock with seeding, so the two can
@@ -541,7 +569,7 @@ function driver(): Promise<Driver> {
 export async function resetDatabase(): Promise<void> {
   const d = await driver();
   const tables = [
-    "SavingsDeposit", "SavingsGoal", "UssdSession", "Lead", "Message", "Campaign",
+    "Donation", "SavingsDeposit", "SavingsGoal", "UssdSession", "Lead", "Message", "Campaign",
     "QuizAttempt", "LessonProgress", "QuizQuestion", "Lesson", "Product", "Rider",
     "Stage", "AppUser", "Partner",
   ];

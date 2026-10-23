@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { count, databaseKind } from "@/lib/db";
 import { providerStatus } from "@/lib/channels/providers";
 import { ensureSeeded } from "@/lib/seed";
+import { cardMode, mpesaMode } from "@/lib/payments/config";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ export async function GET() {
       seeded: partners > 0,
       counts: { partners, products, lessons, riders },
       channels: Object.fromEntries(providerStatus().map((p) => [p.channel, p.mode])),
+      payments: { mpesa: mpesaMode(), card: cardMode() },
       node: process.version,
       latencyMs: Date.now() - started,
     });
