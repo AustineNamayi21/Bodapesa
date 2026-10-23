@@ -79,7 +79,7 @@ export default async function IntegrationsPage() {
       where: "WhatsApp → Configuration → Webhook → Callback URL",
       label: "WhatsApp webhook",
       url: `${base}/api/whatsapp/webhook`,
-      extra: `Verify token: ${process.env.WHATSAPP_VERIFY_TOKEN ?? "bodapesa"}`,
+      extra: `Verify token: ${process.env.WHATSAPP_VERIFY_TOKEN ?? "bodapesa"} · Signature check: ${process.env.WHATSAPP_APP_SECRET ? "on" : "off — set WHATSAPP_APP_SECRET"}`,
     },
   ];
 

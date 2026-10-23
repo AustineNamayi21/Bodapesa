@@ -32,7 +32,7 @@ interface LessonOption {
 
 const CHANNELS = [
   { value: "SMS", label: "SMS", note: "Every handset · KSh 0.80 per part" },
-  { value: "WHATSAPP", label: "WhatsApp", note: "Smartphones · KSh 0.50" },
+  { value: "WHATSAPP", label: "WhatsApp", note: "Smartphones · ≈KSh 2.90 per template, free inside a 24h chat" },
   { value: "USSD", label: "USSD inbox", note: "Shown on *384*14791# · free" },
   { value: "APP", label: "In-app", note: "Rider portal inbox · free" },
 ];
@@ -160,7 +160,7 @@ export default function Composer({
     // Only real recipients cost anything — synthetic riders are simulated.
     return Object.entries(estimate.realByChannel ?? {}).reduce((acc, [channel, n]) => {
       if (channel === "SMS") return acc + n * smsParts1 * 0.8;
-      if (channel === "WHATSAPP") return acc + n * 0.5;
+      if (channel === "WHATSAPP") return acc + n * 2.9;
       return acc;
     }, 0);
   }, [estimate, bodySw, bodyEn]);

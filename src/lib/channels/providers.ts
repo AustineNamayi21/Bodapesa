@@ -28,6 +28,17 @@ export interface ChannelProvider {
 const ref = (prefix: string) => `${prefix}_${Math.random().toString(36).slice(2, 12)}`;
 
 /**
+ * What one WhatsApp message costs. Meta charges business-initiated template
+ * messages per delivery (marketing, Rest of Africa ≈ US$0.0225 ≈ KSh 2.90);
+ * replies inside the 24-hour window after a rider writes in are free.
+ */
+export function whatsappCostKes(template: boolean): number {
+  if (!template) return 0;
+  const configured = Number(process.env.WHATSAPP_TEMPLATE_COST_KES);
+  return Number.isFinite(configured) && configured >= 0 ? configured : 2.9;
+}
+
+/**
  * Africa's Talking SMS adapter.
  *
  * Kenyan riders overwhelmingly use feature phones or low-end smartphones with
@@ -208,7 +219,7 @@ export const whatsappProvider: ChannelProvider = {
       if (Math.random() < 0.05) {
         return { status: "FAILED", costKes: 0, error: "Recipient not on WhatsApp (simulated)" };
       }
-      return { status: "SENT", providerRef: ref("sim"), costKes: 0.5 };
+      return { status: "SENT", providerRef: ref("sim"), costKes: whatsappCostKes(Boolean(options?.useTemplate)) };
     }
 
     // WhatsApp templates are registered per language. Sheng is not a WhatsApp
@@ -246,7 +257,8 @@ export const whatsappProvider: ChannelProvider = {
         };
 
     try {
-      const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+      const version = process.env.WHATSAPP_API_VERSION ?? "v23.0";
+      const res = await fetch(`https://graph.facebook.com/${version}/${phoneId}/messages`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -257,7 +269,7 @@ export const whatsappProvider: ChannelProvider = {
         return { status: "FAILED", costKes: 0, error: explainMetaError(err.error?.code, err.error?.message) };
       }
       const data = (await res.json()) as { messages?: { id: string }[] };
-      return { status: "SENT", providerRef: data.messages?.[0]?.id, costKes: 0.5 };
+      return { status: "SENT", providerRef: data.messages?.[0]?.id, costKes: whatsappCostKes(Boolean(options?.useTemplate)) };
     } catch (err) {
       const e = err as Error;
       return {
@@ -307,7 +319,7 @@ export async function simulatedSend(channel: Channel, body: string): Promise<Sen
   if (channel === "APP" || channel === "USSD") {
     return { status: "SENT", providerRef: ref("sim"), costKes: 0 };
   }
-  const costKes = channel === "SMS" ? Number((Math.max(1, Math.ceil(body.length / 160)) * 0.8).toFixed(2)) : 0.5;
+  const costKes = channel === "SMS" ? Number((Math.max(1, Math.ceil(body.length / 160)) * 0.8).toFixed(2)) : whatsappCostKes(true);
   return { status: "SENT", providerRef: ref("sim"), costKes };
 }
 

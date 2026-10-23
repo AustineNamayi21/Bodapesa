@@ -65,7 +65,7 @@ Write once in three languages, target an audience, and each rider is reached on 
 |---|---|---|---|
 | **SMS** | Every handset | ~KSh 0.80 / part | Africa's Talking |
 | **USSD** | Every handset | Free to the rider | Africa's Talking |
-| **WhatsApp** | Smartphones | ~KSh 0.50 | Meta Cloud API (approved templates outside the 24-hour window) |
+| **WhatsApp** | Smartphones | Free inside a 24-hour chat; ≈KSh 2.90 per template | Meta Cloud API (approved templates outside the 24-hour window) |
 | **In-app** | Portal users | Free | — |
 
 Audiences are defined by stage, sub-county, language, programme status, income band, literacy score and

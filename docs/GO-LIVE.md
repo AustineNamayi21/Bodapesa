@@ -279,6 +279,13 @@ defensible position — say it exactly like that.
 At demo scale this needs no business verification — an unverified account can
 reach up to 250 people a day.
 
+**What it costs.** When a rider messages the BodaPesa number first, every reply
+for the next 24 hours is free-form and free (Meta allows 1,000 such service
+messages a month per number). Messages BodaPesa *starts* — campaigns, reminders —
+use the approved template and are billed per delivery (marketing rate, Rest of
+Africa ≈ US$0.0225 ≈ KSh 2.90), which needs a payment method on the WhatsApp
+account. The free path is all a demo needs.
+
 ### 5a. Create the app
 
 1. Go to <https://developers.facebook.com> and log in with Facebook.
@@ -336,9 +343,10 @@ In Vercel add:
 | `WHATSAPP_TOKEN` | the permanent token from 5b |
 | `WHATSAPP_PHONE_ID` | the Phone number ID from 5a |
 | `WHATSAPP_TEMPLATE_NAME` | `bodapesa_update` |
-| `WHATSAPP_VERIFY_TOKEN` | any word you choose, e.g. `bodapesa-verify` |
+| `WHATSAPP_VERIFY_TOKEN` | a long random word (not `bodapesa`) |
+| `WHATSAPP_APP_SECRET` | Meta app → **App settings → Basic → App secret** (mark it **Secret** in Vercel) |
 
-Redeploy.
+Redeploy. With the app secret set, BodaPesa refuses any webhook call Meta didn't sign.
 
 ### 5e. Register the webhook
 
@@ -349,10 +357,23 @@ Redeploy.
 
 ### ✅ Check stage 5
 
-1. Integrations → **Send a live test** → channel **WhatsApp** → your verified number.
-2. It arrives on WhatsApp. Refresh Integrations — status moves to **DELIVERED**,
+**Free chat (works before the template is approved):**
+
+1. Make sure your own number is a rider: register it under **Riders → Register a
+   rider**, or just send **JIUNGE** to the WhatsApp test number.
+2. From your phone, send **Hi** to the WhatsApp test number. BodaPesa replies at
+   once with the keyword menu — free, because you started the chat.
+3. Send **SOMO** for a lesson, **AKIBA** for your savings, **NDIO** to request the
+   last product you were offered (a lead appears in the partner pipeline),
+   **ACHA** to opt out.
+4. Both sides of the conversation appear under **Message log** and in the rider's inbox.
+
+**Template (after approval):**
+
+1. Integrations → **Send a live test** → channel **WhatsApp** → your verified number,
+   more than 24 hours after you last messaged the business number.
+2. It arrives as the `bodapesa_update` template. Status moves to **DELIVERED**,
    then **READ** once you open it.
-3. Reply to the message from your phone. It appears under **Inbound messages**.
 
 **If it fails, the error says why:** "not on the allowed test list" (verify the
 number in 5a), "Template not found" (wait for approval or check the name),
