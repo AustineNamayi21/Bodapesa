@@ -8,6 +8,7 @@ import {
   PRESET_AMOUNTS_KES,
   beneficiaryName,
   cardMode,
+  cardProviderLabel,
   donationGoalKes,
   methodAvailable,
   mpesaMode,
@@ -121,6 +122,7 @@ export default async function DonatePage() {
               impact={IMPACT_TIERS}
               min={MIN_DONATION_KES}
               max={MAX_DONATION_KES}
+              cardProvider={cardProviderLabel()}
             />
           </div>
         </div>
@@ -128,7 +130,7 @@ export default async function DonatePage() {
 
       <footer className="border-t py-6">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-[0.75rem] text-[var(--text-faint)]">
-          Payments are processed by Safaricom M-Pesa and Flutterwave. We never see your M-Pesa PIN or card details,
+          Payments are processed by Safaricom M-Pesa and {cardProviderLabel()}. We never see your M-Pesa PIN or card details,
           and your phone number and email are never shown publicly.
         </div>
       </footer>

@@ -5,7 +5,7 @@ import { currentUser } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { displayMsisdn } from "@/lib/i18n";
 import { Card, Empty, ModePill, Pill, SectionTitle, Stat, STATUS_TONE, formatKes, timeAgo } from "@/components/ui";
-import { cardMode, mpesaMode } from "@/lib/payments/config";
+import { cardMode, cardProvider, cardProviderLabel, mpesaMode } from "@/lib/payments/config";
 import type { Donation } from "@/lib/payments/donations";
 import CopyField from "../integrations/CopyField";
 
@@ -47,7 +47,7 @@ export default async function DonationsPage() {
         <div className="grid gap-2 sm:grid-cols-2 mb-4">
           {[
             { name: "M-Pesa (Daraja STK Push)", mode: mpesaMode() },
-            { name: "Card (Flutterwave)", mode: cardMode() },
+            { name: `Card (${cardProviderLabel()})`, mode: cardMode() },
           ].map((m) => (
             <div key={m.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
               <span className="text-sm font-medium">{m.name}</span>
@@ -60,10 +60,17 @@ export default async function DonationsPage() {
             <span className="label">Daraja STK callback (sent automatically with each request)</span>
             <CopyField value={`${base}/api/donate/stk-callback${secret}`} />
           </div>
-          <div>
-            <span className="label">Flutterwave webhook (Dashboard → Settings → Webhooks)</span>
-            <CopyField value={`${base}/api/donate/flutterwave-webhook`} />
-          </div>
+          {cardProvider() === "PAYSTACK" ? (
+            <div>
+              <span className="label">Paystack webhook (Dashboard → Settings → API Keys &amp; Webhooks)</span>
+              <CopyField value={`${base}/api/donate/paystack-webhook`} />
+            </div>
+          ) : (
+            <div>
+              <span className="label">Flutterwave webhook (Dashboard → Settings → Webhooks)</span>
+              <CopyField value={`${base}/api/donate/flutterwave-webhook`} />
+            </div>
+          )}
         </div>
       </Card>
 

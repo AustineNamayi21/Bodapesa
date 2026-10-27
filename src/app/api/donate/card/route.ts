@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { clientKey, rateLimit } from "@/lib/env";
-import { baseUrl, beneficiaryName, cardMode, isLiveMode, methodAvailable } from "@/lib/payments/config";
+import { baseUrl, beneficiaryName, cardMode, cardProvider, isLiveMode, methodAvailable } from "@/lib/payments/config";
 import { createDonation, markFailed, parseDonorInput } from "@/lib/payments/donations";
 import { createCardCheckout } from "@/lib/payments/flutterwave";
+import { createPaystackCheckout } from "@/lib/payments/paystack";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +19,14 @@ export async function POST(request: Request) {
   const input = parsed.value;
 
   const mode = cardMode();
+  const provider = cardProvider();
   if (!methodAvailable(mode)) {
     return NextResponse.json({ error: "Card donations aren't open yet. Please check back soon." }, { status: 503 });
   }
 
   const donation = await createDonation({
     method: "CARD",
-    provider: mode === "simulated" ? "SIMULATED" : "FLUTTERWAVE",
+    provider,
     live: isLiveMode(mode),
     input,
   });
@@ -36,15 +38,24 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { link } = await createCardCheckout({
-      txRef: donation.txRef,
-      amountKes: input.amountKes,
-      email: input.email,
-      name: input.name,
-      redirectUrl: returnUrl,
-      title: "Support BodaPesa",
-      description: `Donation to ${beneficiaryName()}`,
-    });
+    const { link } =
+      provider === "PAYSTACK"
+        ? await createPaystackCheckout({
+            txRef: donation.txRef,
+            amountKes: input.amountKes,
+            email: input.email,
+            name: input.name,
+            callbackUrl: returnUrl,
+          })
+        : await createCardCheckout({
+            txRef: donation.txRef,
+            amountKes: input.amountKes,
+            email: input.email,
+            name: input.name,
+            redirectUrl: returnUrl,
+            title: "Support BodaPesa",
+            description: `Donation to ${beneficiaryName()}`,
+          });
     return NextResponse.json({ ref: donation.txRef, link });
   } catch (err) {
     const message = (err as Error).message;

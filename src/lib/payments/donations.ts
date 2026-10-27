@@ -3,6 +3,7 @@ import { normaliseMsisdn } from "@/lib/i18n";
 import { MAX_DONATION_KES, MIN_DONATION_KES, cardMode, isLiveMode, mpesaMode } from "./config";
 import { stkQuery } from "./mpesa";
 import { verifyByReference } from "./flutterwave";
+import { verifyPaystack } from "./paystack";
 
 export type DonationMethod = "MPESA" | "CARD";
 export type DonationStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED";
@@ -11,7 +12,7 @@ export interface Donation {
   id: string;
   txRef: string;
   method: DonationMethod;
-  provider: "DARAJA" | "FLUTTERWAVE" | "SIMULATED";
+  provider: "DARAJA" | "FLUTTERWAVE" | "PAYSTACK" | "SIMULATED";
   live: number;
   amountKes: number;
   donorName: string | null;
@@ -183,7 +184,7 @@ export async function settleMpesa(d: Donation): Promise<Donation> {
 }
 
 /**
- * Brings a pending card donation up to date by asking Flutterwave directly.
+ * Brings a pending card donation up to date by asking the card provider directly.
  * Used by the thank-you page and the webhook — both only trigger the check;
  * neither is believed on its own.
  */
@@ -194,7 +195,10 @@ export async function settleCard(d: Donation): Promise<Donation> {
     if (d.status === "PENDING") await markSuccess(d.txRef, { receipt: `SIM${d.txRef.slice(3, 10)}` });
   } else if (d.status === "PENDING" || d.status === "CANCELLED") {
     if (msSince(d.updatedAt) > 3_000) {
-      const verdict = await verifyByReference(d.txRef, d.amountKes);
+      const verdict =
+        d.provider === "PAYSTACK"
+          ? await verifyPaystack(d.txRef, d.amountKes)
+          : await verifyByReference(d.txRef, d.amountKes);
       if (verdict.state === "SUCCESS") {
         await markSuccess(d.txRef, { providerRef: verdict.transactionId, receipt: verdict.transactionId, amountKes: verdict.amount });
       } else if (verdict.state === "FAILED") {

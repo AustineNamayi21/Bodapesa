@@ -20,10 +20,31 @@ export function mpesaMode(): PayMode {
   return process.env.MPESA_ENV === "production" ? "live" : "sandbox";
 }
 
+export type CardProvider = "PAYSTACK" | "FLUTTERWAVE" | "SIMULATED";
+
+/** Paystack wins if its key is set; Flutterwave is kept as an alternative. */
+export function cardProvider(): CardProvider {
+  if (process.env.PAYSTACK_SECRET_KEY) return "PAYSTACK";
+  if (process.env.FLW_SECRET_KEY) return "FLUTTERWAVE";
+  return "SIMULATED";
+}
+
+export function cardProviderLabel(): string {
+  const p = cardProvider();
+  return p === "PAYSTACK" ? "Paystack" : p === "FLUTTERWAVE" ? "Flutterwave" : "our payment partner";
+}
+
 export function cardMode(): PayMode {
-  const key = process.env.FLW_SECRET_KEY;
-  if (!key) return "simulated";
-  return key.startsWith("FLWSECK_TEST") ? "sandbox" : "live";
+  const p = cardProvider();
+  if (p === "PAYSTACK") {
+    // Only a clearly-live key counts as live, so a malformed key can never
+    // inflate the public total.
+    return process.env.PAYSTACK_SECRET_KEY!.startsWith("sk_live_") ? "live" : "sandbox";
+  }
+  if (p === "FLUTTERWAVE") {
+    return process.env.FLW_SECRET_KEY!.startsWith("FLWSECK_TEST") ? "sandbox" : "live";
+  }
+  return "simulated";
 }
 
 /**

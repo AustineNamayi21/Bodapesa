@@ -17,6 +17,8 @@ interface Props {
   impact: { amountKes: number; text: string }[];
   min: number;
   max: number;
+  /** Display name of the card processor, e.g. "Paystack". */
+  cardProvider: string;
 }
 
 const POLL_MS = 3000;
@@ -24,7 +26,7 @@ const MAX_POLLS = 34; // ~100 seconds — longer than an M-Pesa prompt stays ali
 
 const fmt = (n: number) => `KSh ${Math.round(n).toLocaleString("en-KE")}`;
 
-export default function DonateForm({ methods, presets, impact, min, max }: Props) {
+export default function DonateForm({ methods, presets, impact, min, max, cardProvider }: Props) {
   const firstAvailable: Method = methods.MPESA.available ? "MPESA" : "CARD";
   const [method, setMethod] = useState<Method>(firstAvailable);
   const [preset, setPreset] = useState<number | "custom">(presets[1] ?? presets[0]);
@@ -274,7 +276,7 @@ export default function DonateForm({ methods, presets, impact, min, max }: Props
             <label className="label" htmlFor="d-email">Email (for your receipt)</label>
             <input id="d-email" type="email" className="input" autoComplete="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={sending} />
             <p className="text-[0.72rem] text-[var(--text-faint)] mt-1.5">
-              Next, you&rsquo;ll enter your card number, expiry date and CVV on Flutterwave&rsquo;s secure payment page.
+              Next, you&rsquo;ll enter your card number, expiry date and CVV on {cardProvider}&rsquo;s secure payment page.
             </p>
           </div>
         )}
@@ -310,7 +312,7 @@ export default function DonateForm({ methods, presets, impact, min, max }: Props
       <p className="text-[0.7rem] text-[var(--text-faint)] text-center leading-relaxed">
         {method === "MPESA"
           ? "You'll get an M-Pesa prompt on your phone. We never see your PIN."
-          : "You'll be taken to Flutterwave's secure page to enter your card details. We never see or store them."}
+          : `You'll be taken to ${cardProvider}'s secure page to enter your card details. We never see or store them.`}
       </p>
     </form>
   );
