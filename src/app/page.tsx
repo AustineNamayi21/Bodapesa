@@ -4,6 +4,7 @@ import {
   BookOpen,
   Check,
   Hash,
+  Heart,
   HeartHandshake,
   Landmark,
   MessageCircle,
@@ -377,6 +378,9 @@ export default async function Home() {
               Financial literacy and formal financial access for Nairobi&rsquo;s boda boda riders — a final-year project with Stima DT
               SACCO and Britam.
             </p>
+            <Link href="/donate" className="mt-5 btn btn-primary btn-sm">
+              <Heart size={15} /> Donate
+            </Link>
           </div>
           {[
             { h: "Riders", links: [["Rider portal", "/rider"], ["Lessons", "/rider/learn"], ["Savings goal", "/rider/goal"], ["USSD simulator", "/ussd"]] },

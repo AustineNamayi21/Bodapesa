@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
+  HandCoins,
   HeartHandshake,
   Inbox,
   LayoutDashboard,
@@ -22,16 +23,22 @@ const LINKS = [
   { href: "/admin/leads", label: "Leads", icon: HeartHandshake },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/curriculum", label: "Curriculum", icon: BookOpen },
+  { href: "/admin/donations", label: "Donations", icon: HandCoins },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
 ];
 
 export default function NavLinks({ role }: { role: string }) {
   const pathname = usePathname();
-  // Partner staff manage their own pipeline; curriculum and channel
+  // Partner staff manage their own pipeline; curriculum, donations and channel
   // configuration belong to the platform team.
   const links =
     role === "PARTNER_ADMIN"
-      ? LINKS.filter((l) => l.href !== "/admin/curriculum" && l.href !== "/admin/integrations")
+      ? LINKS.filter(
+          (l) =>
+            l.href !== "/admin/curriculum" &&
+            l.href !== "/admin/donations" &&
+            l.href !== "/admin/integrations",
+        )
       : LINKS;
 
   return (
