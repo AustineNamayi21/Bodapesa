@@ -53,8 +53,8 @@ export default async function Home() {
         </>
       ),
       body: "Free, bite-sized money lessons in Kiswahili, English and Sheng — on any phone. Then a direct line to real savings, loans and insurance from Stima DT SACCO and Britam.",
-      primary: { href: "/rider", label: "Start learning — it's free" },
-      secondary: { href: "/ussd", label: `Dial ${USSD_CODE}` },
+      primary: { href: "/rider/register", label: "Register — it's free" },
+      secondary: { href: "/rider", label: "Already registered? Sign in" },
       card: { label: "Leo umeweka", value: "KSh 100 saved" },
     },
     {
@@ -135,7 +135,7 @@ export default async function Home() {
                 <Link
                   key={c.title}
                   href={c.href}
-                  className="group relative shrink-0 snap-start w-[82%] sm:w-[340px] h-[420px] rounded-[22px] overflow-hidden"
+                  className="group relative shrink-0 snap-start w-[82%] sm:w-[340px] h-[420px] rounded-none overflow-hidden"
                   style={{ boxShadow: "var(--shadow)" }}
                 >
                   <div className="absolute inset-0 photo-zoom">
@@ -163,10 +163,10 @@ export default async function Home() {
       <section id="how" className="max-w-7xl mx-auto px-4 sm:px-6 py-24 scroll-mt-20">
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-14 items-center">
           <div className="relative reveal">
-            <div className="relative aspect-[4/5] rounded-[28px] overflow-hidden photo-zoom" style={{ boxShadow: "var(--shadow-lg)" }}>
+            <div className="relative aspect-[4/5] rounded-none overflow-hidden photo-zoom" style={{ boxShadow: "var(--shadow-lg)" }}>
               <Photo name="kenyanPlate" sizes="(max-width: 1024px) 92vw, 520px" />
             </div>
-            <div className="absolute -bottom-6 -right-2 sm:-right-6 rounded-2xl p-4 max-w-[260px]" style={{ background: "var(--ink)", color: "#fff", boxShadow: "var(--shadow-lg)" }}>
+            <div className="absolute -bottom-6 -right-2 sm:-right-6 rounded-none p-4 max-w-[260px]" style={{ background: "var(--ink)", color: "#fff", boxShadow: "var(--shadow-lg)" }}>
               <div className="text-[0.7rem] font-semibold uppercase tracking-wider" style={{ color: "var(--green-bright)" }}>
                 The problem
               </div>
@@ -178,7 +178,7 @@ export default async function Home() {
 
           <div>
             <span className="eyebrow" style={{ color: "var(--brand-strong)" }}>
-              <span className="w-7 h-[2px] rounded" style={{ background: "var(--green)" }} /> How it works
+              <span className="w-7 h-[2px] rounded-none" style={{ background: "var(--green)" }} /> How it works
             </span>
             <h2 className="mt-3 text-3xl sm:text-[2.7rem] leading-[1.1]">From the stage to the SACCO in four steps</h2>
 
@@ -191,7 +191,7 @@ export default async function Home() {
                 { icon: <HeartHandshake size={20} />, t: "Be onboarded", d: "One tap on “Ninavutiwa” and an officer from Stima SACCO or Britam calls back." },
               ].map((s, i) => (
                 <li key={s.t} className="relative flex gap-5 pb-8 last:pb-0 reveal">
-                  <span className="relative z-10 w-11 h-11 rounded-full grid place-items-center shrink-0 text-white font-display font-bold" style={{ background: "var(--green)" }}>
+                  <span className="relative z-10 w-11 h-11 rounded-none grid place-items-center shrink-0 text-white font-display font-bold" style={{ background: "var(--green)" }}>
                     {i + 1}
                   </span>
                   <div className="pt-1.5">
@@ -239,7 +239,7 @@ export default async function Home() {
               Discover all products
             </Link>
           </div>
-          <Link href="/rider/products" className="w-12 h-12 rounded-full grid place-items-center border hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label="All products">
+          <Link href="/rider/products" className="w-12 h-12 rounded-none grid place-items-center border hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label="All products">
             <ArrowRight size={20} />
           </Link>
         </div>
@@ -263,7 +263,7 @@ export default async function Home() {
               points: ["Personal accident & passenger cover", "Micro-pension from small contributions", "Unit trusts from a low minimum"],
             },
           ].map((p) => (
-            <Link key={p.code} href="/rider/products" className="group rounded-[22px] overflow-hidden flex flex-col reveal" style={{ background: "var(--ink)", color: "#fff", boxShadow: "var(--shadow-lg)" }}>
+            <Link key={p.code} href="/rider/products" className="group rounded-none overflow-hidden flex flex-col reveal" style={{ background: "var(--ink)", color: "#fff", boxShadow: "var(--shadow-lg)" }}>
               <div className="relative h-56 overflow-hidden photo-zoom">
                 <Photo name={p.photo} sizes="(max-width: 768px) 92vw, 620px" />
               </div>
@@ -275,7 +275,7 @@ export default async function Home() {
                 <ul className="mt-5 space-y-2.5 flex-1">
                   {p.points.map((pt) => (
                     <li key={pt} className="flex items-center gap-3 text-[0.95rem] text-white/85">
-                      <span className="w-5 h-5 rounded-full grid place-items-center shrink-0" style={{ background: "var(--green)" }}>
+                      <span className="w-5 h-5 rounded-none grid place-items-center shrink-0" style={{ background: "var(--green)" }}>
                         <Check size={12} strokeWidth={3} color="#fff" />
                       </span>
                       {pt}
@@ -301,7 +301,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
           <div>
             <span className="eyebrow" style={{ color: "var(--brand-strong)" }}>
-              <span className="w-7 h-[2px] rounded" style={{ background: "var(--green)" }} /> Every phone counts
+              <span className="w-7 h-[2px] rounded-none" style={{ background: "var(--green)" }} /> Every phone counts
             </span>
             <h2 className="mt-3 text-3xl sm:text-[2.7rem] leading-[1.1]">Mulika mwizi or smartphone — nobody is left out</h2>
             <p className="mt-4 text-[var(--text-muted)] leading-relaxed max-w-xl">
@@ -328,11 +328,11 @@ export default async function Home() {
           </div>
 
           <div className="relative reveal">
-            <div className="relative aspect-[4/5] rounded-[28px] overflow-hidden" style={{ boxShadow: "var(--shadow-lg)" }}>
+            <div className="relative aspect-[4/5] rounded-none overflow-hidden" style={{ boxShadow: "var(--shadow-lg)" }}>
               <Photo name="phoneSmile" sizes="(max-width: 1024px) 92vw, 480px" />
             </div>
-            <div className="absolute -left-2 sm:-left-8 bottom-10 w-[240px] rounded-2xl p-3 animate-float" style={{ background: "#0a170e", boxShadow: "var(--shadow-lg)" }}>
-              <div className="ussd-screen rounded-lg p-3 text-[0.74rem]">
+            <div className="absolute -left-2 sm:-left-8 bottom-10 w-[240px] rounded-none p-3 animate-float" style={{ background: "#0a170e", boxShadow: "var(--shadow-lg)" }}>
+              <div className="ussd-screen rounded-none p-3 text-[0.74rem]">
                 {`BodaPesa\n1. Jifunze kuhusu pesa\n2. Bidhaa za kifedha\n3. Akiba yangu`}
                 <span className="ussd-caret" />
               </div>
@@ -354,7 +354,7 @@ export default async function Home() {
               { icon: <Smartphone size={20} />, t: "Use the app", v: "Rider portal", href: "/rider" },
             ].map((h) => (
               <Link key={h.t} href={h.href} className="group flex items-start gap-4">
-                <span className="w-11 h-11 rounded-full grid place-items-center shrink-0 border transition-colors group-hover:bg-[var(--green)]" style={{ borderColor: "var(--green-bright)", color: "var(--green-bright)" }}>
+                <span className="w-11 h-11 rounded-none grid place-items-center shrink-0 border transition-colors group-hover:bg-[var(--green)]" style={{ borderColor: "var(--green-bright)", color: "var(--green-bright)" }}>
                   {h.icon}
                 </span>
                 <span>

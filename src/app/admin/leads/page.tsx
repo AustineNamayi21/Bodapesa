@@ -164,7 +164,7 @@ export default async function LeadsPage({
                   </td>
                   <td>
                     <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: l.accent }} />
+                      <span className="w-2 h-2 rounded-none shrink-0" style={{ background: l.accent }} />
                       <span className="text-[0.82rem]">{l.productName}</span>
                     </div>
                     <div className="text-[0.7rem] text-[var(--text-faint)]">

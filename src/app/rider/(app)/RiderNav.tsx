@@ -18,7 +18,7 @@ export default function RiderNav({ lang, unread }: { lang: Lang; unread: number 
 
   return (
     <nav
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-[calc(28rem-1.5rem)] grid grid-cols-5 z-30 rounded-[22px] p-1.5 border-2"
+      className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-[calc(28rem-1.5rem)] grid grid-cols-5 z-30 rounded-none p-1.5 border-2"
       style={{ background: "var(--ink)", borderColor: "var(--ink)", boxShadow: "0 12px 30px -8px rgba(0,0,0,0.45)" }}
     >
       {ITEMS.map((item) => {
@@ -28,7 +28,7 @@ export default function RiderNav({ lang, unread }: { lang: Lang; unread: number 
           <Link
             key={item.href}
             href={item.href}
-            className="flex flex-col items-center gap-0.5 py-1.5 relative rounded-2xl transition-all duration-200"
+            className="flex flex-col items-center gap-0.5 py-1.5 relative rounded-none transition-all duration-200"
             style={{
               color: active ? "#fff" : "rgba(255,255,255,0.6)",
               background: active ? "var(--green)" : "transparent",
@@ -38,7 +38,7 @@ export default function RiderNav({ lang, unread }: { lang: Lang; unread: number 
             <span className="text-[0.6rem] font-bold">{item.label[lang]}</span>
             {item.href === "/rider/inbox" && unread > 0 ? (
               <span
-                className="absolute top-0.5 right-[18%] min-w-[16px] h-[16px] rounded-full text-[0.58rem] grid place-items-center px-1 font-extrabold border-2 animate-pulse-ring"
+                className="absolute top-0.5 right-[18%] min-w-[16px] h-[16px] rounded-none text-[0.58rem] grid place-items-center px-1 font-extrabold border-2 animate-pulse-ring"
                 style={{ background: "var(--green-bright)", color: "var(--ink)", borderColor: "var(--ink)" }}
               >
                 {unread > 9 ? "9+" : unread}

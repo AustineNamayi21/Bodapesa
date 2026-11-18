@@ -50,7 +50,7 @@ export default function GoalForms({
               key={q}
               type="button"
               onClick={() => setDeposit(String(q))}
-              className="flex-1 rounded-xl py-2 font-extrabold tabular-nums border-2 transition-all hover:-translate-y-0.5"
+              className="flex-1 rounded-none py-2 font-extrabold tabular-nums border-2 transition-all hover:-translate-y-0.5"
               style={{
                 background: deposit === String(q) ? "var(--matatu)" : "var(--surface)",
                 borderColor: deposit === String(q) ? "var(--ink)" : "var(--border-strong)",
@@ -93,7 +93,7 @@ export default function GoalForms({
               setTitle(p.title[lang]);
               setAmount(String(p.amount));
             }}
-            className="w-full flex items-center justify-between gap-2 p-3 rounded-2xl text-[0.85rem] text-left border-2 transition-all hover:-translate-y-0.5"
+            className="w-full flex items-center justify-between gap-2 p-3 rounded-none text-[0.85rem] text-left border-2 transition-all hover:-translate-y-0.5"
             style={{
               background: title === p.title[lang] ? "var(--accent-soft)" : "var(--surface)",
               borderColor: title === p.title[lang] ? "var(--ink)" : "var(--border)",

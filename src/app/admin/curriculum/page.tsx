@@ -1,122 +1,173 @@
+import Link from "next/link";
+import { Pencil, Plus } from "lucide-react";
 import { all, count } from "@/lib/db";
-import { Bar, Card, Pill } from "@/components/ui";
-import { MODULE_LABELS } from "@/lib/i18n";
-import { smsParts } from "@/lib/i18n";
+import { currentUser } from "@/lib/auth";
+import { toggleLessonAction } from "@/lib/crud";
+import { MODULE_LABELS, smsParts } from "@/lib/i18n";
+import { Bar, Pill } from "@/components/ui";
+import { MiniForm, PageHeader } from "@/components/admin";
 
 export const dynamic = "force-dynamic";
 
 const MODULES = ["SAVINGS", "CREDIT", "INVESTMENT", "INSURANCE"];
 
+interface Row {
+  id: string;
+  code: string;
+  moduleKey: string;
+  order: number;
+  titleEn: string;
+  titleSw: string;
+  titleSh: string;
+  summaryEn: string | null;
+  sectionsEn: string | null;
+  smsSw: string;
+  durationMin: number;
+  active: number;
+  completions: number;
+  questions: number;
+  accuracy: number | null;
+}
+
+/** How many structured sections a stored JSON column holds. */
+function sectionCount(raw: string | null): number {
+  if (!raw) return 0;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default async function CurriculumPage() {
-  const lessons = await all<{
-    id: string;
-    code: string;
-    moduleKey: string;
-    order: number;
-    titleEn: string;
-    titleSw: string;
-    titleSh: string;
-    bodyEn: string;
-    smsEn: string;
-    smsSw: string;
-    smsSh: string;
-    durationMin: number;
-    completions: number;
-    questions: number;
-    accuracy: number | null;
-  }>(
+  const user = await currentUser();
+  const canEdit = user?.role === "PLATFORM_ADMIN";
+
+  const lessons = await all<Row>(
     `SELECT l.*,
             (SELECT COUNT(*) FROM LessonProgress lp WHERE lp.lessonId = l.id) AS completions,
             (SELECT COUNT(*) FROM QuizQuestion q WHERE q.lessonId = l.id) AS questions,
             (SELECT ROUND(100.0 * SUM(qa.score) / NULLIF(SUM(qa.total),0)) FROM QuizAttempt qa WHERE qa.lessonId = l.id) AS accuracy
-       FROM Lesson l WHERE l.active = 1 ORDER BY l.moduleKey, l."order"`,
+       FROM Lesson l ORDER BY l.moduleKey, l."order"`,
   );
 
-  const riderCount = await count("SELECT COUNT(*) AS n FROM Rider WHERE status NOT IN ('PROSPECT','OPTED_OUT')") || 1;
+  const riderCount =
+    (await count("SELECT COUNT(*) AS n FROM Rider WHERE status NOT IN ('PROSPECT','OPTED_OUT')")) || 1;
+
+  const live = lessons.filter((l) => Number(l.active) === 1).length;
+  const structured = lessons.filter((l) => sectionCount(l.sectionsEn) > 0).length;
 
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-[2rem] leading-tight">Financial literacy curriculum</h1>
-        <p className="text-xs text-[var(--text-faint)] mt-0.5">
-          Twelve lessons across four modules. Each exists in English, Kiswahili and Sheng, in a full version
-          for the rider portal and a condensed version that fits one SMS or USSD screen.
-        </p>
-      </header>
+    <div>
+      <PageHeader
+        title="Financial literacy curriculum"
+        subtitle="Four modules. Every lesson exists in English, Kiswahili and Sheng, as a structured portal lesson and as a condensed version that fits one SMS screen."
+        actions={
+          canEdit ? (
+            <Link href="/admin/curriculum/new" className="btn btn-primary btn-sm">
+              <Plus size={14} /> New lesson
+            </Link>
+          ) : null
+        }
+      />
+
+      {/* ── at a glance ───────────────────────────────────────────────────── */}
+      <div className="grid gap-0 sm:grid-cols-3 mb-9">
+        {[
+          { label: "Lessons live", value: String(live) },
+          { label: "Fully structured", value: `${structured} / ${lessons.length}` },
+          {
+            label: "Quiz questions",
+            value: String(lessons.reduce((n, l) => n + Number(l.questions), 0)),
+          },
+        ].map((s) => (
+          <div key={s.label} className="py-4 pr-6" style={{ borderTop: "2px solid var(--ink)" }}>
+            <div className="stat-value">{s.value}</div>
+            <div className="stat-label mt-1.5">{s.label}</div>
+          </div>
+        ))}
+      </div>
 
       {MODULES.map((moduleKey) => {
         const items = lessons.filter((l) => l.moduleKey === moduleKey);
         if (!items.length) return null;
         return (
-          <section key={moduleKey}>
-            <h2 className="text-[0.95rem] font-semibold tracking-tight mb-3">
-              {MODULE_LABELS[moduleKey]?.EN ?? moduleKey}
-              <span className="text-[0.75rem] font-normal text-[var(--text-faint)] ml-2">
+          <section key={moduleKey} className="mb-9">
+            <div className="rule-head mb-4">
+              <h2 className="text-[1.1rem] leading-none">{MODULE_LABELS[moduleKey]?.EN ?? moduleKey}</h2>
+              <span className="eyebrow">
                 {MODULE_LABELS[moduleKey]?.SW} · {MODULE_LABELS[moduleKey]?.SH}
               </span>
-            </h2>
+            </div>
 
             <div className="grid gap-3">
               {items.map((l) => {
                 const sms = smsParts(l.smsSw);
+                const sections = sectionCount(l.sectionsEn);
+                const hidden = Number(l.active) !== 1;
+
                 return (
-                  <Card key={l.id}>
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                  <article key={l.id} className="card p-4" style={hidden ? { opacity: 0.6 } : undefined}>
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1.5">
                           <Pill tone="neutral">{l.code}</Pill>
-                          <h3 className="text-[0.9rem] font-semibold tracking-tight">{l.titleEn}</h3>
+                          {sections ? (
+                            <Pill tone="accent">{sections} sections</Pill>
+                          ) : (
+                            <Pill tone="neutral">Prose only</Pill>
+                          )}
+                          {hidden ? <Pill tone="danger">Hidden</Pill> : null}
                         </div>
-                        <p className="text-[0.75rem] text-[var(--text-faint)]">
-                          {l.titleSw} · {l.titleSh} · {l.durationMin} min read · {l.questions} quiz questions
+                        <h3 className="text-[1rem] leading-snug" style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>
+                          {l.titleEn}
+                        </h3>
+                        {l.summaryEn ? (
+                          <p className="text-[0.84rem] mt-1.5 max-w-prose leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                            {l.summaryEn}
+                          </p>
+                        ) : null}
+                        <p className="text-[0.74rem] mt-2" style={{ color: "var(--text-faint)" }}>
+                          {l.titleSw} · {l.titleSh} · {l.durationMin} min · {l.questions} quiz question
+                          {Number(l.questions) === 1 ? "" : "s"} · Kiswahili SMS fits {sms.parts} part
+                          {sms.parts === 1 ? "" : "s"}
                         </p>
                       </div>
+
                       <div className="text-right shrink-0">
-                        <div className="text-sm font-semibold tabular-nums">{l.completions.toLocaleString()}</div>
-                        <div className="text-[0.68rem] text-[var(--text-faint)]">
+                        <div className="stat-value text-[1.3rem]">{Number(l.completions).toLocaleString()}</div>
+                        <div className="text-[0.66rem] mt-0.5" style={{ color: "var(--text-faint)" }}>
                           completions · {l.accuracy ?? "—"}% accuracy
                         </div>
                       </div>
                     </div>
 
-                    <Bar value={l.completions} max={riderCount} />
+                    <div className="mt-3">
+                      <Bar value={Number(l.completions)} max={riderCount} />
+                    </div>
 
-                    <details className="mt-3">
-                      <summary className="text-[0.78rem] cursor-pointer text-[var(--text-muted)]">
-                        Preview the lesson and its SMS versions
-                      </summary>
-                      <div className="mt-3 space-y-3">
-                        <div>
-                          <div className="stat-label mb-1">Full lesson (English)</div>
-                          <p className="text-[0.8rem] leading-relaxed text-[var(--text-muted)] whitespace-pre-line p-3 rounded-lg" style={{ background: "var(--surface-2)" }}>
-                            {l.bodyEn}
-                          </p>
-                        </div>
-                        <div className="grid gap-2 sm:grid-cols-3">
-                          {(
-                            [
-                              ["Kiswahili SMS", l.smsSw],
-                              ["English SMS", l.smsEn],
-                              ["Sheng SMS", l.smsSh],
-                            ] as [string, string][]
-                          ).map(([label, body]) => (
-                            <div key={label}>
-                              <div className="stat-label mb-1">
-                                {label} <span className="tabular-nums">({smsParts(body).chars})</span>
-                              </div>
-                              <p className="text-[0.76rem] leading-relaxed p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
-                                {body}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="text-[0.7rem] text-[var(--text-faint)]">
-                          The Kiswahili version fits {sms.parts} SMS part{sms.parts === 1 ? "" : "s"}
-                          {sms.unicode ? " and uses unicode characters, which halves the per-part allowance" : ""}.
-                        </p>
+                    {canEdit ? (
+                      <div className="mt-3 flex items-center gap-2">
+                        <Link href={`/admin/curriculum/${l.code}`} className="btn btn-ghost btn-sm">
+                          <Pencil size={12} /> Edit
+                        </Link>
+                        <MiniForm action={toggleLessonAction} hidden={{ lessonId: l.id }}>
+                          <button type="submit" className="btn btn-ghost btn-sm">
+                            {hidden ? "Publish" : "Hide"}
+                          </button>
+                        </MiniForm>
+                        <Link
+                          href={`/rider/learn/${l.code}`}
+                          target="_blank"
+                          className="text-[0.72rem] ml-auto underline-wipe"
+                          style={{ color: "var(--text-faint)" }}
+                        >
+                          Preview as a rider
+                        </Link>
                       </div>
-                    </details>
-                  </Card>
+                    ) : null}
+                  </article>
                 );
               })}
             </div>

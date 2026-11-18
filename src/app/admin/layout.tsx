@@ -45,9 +45,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <NavLinks role={user.role} />
 
         <div className="mt-auto p-3 hidden lg:block">
-          <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.06)" }}>
+          <div className="rounded-none p-3 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.06)" }}>
             <span
-              className="w-10 h-10 rounded-xl grid place-items-center font-display font-extrabold text-sm shrink-0 border-2"
+              className="w-10 h-10 rounded-none grid place-items-center font-display font-extrabold text-sm shrink-0 border-2"
               style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}
             >
               {initials}
@@ -60,7 +60,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
             <form action={logoutAction}>
               <button
-                className="w-8 h-8 rounded-lg grid place-items-center transition-colors hover:bg-white/10"
+                className="w-8 h-8 rounded-none grid place-items-center transition-colors hover:bg-white/10"
                 title="Sign out"
                 aria-label="Sign out"
               >

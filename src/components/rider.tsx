@@ -26,8 +26,8 @@ export function ScoreRing({ value, size = 104, label }: { value: number; size?: 
         />
         <defs>
           <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#3ad17a" />
-            <stop offset="100%" stopColor="#0e7f3f" />
+            <stop offset="0%" stopColor="#ff8a4c" />
+            <stop offset="100%" stopColor="#b8400c" />
           </linearGradient>
         </defs>
       </svg>
@@ -46,9 +46,9 @@ export function JourneyBar({ done, total }: { done: number; total: number }) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
     <div className="relative pt-11 pr-8">
-      <div className="h-3.5 rounded-full relative overflow-hidden" style={{ background: "rgba(255,255,255,0.14)" }}>
+      <div className="h-3.5 rounded-none relative overflow-hidden" style={{ background: "rgba(255,255,255,0.14)" }}>
         <div
-          className="absolute inset-y-0 left-0 rounded-full progress-stripes bar-fill"
+          className="absolute inset-y-0 left-0 rounded-none progress-stripes bar-fill"
           style={{ width: `${pct}%`, backgroundColor: "var(--green-bright)" }}
         />
       </div>
@@ -88,7 +88,7 @@ export function SavingsJar({ pct, size = 120 }: { pct: number; size?: number }) 
           right: `${(11.5 / 80) * 100}%`,
           top: `${(17.5 / 100) * 100}%`,
           bottom: `${(4.5 / 100) * 100}%`,
-          borderRadius: "10px 10px 12px 12px",
+          borderRadius: 0,
           background: "color-mix(in oklab, var(--mpesa) 10%, var(--surface))",
         }}
       >

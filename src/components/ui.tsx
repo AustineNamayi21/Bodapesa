@@ -67,7 +67,7 @@ export function Stat({
         <div className="stat-label">{label}</div>
         {icon ? (
           <span
-            className="w-8 h-8 rounded-xl grid place-items-center shrink-0 -mt-1 -mr-1"
+            className="w-8 h-8 rounded-none grid place-items-center shrink-0 -mt-1 -mr-1"
             style={{ background: `color-mix(in oklab, ${mark} 22%, var(--surface))`, color: "var(--text)" }}
           >
             {icon}
@@ -102,7 +102,7 @@ export function Pill({
   const t = TONES[tone] ?? TONES.neutral;
   return (
     <span className="pill" style={{ background: t.bg, color: t.fg }}>
-      {dot ? <span className="w-1.5 h-1.5 rounded-full" style={{ background: t.fg }} /> : null}
+      {dot ? <span className="w-1.5 h-1.5 rounded-none" style={{ background: t.fg }} /> : null}
       {children}
     </span>
   );
@@ -150,15 +150,15 @@ export function Bar({ value, max, tone = "brand" }: { value: number; max: number
           ? "var(--mpesa)"
           : "var(--sunset)";
   return (
-    <div className="h-2 rounded-full w-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
-      <div className="h-full rounded-full bar-fill" style={{ width: `${pct}%`, background: colour }} />
+    <div className="h-2 rounded-none w-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
+      <div className="h-full rounded-none bar-fill" style={{ width: `${pct}%`, background: colour }} />
     </div>
   );
 }
 
 export function Empty({ children }: { children: ReactNode }) {
   return (
-    <div className="text-sm text-[var(--text-faint)] py-10 text-center border-2 border-dashed rounded-[var(--radius)]" style={{ borderColor: "var(--border-strong)" }}>
+    <div className="text-sm text-[var(--text-faint)] py-10 text-center border-2 border-dashed rounded-none" style={{ borderColor: "var(--border-strong)" }}>
       {children}
     </div>
   );

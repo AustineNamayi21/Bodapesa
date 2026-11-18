@@ -8,7 +8,7 @@ export default function CopyField({ value }: { value: string }) {
   return (
     <div className="flex gap-2">
       <code
-        className="flex-1 min-w-0 text-[0.74rem] px-2.5 py-2 rounded-lg overflow-x-auto whitespace-nowrap scroll-thin"
+        className="flex-1 min-w-0 text-[0.74rem] px-2.5 py-2 rounded-none overflow-x-auto whitespace-nowrap scroll-thin"
         style={{ background: "var(--surface-2)" }}
       >
         {value}

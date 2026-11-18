@@ -109,6 +109,19 @@ export interface Lesson {
   smsEn: string;
   smsSw: string;
   smsSh: string;
+  /**
+   * Structured teaching sections, stored as JSON. Empty on a lesson that has
+   * not been enriched (including one created from the admin console), in
+   * which case the renderer falls back to the prose body.
+   * See src/lib/curriculum/types.ts for the shape.
+   */
+  sectionsEn: string;
+  sectionsSw: string;
+  sectionsSh: string;
+  /** One-line summary shown on lesson cards and in the console. */
+  summaryEn: string;
+  summarySw: string;
+  summarySh: string;
   durationMin: number;
   active: number;
 }

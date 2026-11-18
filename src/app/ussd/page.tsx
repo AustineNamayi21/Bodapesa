@@ -68,9 +68,9 @@ export default async function UssdPage() {
                   { n: "5", t: "Wasifu wangu — Profile", d: "Stage, lessons completed and current literacy score." },
                   { n: "6", t: "Badilisha lugha — Language", d: "Switch between Kiswahili, English and Sheng at any time." },
                 ].map((m) => (
-                  <li key={m.n} className="flex gap-3 rounded-2xl p-3 lift" style={{ background: "var(--surface-2)" }}>
+                  <li key={m.n} className="flex gap-3 rounded-none p-3 lift" style={{ background: "var(--surface-2)" }}>
                     <span
-                      className="w-8 h-8 rounded-xl grid place-items-center text-[0.9rem] font-extrabold shrink-0 border-2"
+                      className="w-8 h-8 rounded-none grid place-items-center text-[0.9rem] font-extrabold shrink-0 border-2"
                       style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}
                     >
                       {m.n}
@@ -106,7 +106,7 @@ export default async function UssdPage() {
               </ol>
             </div>
 
-            <div className="rounded-[var(--radius)] p-5" style={{ background: "var(--ink)", color: "var(--cream)" }}>
+            <div className="rounded-none p-5" style={{ background: "var(--ink)", color: "var(--cream)" }}>
               <h2 className="text-2xl mb-2" style={{ color: "var(--matatu)" }}>Going live</h2>
               <p className="text-[0.84rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.78)" }}>
                 Register a USSD service code with Africa&rsquo;s Talking and point its callback at{" "}

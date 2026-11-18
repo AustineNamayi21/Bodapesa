@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Hash, PiggyBank, ShieldCheck, BookOpen, Smartphone } from "lucide-react";
+import { ArrowRight, BookOpen, PiggyBank, ShieldCheck } from "lucide-react";
 import { all } from "@/lib/db";
 import { currentRiderId } from "@/lib/auth";
 import { ensureSeeded } from "@/lib/seed";
 import { displayMsisdn } from "@/lib/i18n";
 import { env } from "@/lib/env";
-import { USSD_CODE } from "@/lib/ussd-code";
-import { Logo, Photo, IconBadge } from "@/components/brand";
+import { Logo, Photo } from "@/components/brand";
 import RiderLogin from "./RiderLogin";
 
 export const dynamic = "force-dynamic";
@@ -16,80 +15,158 @@ export default async function RiderEntryPage() {
   await ensureSeeded();
   if (await currentRiderId()) redirect("/rider/home");
 
+  const lessonCount = await all<{ n: number }>("SELECT COUNT(*) AS n FROM Lesson WHERE active = 1");
+  const lessons = Number(lessonCount[0]?.n ?? 0);
+
   // Demo shortcut: a few registered numbers so the portal can be tried
   // immediately. Only in demo mode — on a deployment holding real riders this
   // would publish their phone numbers.
-  const samples = !env.demoMode ? [] : await all<{ msisdn: string; firstName: string; lastName: string; language: string; literacyScore: number }>(
-    `SELECT msisdn, firstName, lastName, language, literacyScore
-       FROM Rider WHERE status IN ('ACTIVE','ONBOARDED') ORDER BY literacyScore DESC LIMIT 3`,
-  );
+  const samples = !env.demoMode
+    ? []
+    : await all<{
+        msisdn: string;
+        firstName: string;
+        lastName: string;
+        language: string;
+        literacyScore: number;
+      }>(
+        `SELECT msisdn, firstName, lastName, language, literacyScore
+           FROM Rider WHERE status IN ('ACTIVE','ONBOARDED') ORDER BY literacyScore DESC LIMIT 3`,
+      );
 
   return (
-    <main className="min-h-screen lg:grid lg:grid-cols-[1.1fr_1fr]">
-      {/* photo side */}
-      <section className="relative min-h-[46vh] lg:min-h-screen overflow-hidden">
-        <Photo name="kenyanPlate" priority sizes="(max-width: 1024px) 100vw, 55vw" />
+    <main className="min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr]">
+      {/* ── editorial side ───────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden" style={{ background: "var(--ink)" }}>
+        <div className="absolute inset-0 animate-kenburns">
+          <Photo name="kenyanPlate" priority sizes="(max-width: 1024px) 100vw, 55vw" />
+        </div>
+        {/* A scrim rather than a flat wash: the photograph keeps its colour
+            at the top, and darkens only where the headline needs contrast. */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.92) 100%)" }}
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.22) 26%, rgba(0,0,0,0.66) 56%, rgba(0,0,0,0.90) 100%)",
+          }}
         />
-        <div className="relative h-full flex flex-col justify-between p-5 sm:p-8 min-h-[46vh] lg:min-h-screen">
+        <div className="relative flex flex-col justify-between p-5 sm:p-10 min-h-[38vh] lg:min-h-screen">
           <Logo tone="light" />
-          <div className="pb-6 lg:pb-10 animate-rise">
-            <span className="sticker" style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}>
+
+          <div className="py-8 lg:py-0 animate-rise">
+            <span
+              className="pill"
+              style={{ background: "var(--ember)", color: "#000", borderColor: "transparent" }}
+            >
               Bure kabisa · Free
             </span>
-            <h1 className="mt-4 text-[2.5rem] sm:text-6xl leading-[1] max-w-lg" style={{ color: "var(--cream)" }}>
-              Karibu, <span style={{ color: "var(--matatu)" }}>rider.</span>
+            <h1
+              className="mt-4 text-[2.6rem] sm:text-[3.6rem] leading-[0.96] max-w-lg"
+              style={{ color: "#fff" }}
+            >
+              Karibu, rider.
             </h1>
-            <p className="mt-3 text-[0.95rem] sm:text-lg max-w-md" style={{ color: "rgba(255,255,255,0.85)" }}>
+            <p
+              className="mt-4 text-[1rem] sm:text-[1.15rem] max-w-md leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.78)", fontFamily: "var(--font-editorial)" }}
+            >
               Jifunze kuhusu pesa. Jiunge na SACCO na bima.
-              <br />
-              <span className="opacity-75">Learn about money. Join a SACCO and get insured.</span>
+              <span className="block mt-2 opacity-70">Learn about money. Join a SACCO and get insured.</span>
             </p>
-            <div className="mt-5 hidden sm:flex flex-wrap gap-2">
+
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-4 max-w-md">
               {[
-                { i: <BookOpen size={15} />, t: "12 lessons", f: "var(--matatu)" },
-                { i: <PiggyBank size={15} />, t: "Savings jar", f: "var(--mpesa)" },
-                { i: <ShieldCheck size={15} />, t: "Real products", f: "var(--kanga)" },
-              ].map((b) => (
-                <span key={b.t} className="pill py-1.5 px-3 border-2" style={{ background: "rgba(0,0,0,0.55)", color: "var(--cream)", borderColor: b.f }}>
-                  <span style={{ color: b.f }}>{b.i}</span> {b.t}
-                </span>
+                { icon: BookOpen, n: String(lessons), label: "Masomo · Lessons" },
+                { icon: PiggyBank, n: "3", label: "Lugha · Languages" },
+                { icon: ShieldCheck, n: "2", label: "Washirika · Partners" },
+              ].map(({ icon: Icon, n, label }) => (
+                <div key={label} style={{ borderTop: "2px solid var(--ember)", paddingTop: "0.6rem" }}>
+                  <div className="flex items-baseline gap-1.5">
+                    <Icon size={14} style={{ color: "var(--ember)" }} />
+                    <span className="stat-value text-[1.6rem]" style={{ color: "#fff" }}>
+                      {n}
+                    </span>
+                  </div>
+                  <div
+                    className="text-[0.58rem] uppercase mt-1"
+                    style={{
+                      letterSpacing: "0.16em",
+                      fontFamily: "var(--font-display)",
+                      color: "rgba(255,255,255,0.55)",
+                    }}
+                  >
+                    {label}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
+
+          <p className="hidden lg:block text-[0.68rem]" style={{ color: "rgba(255,255,255,0.4)" }}>
+            Stima DT SACCO · Britam
+          </p>
         </div>
       </section>
 
-      {/* form side */}
-      <section className="relative px-4 sm:px-8 py-10 flex items-center justify-center">
-        <div className="absolute inset-0 dots opacity-30" aria-hidden="true" />
-        <div className="relative w-full max-w-sm -mt-20 lg:mt-0">
-          <div className="card-pop p-6 animate-pop">
-            <div className="flex items-center gap-3 mb-5">
-              <IconBadge fill="solid" size={44}>
-                <Smartphone size={20} />
-              </IconBadge>
-              <div>
-                <h2 className="text-xl leading-tight">Ingia · Sign in</h2>
-                <p className="text-[0.76rem] text-[var(--text-faint)]">Tumia nambari yako ya simu</p>
-              </div>
-            </div>
-            <RiderLogin />
+      {/* ── sign-in side ─────────────────────────────────────────────────── */}
+      <section className="px-4 sm:px-8 lg:px-14 py-10 lg:py-14 flex items-center justify-center">
+        <div className="w-full max-w-sm">
+          <div className="rule-head mb-5">
+            <h2 className="text-[1.5rem] leading-none">Ingia</h2>
+            <span className="eyebrow">Sign in</span>
           </div>
 
+          <RiderLogin />
+
+          {/* The registration route — the primary way a new rider joins now
+              that USSD onboarding is out of scope. */}
+          <Link
+            href="/rider/register"
+            className="mt-6 flex items-center justify-between gap-3 p-4 lift"
+            style={{ border: "2px solid var(--ink)", background: "var(--surface)" }}
+          >
+            <span>
+              <span
+                className="block text-[0.58rem] uppercase"
+                style={{
+                  letterSpacing: "0.18em",
+                  fontFamily: "var(--font-display)",
+                  color: "var(--ember-deep)",
+                  fontWeight: 600,
+                }}
+              >
+                Mgeni hapa? · New here?
+              </span>
+              <span
+                className="block text-[1.05rem] mt-1"
+                style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}
+              >
+                Jisajili · Register
+              </span>
+              <span className="block text-[0.74rem] mt-0.5" style={{ color: "var(--text-faint)" }}>
+                Dakika mbili. Two minutes.
+              </span>
+            </span>
+            <ArrowRight size={20} className="shrink-0" style={{ color: "var(--ember-deep)" }} />
+          </Link>
+
           {samples.length ? (
-            <div className="card p-4 mt-5 animate-rise d-2">
-              <div className="stat-label mb-2">Try it with a registered number</div>
-              <div className="space-y-2">
+            <div className="mt-6 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="stat-label mb-2.5">Try it with a registered number</div>
+              <div className="space-y-1.5">
                 {samples.map((s) => (
                   <div key={s.msisdn} className="flex items-center justify-between gap-2 text-[0.8rem]">
-                    <span className="text-[var(--text-muted)] truncate">
+                    <span className="truncate" style={{ color: "var(--text-muted)" }}>
                       {s.firstName} {s.lastName}
-                      <span className="text-[var(--text-faint)]"> · {s.language} · {s.literacyScore}</span>
+                      <span style={{ color: "var(--text-faint)" }}>
+                        {" "}
+                        · {s.language} · {s.literacyScore}
+                      </span>
                     </span>
-                    <code className="text-[0.76rem] shrink-0 tabular-nums font-bold px-2 py-0.5 rounded-md" style={{ background: "var(--accent-soft)" }}>
+                    <code
+                      className="text-[0.74rem] shrink-0 tabular-nums font-bold px-2 py-0.5"
+                      style={{ background: "var(--surface-2)" }}
+                    >
                       {displayMsisdn(s.msisdn)}
                     </code>
                   </div>
@@ -98,22 +175,8 @@ export default async function RiderEntryPage() {
             </div>
           ) : null}
 
-          <Link
-            href="/ussd"
-            className="mt-5 flex items-center gap-3 rounded-2xl p-3.5 border-2 border-dashed lift animate-rise d-3"
-            style={{ borderColor: "var(--border-strong)" }}
-          >
-            <IconBadge fill="var(--mpesa)" size={38}>
-              <Hash size={18} />
-            </IconBadge>
-            <span className="text-[0.8rem] leading-snug">
-              <strong>Huna simu ya kisasa?</strong> Piga <strong className="font-mono">{USSD_CODE}</strong>
-              <span className="block text-[var(--text-faint)]">No smartphone? Try the USSD menu →</span>
-            </span>
-          </Link>
-
-          <p className="text-center text-[0.75rem] text-[var(--text-faint)] mt-5">
-            <Link href="/" className="hover:underline">
+          <p className="text-[0.74rem] mt-7" style={{ color: "var(--text-faint)" }}>
+            <Link href="/" className="underline-wipe">
               ← Back to the overview
             </Link>
           </p>

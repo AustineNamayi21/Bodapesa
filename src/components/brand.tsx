@@ -81,8 +81,8 @@ export function BodaRider({
   jacket?: string;
   onDark?: boolean;
 }) {
-  const line = onDark ? "#fff3e4" : "var(--line)";
-  const tyre = onDark ? "#3a2d22" : "var(--tyre)";
+  const line = onDark ? "#f0f3f6" : "var(--line)";
+  const tyre = onDark ? "#2b3136" : "var(--tyre)";
   const spin: CSSProperties = moving ? { animation: "spin 0.8s linear infinite", transformBox: "fill-box", transformOrigin: "center" } : {};
   return (
     <svg width={size} height={size * 0.72} viewBox="0 0 100 72" aria-hidden="true" style={moving ? { animation: "bounce-soft 0.5s ease-in-out infinite" } : undefined}>
@@ -184,7 +184,7 @@ export function Blobs({ className = "" }: { className?: string }) {
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
       <div
-        className="absolute -top-40 right-[-10%] w-[620px] h-[620px] rounded-full opacity-25 blur-3xl"
+        className="absolute -top-40 right-[-10%] w-[620px] h-[620px] rounded-none opacity-25 blur-3xl"
         style={{ background: "radial-gradient(circle, var(--green-bright), transparent 65%)" }}
       />
     </div>
@@ -209,7 +209,7 @@ export function IconBadge({
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.3,
+        borderRadius: 0,
         background: onWhite ? "var(--surface)" : fill === "solid" ? "var(--green)" : "var(--green-soft)",
         color: fill === "solid" ? "#fff" : "var(--brand-strong)",
         boxShadow: onWhite ? "var(--shadow)" : "none",

@@ -31,7 +31,7 @@ export default async function LoginPage() {
                 { i: <Megaphone size={18} />, t: "Campaigns", f: "var(--matatu)" },
                 { i: <HeartHandshake size={18} />, t: "Leads", f: "var(--mpesa)" },
               ].map((b) => (
-                <div key={b.t} className="rounded-2xl p-3 border-2" style={{ background: "rgba(0,0,0,0.55)", borderColor: b.f, color: "var(--cream)" }}>
+                <div key={b.t} className="rounded-none p-3 border-2" style={{ background: "rgba(0,0,0,0.55)", borderColor: b.f, color: "var(--cream)" }}>
                   <span style={{ color: b.f }}>{b.i}</span>
                   <div className="text-[0.8rem] font-bold mt-1">{b.t}</div>
                 </div>

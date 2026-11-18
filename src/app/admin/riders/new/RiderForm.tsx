@@ -106,7 +106,7 @@ export default function RiderForm({ stages }: { stages: { id: string; name: stri
             { name: "hasInsurance", label: "Currently holds any insurance" },
             { name: "usesMobileMoney", label: "Uses mobile money", checked: true },
           ].map((f) => (
-            <label key={f.name} className="flex items-center gap-2 text-[0.85rem] p-2 rounded-lg cursor-pointer" style={{ background: "var(--surface-2)" }}>
+            <label key={f.name} className="flex items-center gap-2 text-[0.85rem] p-2 rounded-none cursor-pointer" style={{ background: "var(--surface-2)" }}>
               <input type="checkbox" name={f.name} defaultChecked={f.checked} className="accent-[var(--brand)]" />
               {f.label}
             </label>
@@ -114,7 +114,7 @@ export default function RiderForm({ stages }: { stages: { id: string; name: stri
         </div>
       </fieldset>
 
-      <label className="flex items-start gap-2.5 text-[0.85rem] p-3 rounded-lg cursor-pointer" style={{ background: "var(--brand-soft)" }}>
+      <label className="flex items-start gap-2.5 text-[0.85rem] p-3 rounded-none cursor-pointer" style={{ background: "var(--brand-soft)" }}>
         <input type="checkbox" name="consent" defaultChecked className="mt-0.5 accent-[var(--brand)]" />
         <span>
           <strong className="font-semibold">Messaging consent given.</strong>

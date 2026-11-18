@@ -22,7 +22,7 @@ function Submit({ lang }: { lang: Lang }) {
   return (
     <button type="submit" className="btn btn-primary btn-lg w-full" disabled={pending}>
       {pending ? (
-        <span className="inline-block w-5 h-5 rounded-full border-[3px] border-current border-t-transparent animate-spin" />
+        <span className="inline-block w-5 h-5 rounded-none border-[3px] border-current border-t-transparent animate-spin" />
       ) : (
         <>
           <Sparkles size={17} />
@@ -62,7 +62,7 @@ export default function Quiz({
 
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl flex items-center gap-2">
-          <span className="w-8 h-8 rounded-xl grid place-items-center text-white" style={{ background: "var(--green)" }}>
+          <span className="w-8 h-8 rounded-none grid place-items-center text-white" style={{ background: "var(--green)" }}>
             ?
           </span>
           {t("quiz", lang)}
@@ -106,7 +106,7 @@ export default function Quiz({
               return (
                 <label
                   key={i}
-                  className={`relative flex items-center gap-3 p-3 rounded-2xl has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-[var(--brand)] text-[0.86rem] leading-snug border-2 transition-all ${
+                  className={`relative flex items-center gap-3 p-3 rounded-none has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-[var(--brand)] text-[0.86rem] leading-snug border-2 transition-all ${
                     state ? "" : "cursor-pointer hover:-translate-y-0.5 has-[:checked]:!border-[var(--green)] has-[:checked]:!bg-[var(--green-soft)]"
                   }`}
                   style={{ background, color: colour, borderColor: border }}
@@ -120,7 +120,7 @@ export default function Quiz({
                     className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-default m-0"
                   />
                   <span
-                    className="w-7 h-7 rounded-lg grid place-items-center text-[0.75rem] font-extrabold shrink-0 border-2 peer-checked:bg-[var(--green)] peer-checked:text-white peer-checked:border-[var(--green)]"
+                    className="w-7 h-7 rounded-none grid place-items-center text-[0.75rem] font-extrabold shrink-0 border-2 peer-checked:bg-[var(--green)] peer-checked:text-white peer-checked:border-[var(--green)]"
                     style={{ borderColor: "currentColor" }}
                   >
                     {state && isCorrect ? <Check size={15} strokeWidth={3} /> : state && chosen ? <X size={15} strokeWidth={3} /> : LETTERS[i]}
@@ -144,10 +144,10 @@ export default function Quiz({
 
       {state ? (
         <div
-          className="rounded-2xl p-4 flex items-center gap-3 border-2 animate-pop"
+          className="rounded-none p-4 flex items-center gap-3 border-2 animate-pop"
           style={{ background: "var(--ink)", color: "#fff", borderColor: "var(--ink)" }}
         >
-          <span className="w-12 h-12 rounded-2xl grid place-items-center shrink-0" style={{ background: "var(--green)", color: "#fff" }}>
+          <span className="w-12 h-12 rounded-none grid place-items-center shrink-0" style={{ background: "var(--green)", color: "#fff" }}>
             <Trophy size={24} />
           </span>
           <div>

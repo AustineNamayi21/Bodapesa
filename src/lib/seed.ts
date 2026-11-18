@@ -1,6 +1,7 @@
 import { count, id, insert, now, run, bulkInsert, withLock, SEED_LOCK } from "./db";
 import { SEED_PRODUCTS } from "./seed-products";
 import { SEED_LESSONS } from "./seed-lessons";
+import { enrichmentFor, syncCurriculum } from "./curriculum";
 import { hashPassword } from "./auth";
 import { env } from "./env";
 import { LEGACY_USSD_CODES, USSD_CODE } from "./ussd-code";
@@ -174,6 +175,10 @@ export async function seed() {
   for (const l of SEED_LESSONS) {
     const lid = id("lsn");
     lessonIds.push(lid);
+    // The structured teaching material lives in src/lib/curriculum and is
+    // written straight in on a fresh seed; an existing database gets it from
+    // syncCurriculum() instead.
+    const rich = enrichmentFor(l.code);
     lessonRows.push({
       id: lid,
       moduleKey: l.moduleKey,
@@ -188,7 +193,13 @@ export async function seed() {
       smsEn: l.smsEn,
       smsSw: l.smsSw,
       smsSh: l.smsSh,
-      durationMin: l.durationMin,
+      sectionsEn: rich ? JSON.stringify(rich.sections.En) : "",
+      sectionsSw: rich ? JSON.stringify(rich.sections.Sw) : "",
+      sectionsSh: rich ? JSON.stringify(rich.sections.Sh) : "",
+      summaryEn: rich?.summary.En ?? "",
+      summarySw: rich?.summary.Sw ?? "",
+      summarySh: rich?.summary.Sh ?? "",
+      durationMin: rich?.durationMin ?? l.durationMin,
       active: 1,
     });
     l.questions.forEach((q, i) => {
@@ -540,10 +551,35 @@ async function refreshUssdCode() {
   }
 }
 
+/**
+ * Brings the stored curriculum up to date with the one in the code.
+ *
+ * Runs once per server instance and holds the bootstrap lock, so two
+ * instances starting together cannot both write the same lessons. Failure is
+ * logged and swallowed: an out-of-date curriculum still renders, so this must
+ * never be able to take the application down.
+ */
+let curriculumChecked = false;
+async function refreshCurriculum() {
+  if (curriculumChecked) return;
+  curriculumChecked = true;
+  try {
+    await withLock(SEED_LOCK, async () => {
+      const { created, enriched } = await syncCurriculum();
+      if (created || enriched) {
+        console.log(`[bodapesa] curriculum synced — ${created} added, ${enriched} updated`);
+      }
+    });
+  } catch (err) {
+    console.error("[bodapesa] curriculum sync failed", err);
+  }
+}
+
 export async function ensureSeeded() {
   try {
     if (await isSeeded()) {
       await refreshUssdCode();
+      await refreshCurriculum();
       return;
     }
     // Several serverless instances can arrive here at once on first deploy.
@@ -551,6 +587,8 @@ export async function ensureSeeded() {
     await withLock(SEED_LOCK, async () => {
       if (!(await isSeeded())) await seed();
     });
+    // A fresh seed already wrote the enriched curriculum, so mark it done.
+    curriculumChecked = true;
   } catch (err) {
     console.error("[bodapesa] seed failed", err);
   }

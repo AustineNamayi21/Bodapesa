@@ -27,14 +27,14 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <form action={setRiderLanguageAction} className="flex rounded-full p-0.5" style={{ background: "rgba(255,255,255,0.12)" }}>
+              <form action={setRiderLanguageAction} className="flex rounded-none p-0.5" style={{ background: "rgba(255,255,255,0.12)" }}>
                 <input type="hidden" name="riderId" value={rider.id} />
                 {(["SW", "EN", "SH"] as const).map((l) => (
                   <button
                     key={l}
                     name="language"
                     value={l}
-                    className="px-2.5 py-1 rounded-full text-[0.7rem] font-extrabold transition-colors"
+                    className="px-2.5 py-1 rounded-none text-[0.7rem] font-extrabold transition-colors"
                     style={{
                       background: rider.language === l ? "var(--matatu)" : "transparent",
                       color: rider.language === l ? "var(--ink)" : "rgba(255,255,255,0.7)",
@@ -46,7 +46,7 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
               </form>
               <form action={riderLogoutAction}>
                 <button
-                  className="w-8 h-8 rounded-full grid place-items-center transition-colors hover:bg-white/10"
+                  className="w-8 h-8 rounded-none grid place-items-center transition-colors hover:bg-white/10"
                   aria-label="Toka · Sign out"
                   title="Toka · Sign out"
                 >

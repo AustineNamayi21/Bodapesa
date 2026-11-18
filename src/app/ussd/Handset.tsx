@@ -80,29 +80,29 @@ export default function Handset({ registered }: { registered: Registered[] }) {
     <div className="space-y-4">
       {/* handset */}
       <div
-        className="relative mx-auto w-full max-w-[330px] rounded-[44px] p-4 pb-5 animate-pop"
+        className="relative mx-auto w-full max-w-[330px] rounded-none p-4 pb-5 animate-pop"
         style={{
           background: "linear-gradient(160deg, #2b3036 0%, #15181b 55%, #0b0d0f 100%)",
           boxShadow: "0 30px 60px -20px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.12), 0 0 0 3px var(--ink)",
         }}
       >
-        <div className="mx-auto mb-3 w-16 h-1.5 rounded-full" style={{ background: "#07080a", boxShadow: "inset 0 1px 1px rgba(0,0,0,0.8)" }} />
-        <div className="rounded-[20px] p-2.5" style={{ background: "#07110b", boxShadow: "inset 0 2px 8px rgba(0,0,0,0.8)" }}>
-          <div className="flex items-center justify-between mb-1.5 px-1 text-[0.62rem] font-mono" style={{ color: "#6fd39a" }}>
+        <div className="mx-auto mb-3 w-16 h-1.5 rounded-none" style={{ background: "#07080a", boxShadow: "inset 0 1px 1px rgba(0,0,0,0.8)" }} />
+        <div className="rounded-none p-2.5" style={{ background: "#07110b", boxShadow: "inset 0 2px 8px rgba(0,0,0,0.8)" }}>
+          <div className="flex items-center justify-between mb-1.5 px-1 text-[0.62rem] font-mono" style={{ color: "#ffb08a" }}>
             <span className="flex items-end gap-[2px]" aria-hidden="true">
               {[4, 6, 8, 10].map((h) => (
-                <span key={h} className="w-[3px] rounded-sm" style={{ height: h, background: "#6fd39a" }} />
+                <span key={h} className="w-[3px] rounded-none" style={{ height: h, background: "#ffb08a" }} />
               ))}
             </span>
             <span className="font-bold tracking-wide">Safaricom</span>
             <span aria-hidden="true">▮▮▮▯</span>
           </div>
-          <div className="ussd-screen rounded-xl p-3 min-h-[228px]">
+          <div className="ussd-screen rounded-none p-3 min-h-[228px]">
             {screen ? (
               <>
                 {screen}
                 {sessionId && !ended ? (
-                  <div className="mt-2 pt-2 border-t border-dashed border-[#2f5a40]">
+                  <div className="mt-2 pt-2 border-t border-dashed border-[#5a3a2f]">
                     &gt; {input}
                     <span className="ussd-caret" />
                   </div>
@@ -128,8 +128,8 @@ export default function Handset({ registered }: { registered: Registered[] }) {
             type="button"
             onClick={() => (sessionId ? (ended ? hangUp() : send()) : dial())}
             disabled={busy || (!sessionId && !phone.trim()) || (Boolean(sessionId) && !ended && !input.trim())}
-            className="h-10 rounded-2xl grid place-items-center font-extrabold text-white transition-transform active:translate-y-0.5 disabled:opacity-50"
-            style={{ background: "linear-gradient(180deg, #22c55e, #15803d)", boxShadow: "0 2px 0 #0b3d1d" }}
+            className="h-10 rounded-none grid place-items-center font-extrabold text-white transition-transform active:translate-y-0.5 disabled:opacity-50"
+            style={{ background: "linear-gradient(180deg, #e65212, #b8400c)", boxShadow: "0 2px 0 #7a2b08" }}
             aria-label={sessionId ? "Send reply" : "Call"}
           >
             ✆
@@ -137,7 +137,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
           <button
             type="button"
             onClick={() => (sessionId ? setInput((v) => v.slice(0, -1)) : setPhone((v) => v.slice(0, -1)))}
-            className="h-8 rounded-xl text-[0.66rem] font-bold tracking-widest text-white/70"
+            className="h-8 rounded-none text-[0.66rem] font-bold tracking-widest text-white/70"
             style={{ background: "#1c2024" }}
           >
             ⌫ CLR
@@ -145,7 +145,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
           <button
             type="button"
             onClick={hangUp}
-            className="h-10 rounded-2xl grid place-items-center font-extrabold text-white transition-transform active:translate-y-0.5"
+            className="h-10 rounded-none grid place-items-center font-extrabold text-white transition-transform active:translate-y-0.5"
             style={{ background: "linear-gradient(180deg, #ef4444, #b91c1c)", boxShadow: "0 2px 0 #4c0b0b" }}
             aria-label="Hang up"
           >
@@ -223,7 +223,7 @@ export default function Handset({ registered }: { registered: Registered[] }) {
               <button
                 key={r.msisdn}
                 onClick={() => setPhone(r.display)}
-                className="w-full flex items-center justify-between gap-2 text-[0.78rem] p-2 rounded-xl hover:bg-[var(--surface-2)] text-left transition-colors"
+                className="w-full flex items-center justify-between gap-2 text-[0.78rem] p-2 rounded-none hover:bg-[var(--surface-2)] text-left transition-colors"
               >
                 <span className="truncate">
                   {r.firstName} {r.lastName}

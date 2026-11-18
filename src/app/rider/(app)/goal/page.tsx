@@ -40,7 +40,7 @@ export default async function GoalPage() {
       {goal ? (
         <>
           <section
-            className="rounded-[24px] p-5 relative overflow-hidden animate-pop border-2"
+            className="rounded-none p-5 relative overflow-hidden animate-pop border-2"
             style={{ background: "var(--success-soft)", borderColor: "transparent", boxShadow: "var(--shadow)" }}
           >
             <div className="flex items-center gap-5">
@@ -55,8 +55,8 @@ export default async function GoalPage() {
                 <div className="text-[0.8rem] text-[var(--text-muted)] mt-1">
                   {t("target", lang)} {formatKes(goal.targetAmount)}
                 </div>
-                <div className="mt-3 h-2.5 rounded-full overflow-hidden" style={{ background: "rgba(16,178,108,0.18)" }}>
-                  <div className="h-full rounded-full bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--mpesa)" }} />
+                <div className="mt-3 h-2.5 rounded-none overflow-hidden" style={{ background: "rgba(16,178,108,0.18)" }}>
+                  <div className="h-full rounded-none bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--mpesa)" }} />
                 </div>
               </div>
             </div>
@@ -70,7 +70,7 @@ export default async function GoalPage() {
                   i: <Flame size={15} />,
                 },
               ].map((x) => (
-                <div key={x.l} className="rounded-2xl p-2.5 text-center" style={{ background: "var(--surface)" }}>
+                <div key={x.l} className="rounded-none p-2.5 text-center" style={{ background: "var(--surface)" }}>
                   <div className="flex justify-center" style={{ color: "var(--success)" }}>
                     {x.i}
                   </div>
@@ -94,7 +94,7 @@ export default async function GoalPage() {
               <ul className="space-y-2">
                 {deposits.map((d) => (
                   <li key={d.id} className="flex items-center gap-3 text-[0.85rem]">
-                    <span className="w-8 h-8 rounded-full grid place-items-center shrink-0" style={{ background: "var(--success-soft)", color: "var(--success)" }}>
+                    <span className="w-8 h-8 rounded-none grid place-items-center shrink-0" style={{ background: "var(--success-soft)", color: "var(--success)" }}>
                       <ArrowDownToLine size={15} />
                     </span>
                     <span className="flex-1 font-bold tabular-nums">+ {formatKes(d.amount)}</span>

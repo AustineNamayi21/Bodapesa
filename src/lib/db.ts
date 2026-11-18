@@ -125,6 +125,12 @@ CREATE TABLE IF NOT EXISTS Lesson (
   smsEn TEXT NOT NULL,
   smsSw TEXT NOT NULL,
   smsSh TEXT NOT NULL,
+  sectionsEn TEXT NOT NULL DEFAULT '',
+  sectionsSw TEXT NOT NULL DEFAULT '',
+  sectionsSh TEXT NOT NULL DEFAULT '',
+  summaryEn TEXT NOT NULL DEFAULT '',
+  summarySw TEXT NOT NULL DEFAULT '',
+  summarySh TEXT NOT NULL DEFAULT '',
   durationMin INTEGER NOT NULL DEFAULT 4,
   active INTEGER NOT NULL DEFAULT 1
 );
@@ -590,10 +596,73 @@ export async function resetDatabase(): Promise<void> {
   globalForDb.__bodapesaMigrated = undefined;
 }
 
+/**
+ * Columns added after the first release.
+ *
+ * `CREATE TABLE IF NOT EXISTS` does nothing to a table that already exists,
+ * so a database created by an earlier version would be missing these. Rather
+ * than force a destructive reset on a live deployment, each is added in place
+ * if absent. Every one is nullable-or-defaulted, so adding it cannot fail and
+ * cannot invalidate an existing row.
+ */
+const ADDITIVE_COLUMNS: { table: string; column: string; ddl: string }[] = [
+  { table: "Lesson", column: "sectionsEn", ddl: "TEXT NOT NULL DEFAULT ''" },
+  { table: "Lesson", column: "sectionsSw", ddl: "TEXT NOT NULL DEFAULT ''" },
+  { table: "Lesson", column: "sectionsSh", ddl: "TEXT NOT NULL DEFAULT ''" },
+  { table: "Lesson", column: "summaryEn", ddl: "TEXT NOT NULL DEFAULT ''" },
+  { table: "Lesson", column: "summarySw", ddl: "TEXT NOT NULL DEFAULT ''" },
+  { table: "Lesson", column: "summarySh", ddl: "TEXT NOT NULL DEFAULT ''" },
+];
+
+async function existingColumns(d: Driver, table: string): Promise<Set<string>> {
+  const rows =
+    d.kind === "sqlite"
+      ? await d.query(`SELECT name FROM pragma_table_info('${table}')`, [])
+      : await d.query("SELECT column_name AS name FROM information_schema.columns WHERE table_name = ?", [
+          table.toLowerCase(),
+        ]);
+  // Compared case-insensitively: Postgres folds unquoted identifiers to
+  // lower case, so `sectionsEn` comes back as `sectionsen`.
+  return new Set(rows.map((r) => String(r.name).toLowerCase()));
+}
+
+async function topUpColumns(d: Driver): Promise<void> {
+  const byTable = new Map<string, typeof ADDITIVE_COLUMNS>();
+  for (const c of ADDITIVE_COLUMNS) {
+    byTable.set(c.table, [...(byTable.get(c.table) ?? []), c]);
+  }
+  for (const [table, columns] of byTable) {
+    const present = await existingColumns(d, table);
+    // The table itself may not exist yet on a database that predates it;
+    // in that case the fresh DDL above already created it correctly.
+    if (!present.size) continue;
+
+    for (const c of columns) {
+      if (present.has(c.column.toLowerCase())) continue;
+      // On a serverless host several instances cold-start at once and can
+      // all read the column as missing before any of them adds it. Postgres
+      // can make the statement itself idempotent; SQLite cannot, but it runs
+      // in a single local process where the race does not arise. Either way a
+      // "column already exists" failure means another instance won the race
+      // and the schema is correct, so it is not an error worth propagating —
+      // anything else still is.
+      const ifNotExists = d.kind === "postgres" ? "IF NOT EXISTS " : "";
+      try {
+        await d.query(`ALTER TABLE ${table} ADD COLUMN ${ifNotExists}${c.column} ${c.ddl}`, []);
+      } catch (err) {
+        if (!/already exists|duplicate column/i.test(String(err))) throw err;
+      }
+    }
+  }
+}
+
 /** Creates the schema if it does not exist. Safe to call on every request. */
 export function migrate(): Promise<void> {
   if (!globalForDb.__bodapesaMigrated) {
-    globalForDb.__bodapesaMigrated = driver().then((d) => d.migrate());
+    globalForDb.__bodapesaMigrated = driver().then(async (d) => {
+      await d.migrate();
+      await topUpColumns(d);
+    });
   }
   return globalForDb.__bodapesaMigrated;
 }
@@ -686,6 +755,50 @@ export async function update(table: string, idValue: string, data: Record<string
   if (!keys.length) return;
   const sets = keys.map((k) => `${quoteIdentifier(k)} = ?`).join(", ");
   await run(`UPDATE ${table} SET ${sets} WHERE id = ?`, [...keys.map((k) => data[k]), idValue]);
+}
+
+/**
+ * Insert a row, or update it if one with the same value in `conflictColumn`
+ * is already there. Used by the curriculum sync, which has to reach a
+ * database that may or may not already hold a given lesson.
+ *
+ * Written as select-then-write rather than as `ON CONFLICT`, because the two
+ * drivers spell that clause differently and the volumes here are tiny.
+ */
+export async function upsert(
+  table: string,
+  conflictColumn: string,
+  conflictValue: unknown,
+  data: Record<string, unknown>,
+): Promise<{ id: string; created: boolean }> {
+  const existing = await one<{ id: string }>(
+    `SELECT id FROM ${table} WHERE ${quoteIdentifier(conflictColumn)} = ?`,
+    [conflictValue],
+  );
+  if (existing) {
+    // `id` is the row's identity, never something to overwrite.
+    const { id: _ignored, ...patch } = data;
+    void _ignored;
+    await update(table, existing.id, patch);
+    return { id: existing.id, created: false };
+  }
+  await insert(table, data);
+  return { id: data.id as string, created: true };
+}
+
+/** Delete one row by id. */
+export async function remove(table: string, idValue: string): Promise<void> {
+  await run(`DELETE FROM ${table} WHERE id = ?`, [idValue]);
+}
+
+/**
+ * Delete by an arbitrary condition.
+ *
+ * `where` is a fragment written by the application, never by a user — the
+ * values always travel as bound parameters.
+ */
+export async function removeWhere(table: string, where: string, params: unknown[] = []): Promise<void> {
+  await run(`DELETE FROM ${table} WHERE ${where}`, params);
 }
 
 export const bool = (v: unknown) => Number(v) === 1;

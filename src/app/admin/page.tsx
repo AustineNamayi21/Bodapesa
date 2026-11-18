@@ -55,7 +55,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <header
-        className="relative rounded-[28px] overflow-hidden animate-rise"
+        className="relative rounded-none overflow-hidden animate-rise"
         style={{ background: "var(--ink)", boxShadow: "var(--shadow-lg)" }}
       >
         <div className="absolute inset-y-0 right-0 w-full md:w-[58%]">
@@ -200,10 +200,10 @@ export default async function DashboardPage() {
           <SectionTitle title="Partner pipeline" subtitle="Enquiries routed to each institution and their conversion" />
           <div className="space-y-3">
             {partners.map((p) => (
-              <div key={p.code} className="flex items-center justify-between gap-4 p-3 rounded-lg" style={{ background: "var(--surface-2)" }}>
+              <div key={p.code} className="flex items-center justify-between gap-4 p-3 rounded-none" style={{ background: "var(--surface-2)" }}>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: p.accent }} />
+                    <span className="w-2.5 h-2.5 rounded-none shrink-0" style={{ background: p.accent }} />
                     <span className="text-sm font-medium truncate">{p.name}</span>
                   </div>
                   <div className="text-[0.72rem] text-[var(--text-faint)] mt-0.5">

@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Check, ChevronRight, Clock, Hash } from "lucide-react";
+import { Check, ChevronRight, Clock, MessageSquare } from "lucide-react";
 import { all } from "@/lib/db";
 import { completedLessonIds, requireRider } from "@/lib/rider";
 import { MODULE_LABELS, pick, t } from "@/lib/i18n";
 import { MODULE_PHOTO, MODULE_THEME } from "@/lib/photos";
-import { USSD_CODE } from "@/lib/ussd-code";
 import { IconBadge, Photo } from "@/components/brand";
 import { ModuleIcon } from "@/components/rider";
 import type { Lang, Lesson } from "@/lib/types";
@@ -47,8 +46,8 @@ export default async function LearnPage() {
       <div className="animate-rise">
         <h1 className="text-[1.9rem] leading-tight">{t("learn", lang)}</h1>
         <div className="mt-2 flex items-center gap-3">
-          <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
-            <div className="h-full rounded-full bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--sunset)" }} />
+          <div className="flex-1 h-2.5 rounded-none overflow-hidden" style={{ background: "var(--surface-2)" }}>
+            <div className="h-full rounded-none bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--sunset)" }} />
           </div>
           <span className="text-[0.8rem] font-bold tabular-nums">
             {lessonsDone}/{lessonsTotal}
@@ -66,7 +65,7 @@ export default async function LearnPage() {
 
         return (
           <section key={moduleKey} className="animate-rise" style={{ animationDelay: `${mi * 90}ms` }}>
-            <div className="relative rounded-[20px] overflow-hidden h-28 photo-zoom" style={{ boxShadow: "var(--shadow)" }}>
+            <div className="relative rounded-none overflow-hidden h-28 photo-zoom" style={{ boxShadow: "var(--shadow)" }}>
               <Photo name={MODULE_PHOTO[moduleKey]} sizes="420px" />
               <div className="absolute inset-0" style={{ background: "linear-gradient(95deg, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.15) 90%)" }} />
               <div className="absolute inset-0 p-4 flex items-center justify-between gap-3">
@@ -82,7 +81,7 @@ export default async function LearnPage() {
                   </div>
                 </div>
                 <span
-                  className="shrink-0 rounded-full px-2.5 py-1 text-[0.72rem] font-extrabold border-2 tabular-nums"
+                  className="shrink-0 rounded-none px-2.5 py-1 text-[0.72rem] font-extrabold border-2 tabular-nums"
                   style={{ background: complete ? "var(--green-bright)" : "var(--surface)", borderColor: "transparent", color: "var(--ink)" }}
                 >
                   {complete ? "★ " : ""}
@@ -98,7 +97,7 @@ export default async function LearnPage() {
                 return (
                   <Link key={l.id} href={`/rider/learn/${l.code}`} className="card lift p-3 flex items-center gap-3 relative">
                     <span
-                      className="w-8 h-8 rounded-full grid place-items-center text-[0.8rem] font-extrabold shrink-0 border-2 relative z-10"
+                      className="w-8 h-8 rounded-none grid place-items-center text-[0.8rem] font-extrabold shrink-0 border-2 relative z-10"
                       style={{
                         background: isDone ? theme.fill : "var(--surface)",
                         borderColor: theme.fill,
@@ -127,16 +126,16 @@ export default async function LearnPage() {
         );
       })}
 
-      <div className="rounded-2xl p-4 flex items-center gap-3 border-2 border-dashed" style={{ borderColor: "var(--border-strong)" }}>
-        <IconBadge fill="var(--mpesa)" size={38}>
-          <Hash size={18} />
+      <div className="p-4 flex items-start gap-3" style={{ border: "2px solid var(--ink)" }}>
+        <IconBadge fill="var(--ember)" size={36}>
+          <MessageSquare size={17} />
         </IconBadge>
-        <p className="text-[0.8rem] text-[var(--text-muted)] leading-relaxed">
+        <p className="text-[0.82rem] leading-relaxed" style={{ color: "var(--text-muted)" }}>
           {lang === "EN"
-            ? `Every lesson here is also on ${USSD_CODE} — any phone, no data bundle.`
+            ? "A short version of every lesson is also sent to you by SMS, so you can read it without a data bundle and keep it on your phone."
             : lang === "SH"
-              ? `Kila lesson hapa iko pia kwa ${USSD_CODE} — simu yoyote, bila bundle.`
-              : `Kila somo hapa linapatikana pia kwa ${USSD_CODE} — simu yoyote, bila bando.`}
+              ? "Version fupi ya kila lesson inatumwa pia kwa SMS, ili usome bila bundle na uikeep kwa simu."
+              : "Toleo fupi la kila somo hutumwa pia kwa SMS, ili usome bila bando na ulihifadhi kwenye simu yako."}
         </p>
       </div>
     </div>

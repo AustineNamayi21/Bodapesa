@@ -99,7 +99,7 @@ export default async function IntegrationsPage() {
           {providers.map((p) => (
             <div
               key={p.channel}
-              className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg"
+              className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-none"
               style={{ background: "var(--surface-2)" }}
             >
               <div>
@@ -110,7 +110,7 @@ export default async function IntegrationsPage() {
             </div>
           ))}
           <div
-            className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg"
+            className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-none"
             style={{ background: "var(--surface-2)" }}
           >
             <div>
@@ -146,7 +146,7 @@ export default async function IntegrationsPage() {
         />
         {isLocal ? (
           <div
-            className="text-[0.78rem] p-3 rounded-lg mb-4"
+            className="text-[0.78rem] p-3 rounded-none mb-4"
             style={{ background: "var(--accent-soft)", color: "var(--text-muted)" }}
           >
             <strong style={{ color: "var(--accent)" }}>This is a local address.</strong> Providers cannot reach{" "}
@@ -156,7 +156,7 @@ export default async function IntegrationsPage() {
         ) : null}
         {!env.webhookSecret ? (
           <div
-            className="text-[0.78rem] p-3 rounded-lg mb-4"
+            className="text-[0.78rem] p-3 rounded-none mb-4"
             style={{ background: "var(--surface-2)", color: "var(--text-muted)" }}
           >
             <strong>Tip:</strong> set <code>WEBHOOK_SECRET</code> in your environment. It is appended to the

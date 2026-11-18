@@ -34,7 +34,7 @@ export default async function DonatePage() {
       <header className="border-b" style={{ background: "var(--surface)" }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg grid place-items-center text-xs font-bold" style={{ background: "var(--brand)", color: "#fff" }}>
+            <div className="w-7 h-7 rounded-none grid place-items-center text-xs font-bold" style={{ background: "var(--brand)", color: "#fff" }}>
               B
             </div>
             <span className="font-semibold tracking-tight text-sm">BodaPesa</span>

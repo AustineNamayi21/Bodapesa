@@ -75,7 +75,7 @@ export function CountUp({
   );
 }
 
-const CONFETTI_COLOURS = ["#0e7f3f", "#3ad17a", "#111111", "#ffffff", "#22b35e"];
+const CONFETTI_COLOURS = ["#e65212", "#000000", "#05c8a1", "#ffffff", "#b8400c"];
 
 /** A one-off confetti burst, e.g. when a quiz is passed. */
 export function Confetti({ pieces = 36 }: { pieces?: number }) {
@@ -100,7 +100,7 @@ export function Confetti({ pieces = 36 }: { pieces?: number }) {
             {
               left: b.left,
               background: b.colour,
-              borderRadius: b.round ? "999px" : "2px",
+              borderRadius: 0,
               animationDelay: b.delay,
               "--dx": b.dx,
               "--rot": b.rot,

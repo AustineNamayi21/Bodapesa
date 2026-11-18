@@ -275,7 +275,7 @@ export default function Composer({
             {CHANNELS.map((c) => (
               <label
                 key={c.value}
-                className="flex items-start gap-2.5 p-3 rounded-lg cursor-pointer"
+                className="flex items-start gap-2.5 p-3 rounded-none cursor-pointer"
                 style={{ background: "var(--surface-2)" }}
               >
                 <input
@@ -404,7 +404,7 @@ export default function Composer({
           <p className="text-[0.72rem] text-[var(--text-faint)] mb-3">riders will receive this campaign</p>
 
           {estimate && estimate.synthetic > 0 ? (
-            <div className="text-[0.74rem] p-2.5 rounded-lg mb-3 leading-relaxed" style={{ background: "var(--surface-2)" }}>
+            <div className="text-[0.74rem] p-2.5 rounded-none mb-3 leading-relaxed" style={{ background: "var(--surface-2)" }}>
               <div className="flex justify-between">
                 <span>Real messages</span>
                 <strong className="tabular-nums">{estimate.real.toLocaleString()}</strong>

@@ -49,7 +49,7 @@ export default async function DonationsPage() {
             { name: "M-Pesa (Daraja STK Push)", mode: mpesaMode() },
             { name: `Card (${cardProviderLabel()})`, mode: cardMode() },
           ].map((m) => (
-            <div key={m.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+            <div key={m.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-none" style={{ background: "var(--surface-2)" }}>
               <span className="text-sm font-medium">{m.name}</span>
               <ModePill mode={m.mode} />
             </div>

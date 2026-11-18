@@ -108,7 +108,7 @@ export default async function RiderProductsPage() {
                           <h3 className="text-[1.1rem] leading-snug">{p.name}</h3>
                           <div className="flex items-center gap-1.5 mt-1">
                             <span
-                              className="w-5 h-5 rounded-md grid place-items-center text-[0.6rem] font-extrabold text-white"
+                              className="w-5 h-5 rounded-none grid place-items-center text-[0.6rem] font-extrabold text-white"
                               style={{ background: p.accent }}
                             >
                               {p.partnerName.charAt(0)}
@@ -149,7 +149,7 @@ export default async function RiderProductsPage() {
                       <div className="mt-4">
                         {requested ? (
                           <div
-                            className="text-[0.8rem] p-3 rounded-xl font-semibold flex items-center gap-2 animate-pop"
+                            className="text-[0.8rem] p-3 rounded-none font-semibold flex items-center gap-2 animate-pop"
                             style={{ background: "var(--success-soft)", color: "var(--success)" }}
                           >
                             <BadgeCheck size={17} /> {t("requestSent", lang)}

@@ -10,6 +10,7 @@ import { PROVIDERS, smsMode } from "./channels/providers";
 import { inBackground } from "./background";
 import { normaliseMsisdn, displayMsisdn } from "./i18n";
 import { env, rateLimit } from "./env";
+import { echo } from "./form-state";
 import { currentUser } from "./auth";
 import { OTP_COOKIE, OTP_TTL_MS, checkTicket, codeMessage, issueTicket, newCode, readTicket } from "./otp";
 import { cookies, headers } from "next/headers";
@@ -254,7 +255,11 @@ export async function riderLoginAction(_prev: RiderLoginState, formData: FormDat
     "SELECT id, language, isSynthetic FROM Rider WHERE msisdn = ?",
     [msisdn],
   );
-  if (!rider) return { error: "That number is not registered. Dial *384*14791# to join, or ask your stage chairperson." };
+  if (!rider) {
+    return {
+      error: "That number is not registered yet. Tap “Jisajili · Register” below to join — it takes two minutes.",
+    };
+  }
 
   // Demonstration riders hold no real person's data (their numbers were
   // generated, or typed into the web USSD simulator), so they sign in
@@ -295,6 +300,124 @@ export async function riderLoginAction(_prev: RiderLoginState, formData: FormDat
         ? "Sandbox mode: the code appears in the Africa's Talking simulator, not on a real phone."
         : undefined,
   };
+}
+
+// ------------------------------------------------- rider self-registration --
+
+/**
+ * `values` echoes the submission back. React resets an uncontrolled form once
+ * its action resolves, so without this a rider who forgets the consent box
+ * would find every other field blanked and have to start again.
+ */
+export type RiderRegisterState = null | { error?: string; field?: string; values?: Record<string, string> };
+
+/**
+ * Rider self-registration.
+ *
+ * The second of the two onboarding routes that replace USSD. A field officer
+ * can still enrol a rider from the console; this lets a rider who has a
+ * smartphone do it themselves at the stage, in their own language, and land
+ * straight in the portal.
+ *
+ * It writes the same Rider row as the console route — same columns, same
+ * defaults — so a self-registered rider is indistinguishable downstream
+ * except for `registeredVia`, which records how they arrived. Campaign
+ * audiences, segments and the literacy score all work unchanged.
+ */
+export async function riderSelfRegisterAction(
+  _prev: RiderRegisterState,
+  formData: FormData,
+): Promise<RiderRegisterState> {
+  const ip = await clientIp();
+  // A registration creates a permanent record and can trigger an SMS, so the
+  // endpoint is throttled per address. Generous enough for a whole stage
+  // signing up together, tight enough that it cannot be used to enumerate
+  // numbers or burn the SMS balance.
+  if (!rateLimit(`rider-register-ip:${ip}`, 12, 30 * 60_000)) {
+    return { error: "Too many registrations from this connection. Please wait a few minutes.", values: echo(formData) };
+  }
+
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+  if (!firstName) return { error: "Enter your first name.", field: "firstName", values: echo(formData) };
+  if (!lastName) return { error: "Enter your last name.", field: "lastName", values: echo(formData) };
+
+  const msisdn = normaliseMsisdn(String(formData.get("msisdn") ?? ""));
+  if (!msisdn) return { error: "Enter a valid Kenyan phone number, e.g. 0712 345 678.", field: "msisdn", values: echo(formData) };
+
+  if (!formData.get("consent")) {
+    return { error: "Please agree to receive the lessons before continuing.", field: "consent", values: echo(formData) };
+  }
+
+  const existing = await one<{ id: string }>("SELECT id FROM Rider WHERE msisdn = ?", [msisdn]);
+  if (existing) {
+    return {
+      error: "That number is already registered. Go back and sign in with it instead.",
+      field: "msisdn",
+      values: echo(formData),
+    };
+  }
+
+  // Only accept values the schema expects; anything else falls back to the
+  // same defaults the console form uses.
+  const language = (["EN", "SW", "SH"] as const).includes(String(formData.get("language")) as Lang)
+    ? String(formData.get("language"))
+    : "SW";
+  const channelPref = (["SMS", "WHATSAPP", "USSD", "APP"] as const).includes(
+    String(formData.get("channelPref")) as Channel,
+  )
+    ? String(formData.get("channelPref"))
+    : "SMS";
+
+  const stageId = String(formData.get("stageId") ?? "").trim() || null;
+  if (stageId) {
+    const stage = await one("SELECT id FROM Stage WHERE id = ?", [stageId]);
+    if (!stage) return { error: "That stage was not recognised. Pick one from the list.", values: echo(formData) };
+  }
+
+  const riderId = id("rdr");
+  await insert("Rider", {
+    id: riderId,
+    msisdn,
+    firstName,
+    lastName,
+    nationalId: String(formData.get("nationalId") ?? "").trim() || null,
+    gender: String(formData.get("gender") ?? "") || null,
+    ageBand: String(formData.get("ageBand") ?? "") || null,
+    language,
+    channelPref,
+    stageId,
+    dailyIncomeBand: String(formData.get("dailyIncomeBand") ?? "") || null,
+    ownsMotorbike: formData.get("ownsMotorbike") ? 1 : 0,
+    hasBankAccount: formData.get("hasBankAccount") ? 1 : 0,
+    saccoMember: formData.get("saccoMember") ? 1 : 0,
+    hasInsurance: formData.get("hasInsurance") ? 1 : 0,
+    usesMobileMoney: formData.get("usesMobileMoney") ? 1 : 0,
+    // They have signed themselves up and are about to start lesson one, so
+    // they are further along than a prospect an officer merely recorded.
+    status: "ENROLLED",
+    literacyScore: 0,
+    consent: 1,
+    consentAt: now(),
+    registeredVia: "SELF",
+    isSynthetic: 0,
+    lastActiveAt: now(),
+    createdAt: now(),
+    updatedAt: now(),
+  });
+
+  // Confirms the number really is theirs and gives them something in the
+  // inbox on first visit. Backgrounded so a slow gateway cannot stall the
+  // form; a failure here must not undo a completed registration.
+  inBackground(() => sendWelcome(riderId));
+
+  // Straight into the portal — asking someone to register and then sign in
+  // again with a code loses people at exactly the wrong moment.
+  await setRiderSession(riderId);
+
+  revalidatePath("/admin/riders");
+  revalidatePath("/admin");
+  redirect("/rider/home");
 }
 
 export async function riderLogoutAction() {

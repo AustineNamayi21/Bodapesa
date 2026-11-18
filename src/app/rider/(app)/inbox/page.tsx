@@ -62,7 +62,7 @@ export default async function InboxPage() {
                 <LogoMark size={30} className="shrink-0 mb-1" />
                 <div className="min-w-0 flex-1">
                   <div
-                    className="rounded-2xl rounded-bl-sm p-3.5 border-2 relative"
+                    className="rounded-none p-3.5 border-2 relative"
                     style={{
                       background: "var(--surface)",
                       borderColor: m.readAt ? "var(--border)" : "var(--green)",
@@ -83,7 +83,7 @@ export default async function InboxPage() {
                     ) : null}
                   </div>
                   <div className="flex items-center gap-2 mt-1 ml-1 text-[0.68rem] text-[var(--text-faint)]">
-                    <span className="w-2 h-2 rounded-full" style={{ background: ch.fill }} />
+                    <span className="w-2 h-2 rounded-none" style={{ background: ch.fill }} />
                     <span className="font-bold">{ch.label}</span>
                     <span>· {timeAgo(m.createdAt)}</span>
                   </div>

@@ -88,10 +88,10 @@ export default async function RiderHomePage() {
 
       {/* ───────────────────────────────────────────────── journey card ── */}
       <section
-        className="rounded-[24px] p-5 relative overflow-hidden animate-pop"
+        className="rounded-none p-5 relative overflow-hidden animate-pop"
         style={{ background: "var(--ink)", color: "var(--cream)", boxShadow: "var(--shadow-lg)" }}
       >
-        <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full opacity-25 blur-2xl" style={{ background: "var(--kanga)" }} aria-hidden="true" />
+        <div className="absolute -right-16 -top-16 w-48 h-48 rounded-none opacity-25 blur-2xl" style={{ background: "var(--kanga)" }} aria-hidden="true" />
         <div className="relative flex items-center gap-4">
           <ScoreRing value={rider.literacyScore} label={COPY.score[lang]} />
           <div className="min-w-0">
@@ -212,7 +212,7 @@ export default async function RiderHomePage() {
             <MessageSquareText size={13} /> {COPY.latest[lang]}
           </div>
           <div
-            className="rounded-2xl rounded-tl-sm p-3.5 text-[0.84rem] leading-relaxed border-2 lift"
+            className="rounded-none p-3.5 text-[0.84rem] leading-relaxed border-2 lift"
             style={{ background: "var(--surface)", borderColor: "var(--border)", boxShadow: "var(--shadow)" }}
           >
             <span className="pill mb-1.5" style={{ background: "var(--success-soft)", color: "var(--success)" }}>

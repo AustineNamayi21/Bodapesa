@@ -132,7 +132,7 @@ export default function DonateForm({ methods, presets, impact, min, max, cardPro
   if (phase === "success") {
     return (
       <div className="card p-6 text-center">
-        <div className="w-12 h-12 mx-auto rounded-full grid place-items-center text-xl mb-3" style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}>
+        <div className="w-12 h-12 mx-auto rounded-none grid place-items-center text-xl mb-3" style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}>
           ✓
         </div>
         <h3 className="font-semibold text-lg tracking-tight">Asante sana{name ? `, ${name.split(" ")[0]}` : ""}!</h3>
@@ -150,7 +150,7 @@ export default function DonateForm({ methods, presets, impact, min, max, cardPro
   if (phase === "waiting") {
     return (
       <div className="card p-6 text-center">
-        <div className="w-10 h-10 mx-auto mb-4 rounded-full border-2 animate-spin" style={{ borderColor: "var(--border-strong)", borderTopColor: "var(--brand)" }} />
+        <div className="w-10 h-10 mx-auto mb-4 rounded-none border-2 animate-spin" style={{ borderColor: "var(--border-strong)", borderTopColor: "var(--brand)" }} />
         <h3 className="font-semibold tracking-tight">Check your phone</h3>
         <p className="text-sm text-[var(--text-muted)] mt-1.5">
           An M-Pesa prompt for <strong className="text-[var(--text)]">{fmt(amount)}</strong> is on its way to {phone}. Enter your M-Pesa PIN to finish.
@@ -187,7 +187,7 @@ export default function DonateForm({ methods, presets, impact, min, max, cardPro
   return (
     <form onSubmit={submit} className="card p-5 sm:p-6 space-y-5" noValidate>
       {testMode ? (
-        <div className="text-[0.75rem] rounded-lg px-3 py-2" style={{ background: "var(--info-soft)", color: "var(--info)" }}>
+        <div className="text-[0.75rem] rounded-none px-3 py-2" style={{ background: "var(--info-soft)", color: "var(--info)" }}>
           Test mode — {methods[method].mode === "sandbox" ? "the provider sandbox is in use" : "payments are simulated"}, so no real money moves.
         </div>
       ) : null}

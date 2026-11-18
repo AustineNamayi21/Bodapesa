@@ -51,7 +51,7 @@ export default async function ThanksPage({
     <main className="min-h-screen grid place-items-center px-4">
       <div className="card p-8 max-w-md w-full text-center">
         <div
-          className="w-12 h-12 mx-auto rounded-full grid place-items-center text-xl mb-4"
+          className="w-12 h-12 mx-auto rounded-none grid place-items-center text-xl mb-4"
           style={{
             background: tone === "ok" ? "var(--brand-soft)" : tone === "wait" ? "var(--info-soft)" : "var(--danger-soft)",
             color: tone === "ok" ? "var(--brand-strong)" : tone === "wait" ? "var(--info)" : "var(--danger)",

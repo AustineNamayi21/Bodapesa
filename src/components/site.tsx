@@ -49,7 +49,7 @@ export function SiteHeader() {
               >
                 {n.label}
                 <span
-                  className="absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full origin-left transition-transform duration-300 group-hover:scale-x-100"
+                  className="absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-none origin-left transition-transform duration-300 group-hover:scale-x-100"
                   style={{ background: "var(--green-bright)", transform: active ? "scaleX(1)" : "scaleX(0)" }}
                 />
               </Link>
@@ -66,7 +66,7 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            className="lg:hidden w-10 h-10 grid place-items-center rounded-full text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden w-10 h-10 grid place-items-center rounded-none text-white hover:bg-white/10 transition-colors"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? "Close menu" : "Open menu"}
@@ -135,7 +135,7 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
       aria-roledescription="carousel"
     >
       <div
-        className="absolute -top-40 right-[-10%] w-[640px] h-[640px] rounded-full opacity-20 blur-3xl pointer-events-none"
+        className="absolute -top-40 right-[-10%] w-[640px] h-[640px] rounded-none opacity-20 blur-3xl pointer-events-none"
         style={{ background: "radial-gradient(circle, var(--green-bright), transparent 65%)" }}
         aria-hidden="true"
       />
@@ -155,7 +155,7 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
               >
                 <div key={active ? `on-${index}` : `off-${i}`}>
                   <span className="eyebrow animate-rise" style={{ color: "var(--green-bright)" }}>
-                    <span className="w-7 h-[2px] rounded" style={{ background: "var(--green-bright)" }} />
+                    <span className="w-7 h-[2px] rounded-none" style={{ background: "var(--green-bright)" }} />
                     {s.eyebrow}
                   </span>
                   {i === 0 ? (
@@ -177,7 +177,7 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
                 </div>
 
                 <div className="relative">
-                  <div className="relative aspect-[5/4] rounded-[28px] overflow-hidden" style={{ boxShadow: "0 40px 80px -30px rgba(0,0,0,0.8)" }}>
+                  <div className="relative aspect-[5/4] rounded-none overflow-hidden" style={{ boxShadow: "0 40px 80px -30px rgba(0,0,0,0.8)" }}>
                     <div key={active ? `img-${index}` : `img-off-${i}`} className="absolute inset-0 animate-kenburns">
                       <Photo name={s.photo} priority={i === 0} sizes="(max-width: 1024px) 92vw, 560px" />
                     </div>
@@ -185,10 +185,10 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
                   </div>
                   {s.card ? (
                     <div
-                      className="absolute -bottom-6 left-4 sm:-left-6 rounded-2xl px-4 py-3 flex items-center gap-3 animate-float"
+                      className="absolute -bottom-6 left-4 sm:-left-6 rounded-none px-4 py-3 flex items-center gap-3 animate-float"
                       style={{ background: "#fff", color: "var(--ink)", boxShadow: "0 20px 40px -16px rgba(0,0,0,0.5)" }}
                     >
-                      <span className="w-10 h-10 rounded-xl grid place-items-center text-white font-display font-bold" style={{ background: "var(--green)" }}>
+                      <span className="w-10 h-10 rounded-none grid place-items-center text-white font-display font-bold" style={{ background: "var(--green)" }}>
                         ✓
                       </span>
                       <span className="leading-tight">
@@ -214,13 +214,13 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
                   onClick={() => go(i)}
                   aria-label={`Show slide ${i + 1}`}
                   aria-current={i === index}
-                  className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                  className="relative h-1.5 rounded-none overflow-hidden transition-all duration-300"
                   style={{ width: i === index ? 48 : 18, background: "rgba(255,255,255,0.25)" }}
                 >
                   {i === index ? (
                     <span
                       key={`p-${index}-${paused}`}
-                      className="absolute inset-0 rounded-full origin-left"
+                      className="absolute inset-0 rounded-none origin-left"
                       style={{
                         background: "var(--green-bright)",
                         animation: paused ? "none" : `progress-x ${interval}ms linear forwards`,
@@ -232,10 +232,10 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
               ))}
             </div>
             <div className="flex gap-2 ml-auto">
-              <button type="button" onClick={() => go(index - 1)} className="w-11 h-11 rounded-full grid place-items-center border border-white/25 hover:border-[var(--green-bright)] hover:text-[var(--green-bright)] transition-colors" aria-label="Previous slide">
+              <button type="button" onClick={() => go(index - 1)} className="w-11 h-11 rounded-none grid place-items-center border border-white/25 hover:border-[var(--green-bright)] hover:text-[var(--green-bright)] transition-colors" aria-label="Previous slide">
                 <ArrowLeft size={18} />
               </button>
-              <button type="button" onClick={() => go(index + 1)} className="w-11 h-11 rounded-full grid place-items-center border border-white/25 hover:border-[var(--green-bright)] hover:text-[var(--green-bright)] transition-colors" aria-label="Next slide">
+              <button type="button" onClick={() => go(index + 1)} className="w-11 h-11 rounded-none grid place-items-center border border-white/25 hover:border-[var(--green-bright)] hover:text-[var(--green-bright)] transition-colors" aria-label="Next slide">
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -263,10 +263,10 @@ export function CardRail({ children, label }: { children: ReactNode; label: stri
   return (
     <div className="relative">
       <div className="hidden sm:flex gap-2 absolute -top-16 right-0">
-        <button type="button" onClick={() => scroll(-1)} className="w-11 h-11 rounded-full grid place-items-center border bg-[var(--surface)] hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label={`Scroll ${label} left`}>
+        <button type="button" onClick={() => scroll(-1)} className="w-11 h-11 rounded-none grid place-items-center border bg-[var(--surface)] hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label={`Scroll ${label} left`}>
           <ArrowLeft size={18} />
         </button>
-        <button type="button" onClick={() => scroll(1)} className="w-11 h-11 rounded-full grid place-items-center border bg-[var(--surface)] hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label={`Scroll ${label} right`}>
+        <button type="button" onClick={() => scroll(1)} className="w-11 h-11 rounded-none grid place-items-center border bg-[var(--surface)] hover:border-[var(--green)] hover:text-[var(--green)] transition-colors" aria-label={`Scroll ${label} right`}>
           <ArrowRight size={18} />
         </button>
       </div>

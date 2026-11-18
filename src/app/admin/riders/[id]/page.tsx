@@ -4,6 +4,10 @@ import { all, count, one } from "@/lib/db";
 import { Bar, Card, Pill, SectionTitle, STATUS_TONE, formatKes, timeAgo } from "@/components/ui";
 import { displayMsisdn } from "@/lib/i18n";
 import { updateRiderStatusAction } from "@/lib/actions";
+import { deleteRiderAction } from "@/lib/crud";
+import { currentUser } from "@/lib/auth";
+import { DangerButton } from "@/components/admin";
+import { Pencil } from "lucide-react";
 import DirectMessage from "./DirectMessage";
 import type { RiderWithStage } from "@/lib/types";
 
@@ -54,6 +58,8 @@ export default async function RiderDetailPage({ params }: { params: Promise<{ id
     : 0;
 
   const totalLessons = await count("SELECT COUNT(*) AS n FROM Lesson WHERE active = 1");
+  const user = await currentUser();
+  const canDelete = user?.role === "PLATFORM_ADMIN";
 
   const facts: [string, string][] = [
     ["Phone", displayMsisdn(rider.msisdn)],
@@ -88,6 +94,22 @@ export default async function RiderDetailPage({ params }: { params: Promise<{ id
           {rider.consent ? <Pill tone="brand">Consented</Pill> : <Pill tone="danger">No consent</Pill>}
           {Number(rider.isSynthetic) === 1 ? <Pill tone="neutral">Demo rider · messages simulated</Pill> : null}
           {rider.registeredVia === "TEST" ? <Pill tone="info">Test number</Pill> : null}
+          {rider.registeredVia === "SELF" ? <Pill tone="accent">Self-registered</Pill> : null}
+        </div>
+
+        <div className="flex flex-wrap items-start gap-2 mt-4">
+          <Link href={`/admin/riders/${rider.id}/edit`} className="btn btn-ghost btn-sm">
+            <Pencil size={13} /> Edit rider
+          </Link>
+          {canDelete ? (
+            <DangerButton
+              action={deleteRiderAction}
+              hidden={{ riderId: rider.id }}
+              label="Delete rider"
+              confirmLabel="Delete permanently"
+              warning={`Deleting ${rider.firstName} ${rider.lastName} also removes their ${progress.length} lesson completion${progress.length === 1 ? "" : "s"}, ${leads.length} lead${leads.length === 1 ? "" : "s"}, every message sent to them and any savings goal. This cannot be undone.`}
+            />
+          ) : null}
         </div>
       </header>
 
@@ -112,7 +134,7 @@ export default async function RiderDetailPage({ params }: { params: Promise<{ id
               {holdings.map(([label, has]) => (
                 <li key={label} className="flex items-center gap-2 text-[0.82rem]">
                   <span
-                    className="w-4 h-4 rounded grid place-items-center text-[0.6rem] shrink-0"
+                    className="w-4 h-4 rounded-none grid place-items-center text-[0.6rem] shrink-0"
                     style={{
                       background: has ? "var(--brand-soft)" : "var(--surface-2)",
                       color: has ? "var(--brand-strong)" : "var(--text-faint)",
@@ -214,7 +236,7 @@ export default async function RiderDetailPage({ params }: { params: Promise<{ id
             {leads.length ? (
               <ul className="space-y-2">
                 {leads.map((l) => (
-                  <li key={l.id} className="p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+                  <li key={l.id} className="p-2.5 rounded-none" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="text-[0.82rem] font-medium truncate">{l.productName}</div>

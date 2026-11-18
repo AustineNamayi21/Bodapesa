@@ -163,7 +163,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                     </span>
                   </div>
                   <p
-                    className="text-[0.82rem] leading-relaxed p-3 rounded-lg"
+                    className="text-[0.82rem] leading-relaxed p-3 rounded-none"
                     style={{ background: "var(--surface-2)" }}
                   >
                     {body}
@@ -200,7 +200,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
           ) : (
             <Card>
               <SectionTitle title="Audience definition" />
-              <pre className="text-[0.72rem] p-3 rounded-lg overflow-x-auto scroll-thin" style={{ background: "var(--surface-2)" }}>
+              <pre className="text-[0.72rem] p-3 rounded-none overflow-x-auto scroll-thin" style={{ background: "var(--surface-2)" }}>
                 {JSON.stringify(segment, null, 2)}
               </pre>
             </Card>

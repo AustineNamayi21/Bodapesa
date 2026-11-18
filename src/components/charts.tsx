@@ -64,7 +64,7 @@ export function TrendChart({
       <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2">
         {series.map((s, i) => (
           <span key={s.key} className="inline-flex items-center gap-1.5 text-[0.72rem] text-[var(--text-muted)]">
-            <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: SERIES[i % SERIES.length] }} />
+            <span className="w-2.5 h-2.5 rounded-none" style={{ background: SERIES[i % SERIES.length] }} />
             {s.label}
           </span>
         ))}
@@ -139,7 +139,7 @@ export function TrendChart({
             {series.map((s, i) => (
               <div key={s.key} className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-1.5 text-[var(--text-muted)]">
-                  <span className="w-2 h-2 rounded-[2px]" style={{ background: SERIES[i % SERIES.length] }} />
+                  <span className="w-2 h-2 rounded-none" style={{ background: SERIES[i % SERIES.length] }} />
                   {s.label}
                 </span>
                 <span className="font-semibold tabular-nums">{String(data[hover][s.key] ?? 0)}</span>
@@ -222,9 +222,9 @@ export function BarList({
             {/* direct label — identity and magnitude never rely on colour alone */}
             <span className="text-[0.8rem] font-semibold tabular-nums shrink-0">{format(d.value)}</span>
           </div>
-          <div className="h-2 rounded-[4px] w-full" style={{ background: "var(--surface-2)" }}>
+          <div className="h-2 rounded-none w-full" style={{ background: "var(--surface-2)" }}>
             <div
-              className="h-full rounded-[4px] transition-[width] duration-300"
+              className="h-full rounded-none transition-[width] duration-300"
               style={{
                 width: `${Math.max(2, (d.value / max) * 100)}%`,
                 background: colour,
@@ -264,7 +264,7 @@ export function GroupedBars({
       <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
         {seriesLabels.map((l, i) => (
           <span key={l} className="inline-flex items-center gap-1.5 text-[0.72rem] text-[var(--text-muted)]">
-            <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: SERIES[i] }} />
+            <span className="w-2.5 h-2.5 rounded-none" style={{ background: SERIES[i] }} />
             {l}
           </span>
         ))}
@@ -276,9 +276,9 @@ export function GroupedBars({
             <div className="space-y-1">
               {([d.a, d.b] as const).map((v, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <div className="h-2 rounded-[4px] flex-1" style={{ background: "var(--surface-2)" }}>
+                  <div className="h-2 rounded-none flex-1" style={{ background: "var(--surface-2)" }}>
                     <div
-                      className="h-full rounded-[4px]"
+                      className="h-full rounded-none"
                       style={{
                         width: `${Math.max(2, (v / max) * 100)}%`,
                         background: SERIES[i],
@@ -322,9 +322,9 @@ export function Funnel({ data }: { data: { stage: string; value: number }[] }) {
                 ) : null}
               </span>
             </div>
-            <div className="h-6 rounded-[5px] w-full" style={{ background: "var(--surface-2)" }}>
+            <div className="h-6 rounded-none w-full" style={{ background: "var(--surface-2)" }}>
               <div
-                className="h-full rounded-[5px] transition-[width] duration-300"
+                className="h-full rounded-none transition-[width] duration-300"
                 style={{
                   width: `${Math.max(3, (d.value / max) * 100)}%`,
                   background: "var(--brand)",
