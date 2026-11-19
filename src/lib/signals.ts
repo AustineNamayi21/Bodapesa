@@ -72,13 +72,19 @@ export async function recordSignal(opts: {
   try {
     if (opts.dedupeHours) {
       const since = new Date(Date.now() - opts.dedupeHours * 3600_000).toISOString();
-      const seen = await one<{ id: string }>(
-        `SELECT id FROM RiderSignal
-          WHERE riderId = ? AND kind = ? AND createdAt > ?
-            AND ((productId IS NULL AND ? IS NULL) OR productId = ?)
-          LIMIT 1`,
-        [opts.riderId, opts.kind, since, opts.productId ?? null, opts.productId ?? null],
-      );
+      // Branching rather than `? IS NULL`, which Postgres cannot type.
+      const productId = opts.productId ?? null;
+      const seen = productId
+        ? await one<{ id: string }>(
+            `SELECT id FROM RiderSignal
+              WHERE riderId = ? AND kind = ? AND createdAt > ? AND productId = ? LIMIT 1`,
+            [opts.riderId, opts.kind, since, productId],
+          )
+        : await one<{ id: string }>(
+            `SELECT id FROM RiderSignal
+              WHERE riderId = ? AND kind = ? AND createdAt > ? AND productId IS NULL LIMIT 1`,
+            [opts.riderId, opts.kind, since],
+          );
       if (seen) return;
     }
     await insert("RiderSignal", {
@@ -152,7 +158,7 @@ export async function warmRiders(opts: { days?: number; limit?: number; partnerI
        LEFT JOIN Stage st ON st.id = r.stageId
        LEFT JOIN Product pr ON pr.id = s.productId
       WHERE s.createdAt > ? AND r.status <> 'OPTED_OUT' ${partnerFilter}
-      GROUP BY r.id
+      GROUP BY r.id, st.name
       ORDER BY score DESC, lastSignalAt DESC
       LIMIT ?`,
     [since, ...params],

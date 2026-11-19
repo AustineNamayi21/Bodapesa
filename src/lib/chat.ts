@@ -64,13 +64,23 @@ export async function openConversation(opts: {
   subject: string;
   openedBy: SenderType;
 }): Promise<string> {
-  const existing = await one<{ id: string }>(
-    `SELECT id FROM Conversation
-      WHERE riderId = ? AND status <> 'RESOLVED'
-        AND ((productId IS NULL AND ? IS NULL) OR productId = ?)
-      ORDER BY lastMessageAt DESC LIMIT 1`,
-    [opts.riderId, opts.productId ?? null, opts.productId ?? null],
-  );
+  // The product branch is chosen in JavaScript rather than with `? IS NULL`:
+  // Postgres cannot infer the type of a bare parameter compared to NULL and
+  // rejects the statement, where SQLite accepts it happily.
+  const productId = opts.productId ?? null;
+  const existing = productId
+    ? await one<{ id: string }>(
+        `SELECT id FROM Conversation
+          WHERE riderId = ? AND status <> 'RESOLVED' AND productId = ?
+          ORDER BY lastMessageAt DESC LIMIT 1`,
+        [opts.riderId, productId],
+      )
+    : await one<{ id: string }>(
+        `SELECT id FROM Conversation
+          WHERE riderId = ? AND status <> 'RESOLVED' AND productId IS NULL
+          ORDER BY lastMessageAt DESC LIMIT 1`,
+        [opts.riderId],
+      );
   if (existing) return existing.id;
 
   const stamp = now();
@@ -135,16 +145,20 @@ export async function postMessage(opts: {
   }
 
   // Staff and system replies both land on the rider's side. A staff reply
-  // also parks the thread as waiting on the rider.
+  // also clears our own unread and parks the thread as waiting on the rider.
+  // Whether this is a staff reply is known here, so it shapes the statement
+  // instead of becoming a parameter: Postgres cannot type `? = 'STAFF'`,
+  // where both sides are unknown to the planner.
+  const fromStaff = opts.senderType === "STAFF";
   await run(
     `UPDATE Conversation
         SET riderUnread = riderUnread + 1,
-            staffUnread = CASE WHEN ? = 'STAFF' THEN 0 ELSE staffUnread END,
+            ${fromStaff ? "staffUnread = 0," : ""}
             lastMessageAt = ?, lastMessageFrom = ?,
-            status = CASE WHEN ? = 'STAFF' AND status = 'OPEN' THEN 'PENDING_RIDER' ELSE status END,
+            ${fromStaff ? "status = CASE WHEN status = 'OPEN' THEN 'PENDING_RIDER' ELSE status END," : ""}
             updatedAt = ?
       WHERE id = ?`,
-    [opts.senderType, stamp, opts.senderType, opts.senderType, stamp, opts.conversationId],
+    [stamp, opts.senderType, stamp, opts.conversationId],
   );
 }
 

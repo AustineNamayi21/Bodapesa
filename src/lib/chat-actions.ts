@@ -88,11 +88,14 @@ export async function riderSendMessageAction(
           updatedAt: now(),
         });
       } else {
-        await run("UPDATE Lead SET conversationId = ?, updatedAt = ? WHERE id = ?", [
-          conversationId,
-          now(),
-          leadId,
-        ]);
+        // The rider is asking again about something they already have an open
+        // lead on. Link the thread, and pull the lead back to the front of the
+        // queue: a second question is the clearest signal there is that the
+        // first one was not answered well enough.
+        await run(
+          "UPDATE Lead SET conversationId = ?, nextActionAt = ?, updatedAt = ? WHERE id = ?",
+          [conversationId, now(), now(), leadId],
+        );
       }
       await run("UPDATE Conversation SET leadId = ? WHERE id = ?", [leadId, conversationId]);
       await recordSignal({ riderId, kind: "ENQUIRY_SENT", productId, detail: "Asked in chat" });

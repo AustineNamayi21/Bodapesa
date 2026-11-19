@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS AppUser (
   passwordHash TEXT NOT NULL,
   role TEXT NOT NULL,
   partnerId TEXT REFERENCES Partner(id),
+  active INT_TYPE NOT NULL DEFAULT 1,
   createdAt TEXT NOT NULL
 );
 
@@ -216,6 +217,11 @@ CREATE TABLE IF NOT EXISTS Lead (
   source TEXT NOT NULL DEFAULT 'APP',
   note TEXT,
   valueKes REAL_TYPE,
+  ownerId TEXT,
+  nextActionAt TEXT,
+  firstContactedAt TEXT,
+  outcomeReason TEXT,
+  conversationId TEXT,
   createdAt TEXT NOT NULL,
   updatedAt TEXT NOT NULL
 );
@@ -342,6 +348,16 @@ CREATE INDEX IF NOT EXISTS idx_donation_providerref ON Donation(providerRef);
  */
 const EXTRA_ALIASES = [
   "stageName",
+  "riderName",
+  "ownerName",
+  "assignedName",
+  "leadStatus",
+  "riderStatus",
+  "topKind",
+  "hasOpenLead",
+  "lastSignalAt",
+  "lessonsDone",
+  "goalTitle",
   "partnerName",
   "partnerCode",
   "partnerAccent",
@@ -351,6 +367,13 @@ const EXTRA_ALIASES = [
   "riderId",
   "msgs",
 ];
+
+/** Every table the DDL declares, lowercased as Postgres stores them. */
+function ddlTableNames(): string[] {
+  return [...BASE_DDL.matchAll(/CREATE TABLE IF NOT EXISTS\s+([A-Za-z_][A-Za-z0-9_]*)/g)].map((m) =>
+    m[1].toLowerCase(),
+  );
+}
 
 function buildKeyMap(): Map<string, string> {
   const map = new Map<string, string>();
@@ -580,15 +603,21 @@ async function createPostgresDriver(url: string): Promise<Driver> {
     kind: "postgres",
     query,
     async migrate() {
-      // Fast path: the schema is created in a single transaction, so if its
-      // last table exists, all of it does. `to_regclass` takes no locks.
-      // Skipping here matters: even a no-op `CREATE INDEX IF NOT EXISTS`
-      // takes a table lock, which can deadlock against a seed in progress.
-      // Checks the first AND the most recently added table, so a database
-      // created before a later table existed (e.g. Donation) is topped up —
-      // every statement is CREATE ... IF NOT EXISTS, so re-running is safe.
+      // Fast path: skip the DDL when every table the schema declares is
+      // already there. `to_regclass` takes no locks, and skipping matters —
+      // even a no-op `CREATE INDEX IF NOT EXISTS` takes a table lock, which
+      // can deadlock against a seed in progress.
+      //
+      // The list is derived from the DDL rather than written out here. An
+      // earlier version named two tables by hand as proof the schema was
+      // complete, so adding a table without also editing this line left
+      // every existing database missing it: the guard returned before the
+      // DDL could run, and the first query against the new table failed with
+      // `relation does not exist`. Deriving the list means a new table is
+      // covered the moment it is declared.
       const exists = await pool.query(
-        "SELECT (to_regclass('ussdsession') IS NOT NULL AND to_regclass('donation') IS NOT NULL) AS ok",
+        "SELECT bool_and(to_regclass(t) IS NOT NULL) AS ok FROM unnest($1::text[]) AS t",
+        [ddlTableNames()],
       );
       if (exists.rows[0]?.ok === true) return;
 
@@ -677,6 +706,7 @@ const ADDITIVE_COLUMNS: { table: string; column: string; ddl: string }[] = [
   { table: "Lead", column: "firstContactedAt", ddl: "TEXT" },
   { table: "Lead", column: "outcomeReason", ddl: "TEXT" },
   { table: "Lead", column: "conversationId", ddl: "TEXT" },
+  { table: "AppUser", column: "active", ddl: "INTEGER NOT NULL DEFAULT 1" },
 ];
 
 async function existingColumns(d: Driver, table: string): Promise<Set<string>> {

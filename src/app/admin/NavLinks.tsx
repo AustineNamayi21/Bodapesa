@@ -12,6 +12,7 @@ import {
   MapPin,
   Megaphone,
   MessageCircle,
+  UserCog,
   Package,
   Flame,
   Plug,
@@ -52,6 +53,7 @@ const GROUPS: { label: string; links: { href: string; label: string; icon: typeo
   {
     label: "Platform",
     links: [
+      { href: "/admin/users", label: "Console accounts", icon: UserCog },
       { href: "/admin/donations", label: "Donations", icon: HandCoins },
       { href: "/admin/integrations", label: "Integrations", icon: Plug },
     ],
@@ -61,6 +63,7 @@ const GROUPS: { label: string; links: { href: string; label: string; icon: typeo
 // Partner staff manage their own pipeline; curriculum, partners, stages,
 // donations and channel configuration belong to the platform team.
 const PLATFORM_ONLY = new Set([
+  "/admin/users",
   "/admin/curriculum",
   "/admin/partners",
   "/admin/stages",

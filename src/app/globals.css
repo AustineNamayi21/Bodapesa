@@ -625,6 +625,22 @@ body {
   .btn:hover svg:last-child {
     transform: translateX(2px);
   }
+  /* A placeholder block while a screen resolves. Pulsing opacity rather
+     than a sweeping gradient: the language has no gloss in it, and a
+     shimmer on a hairline layout reads as a rendering fault. */
+  .skeleton {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    animation: skeleton-pulse 1.6s var(--ease-soft) infinite;
+  }
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.95; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; }
+  }
+
   /* ── theme switch ─────────────────────────────────────────────────────
      The same circle as the CTA ring. The two icons are stacked and swapped
      by rotation, so neither reflows the button. */

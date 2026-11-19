@@ -73,14 +73,14 @@ export async function currentUser(): Promise<SessionUser | null> {
     `SELECT u.id, u.email, u.name, u.role, u.partnerId,
             p.name AS partnerName, p.code AS partnerCode
        FROM AppUser u LEFT JOIN Partner p ON p.id = u.partnerId
-      WHERE u.id = ?`,
+      WHERE u.id = ? AND u.active = 1`,
     [userId],
   );
 }
 
 export async function login(email: string, password: string): Promise<SessionUser | null> {
   const row = await one<{ id: string; passwordHash: string }>(
-    "SELECT id, passwordHash FROM AppUser WHERE email = ?",
+    "SELECT id, passwordHash FROM AppUser WHERE email = ? AND active = 1",
     [email.trim().toLowerCase()],
   );
   if (!row || !verifyPassword(password, row.passwordHash)) return null;
