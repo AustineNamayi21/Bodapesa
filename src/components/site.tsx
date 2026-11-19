@@ -58,7 +58,7 @@ export function SiteHeader() {
         className="flex items-center justify-between gap-6"
         style={{ paddingInline: "var(--gutter)", height: "72px" }}
       >
-        <Logo tone={solid ? "default" : "light"} size={30} />
+        <Logo tone={solid ? "default" : "light"} size={30} mark={false} />
 
         <nav className="hidden lg:flex items-center" style={{ gap: "2.25rem" }} aria-label="Main">
           {NAV.map((n) => (

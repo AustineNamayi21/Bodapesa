@@ -28,15 +28,21 @@ export function Logo({
   size = 36,
   tone = "default",
   sub,
+  mark = true,
 }: {
   href?: string | null;
   size?: number;
   tone?: "default" | "light";
   sub?: ReactNode;
+  /** Set false for a wordmark on its own — the nav bar, where the chip
+   *  competed with the tracked uppercase links either side of it. */
+  mark?: boolean;
 }) {
   const body = (
     <span className="inline-flex items-center gap-2.5">
-      <LogoMark size={size} className="shrink-0 transition-transform duration-300 group-hover:scale-105" />
+      {mark ? (
+        <LogoMark size={size} className="shrink-0 transition-transform duration-300 group-hover:scale-105" />
+      ) : null}
       <span className="leading-none">
         <span
           className="font-display font-bold tracking-tight block"
