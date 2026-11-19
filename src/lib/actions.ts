@@ -8,6 +8,7 @@ import { sendCampaign, sendDirect, sendWelcome } from "./channels/dispatch";
 import { handleUssd, recomputeLiteracy } from "./channels/ussd";
 import { PROVIDERS, smsMode } from "./channels/providers";
 import { inBackground } from "./background";
+import { recordSignal } from "./signals";
 import { normaliseMsisdn, displayMsisdn } from "./i18n";
 import { env, rateLimit } from "./env";
 import { echo } from "./form-state";
@@ -177,12 +178,48 @@ export async function deleteCampaignAction(formData: FormData) {
 
 // ----------------------------------------------------------------- leads --
 
-export async function updateLeadAction(formData: FormData) {
+/**
+ * Moves a lead along.
+ *
+ * Three things changed here from the version that only set a status:
+ *
+ *  · A lead now has an owner and a next action date, so "somebody will call
+ *    them" becomes a named person and a day.
+ *  · Declining requires a reason. Eight declines with a blank note tell you
+ *    nothing; eight declines that all say "premium too high" tell you to
+ *    change the premium.
+ *  · First contact is stamped once and never overwritten, which is what
+ *    makes time-to-first-contact measurable at all.
+ */
+export async function updateLeadAction(formData: FormData): Promise<void> {
+  const user = await currentUser();
+  if (!user) return;
+
   const leadId = String(formData.get("leadId"));
   const status = String(formData.get("status"));
-  const valueRaw = String(formData.get("valueKes") ?? "");
+  if (!leadId || !status) return;
+
+  const valueRaw = String(formData.get("valueKes") ?? "").trim();
+  const reason = String(formData.get("outcomeReason") ?? "").trim();
+  const nextAction = String(formData.get("nextActionAt") ?? "").trim();
+  const claim = String(formData.get("claim") ?? "") === "1";
+
   const patch: Record<string, unknown> = { status, updatedAt: now() };
   if (status === "CONVERTED" && valueRaw) patch.valueKes = Number(valueRaw);
+  if (reason) patch.outcomeReason = reason.slice(0, 400);
+  if (nextAction) patch.nextActionAt = nextAction;
+  if (claim) patch.ownerId = user.id;
+
+  // Anything past NEW means a human has been in touch.
+  if (status !== "NEW") {
+    const existing = await one<{ firstContactedAt: string | null }>(
+      "SELECT firstContactedAt FROM Lead WHERE id = ?",
+      [leadId],
+    );
+    if (existing && !existing.firstContactedAt) patch.firstContactedAt = now();
+  }
+  // A resolved lead has no next action; leaving one would keep it in the queue.
+  if (status === "CONVERTED" || status === "DECLINED") patch.nextActionAt = null;
 
   await update("Lead", leadId, patch);
 
@@ -445,8 +482,26 @@ export async function completeLessonAction(formData: FormData) {
       completedAt: now(),
     });
   }
-  await run("UPDATE Rider SET status = CASE WHEN status IN ('PROSPECT','ENROLLED') THEN 'ACTIVE' ELSE status END WHERE id = ?", [riderId]);
+  await run("UPDATE Rider SET status = CASE WHEN status IN ('PROSPECT','ENROLLED') THEN 'ACTIVE' ELSE status END, lastActiveAt = ? WHERE id = ?", [now(), riderId]);
   await recomputeLiteracy(riderId);
+
+  await recordSignal({ riderId, kind: "LESSON_DONE" });
+  // The module a lesson belongs to is the first part of its code (SAV, CRE,
+  // INS, INV). Finishing every lesson in one is the moment the rider knows
+  // what that category of product actually does.
+  const lesson = await one<{ code: string }>("SELECT code FROM Lesson WHERE id = ?", [lessonId]);
+  const moduleCode = lesson?.code?.split("-")[0];
+  if (moduleCode) {
+    const remaining = await one<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM Lesson l
+        WHERE l.active = 1 AND l.code LIKE ?
+          AND NOT EXISTS (SELECT 1 FROM LessonProgress lp WHERE lp.lessonId = l.id AND lp.riderId = ?)`,
+      [`${moduleCode}-%`, riderId],
+    );
+    if (Number(remaining?.n ?? 1) === 0) {
+      await recordSignal({ riderId, kind: "MODULE_DONE", detail: moduleCode, dedupeHours: 24 });
+    }
+  }
   revalidatePath("/rider", "layout");
 }
 
@@ -508,7 +563,8 @@ export async function expressInterestAction(formData: FormData) {
       updatedAt: now(),
     });
   }
-  await run("UPDATE Rider SET status = CASE WHEN status IN ('PROSPECT','ENROLLED') THEN 'ACTIVE' ELSE status END WHERE id = ?", [riderId]);
+  await run("UPDATE Rider SET status = CASE WHEN status IN ('PROSPECT','ENROLLED') THEN 'ACTIVE' ELSE status END, lastActiveAt = ? WHERE id = ?", [now(), riderId]);
+  await recordSignal({ riderId, kind: "ENQUIRY_SENT", productId });
   revalidatePath("/rider", "layout");
   revalidatePath("/admin/leads");
 }
@@ -529,6 +585,7 @@ export async function createGoalAction(_prev: unknown, formData: FormData) {
     targetDate: new Date(Date.now() + days * 86400000).toISOString(),
     createdAt: now(),
   });
+  await recordSignal({ riderId, kind: "GOAL_SET", detail: title });
   revalidatePath("/rider", "layout");
   return { ok: "Goal created." };
 }
@@ -544,6 +601,23 @@ export async function addDepositAction(_prev: unknown, formData: FormData) {
     note: String(formData.get("note") ?? "") || null,
     createdAt: now(),
   });
+
+  // A single deposit is noise. Three in a fortnight is a rider who has built
+  // the habit the savings products are sold on.
+  const goal = await one<{ riderId: string }>("SELECT riderId FROM SavingsGoal WHERE id = ?", [goalId]);
+  if (goal) {
+    await recordSignal({ riderId: goal.riderId, kind: "DEPOSIT" });
+    const fortnightAgo = new Date(Date.now() - 14 * 86_400_000).toISOString();
+    const recent = await one<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM SavingsDeposit d
+         JOIN SavingsGoal g ON g.id = d.goalId
+        WHERE g.riderId = ? AND d.createdAt > ?`,
+      [goal.riderId, fortnightAgo],
+    );
+    if (Number(recent?.n ?? 0) >= 3) {
+      await recordSignal({ riderId: goal.riderId, kind: "DEPOSIT_STREAK", dedupeHours: 168 });
+    }
+  }
   revalidatePath("/rider", "layout");
   return { ok: "Deposit recorded." };
 }

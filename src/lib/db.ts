@@ -222,6 +222,63 @@ CREATE TABLE IF NOT EXISTS Lead (
 CREATE INDEX IF NOT EXISTS idx_lead_status ON Lead(status);
 CREATE INDEX IF NOT EXISTS idx_lead_partner ON Lead(partnerId);
 
+/* ── Conversations ────────────────────────────────────────────────────────
+   A rider talking to a human, as distinct from Message, which is outbound
+   campaign traffic. A conversation with a partnerId belongs to Britam or
+   Stima; with none, it belongs to the platform team. Unread counters are
+   kept on the row rather than derived, because both sides poll this table
+   on an interval and a COUNT per poll per thread does not scale.
+   ──────────────────────────────────────────────────────────────────────── */
+CREATE TABLE IF NOT EXISTS Conversation (
+  id TEXT PRIMARY KEY,
+  riderId TEXT NOT NULL REFERENCES Rider(id) ON DELETE CASCADE,
+  partnerId TEXT REFERENCES Partner(id) ON DELETE SET NULL,
+  productId TEXT REFERENCES Product(id) ON DELETE SET NULL,
+  leadId TEXT REFERENCES Lead(id) ON DELETE SET NULL,
+  subject TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'OPEN',
+  assignedToId TEXT REFERENCES AppUser(id) ON DELETE SET NULL,
+  openedBy TEXT NOT NULL DEFAULT 'RIDER',
+  lastMessageAt TEXT NOT NULL,
+  lastMessageFrom TEXT NOT NULL DEFAULT 'RIDER',
+  riderUnread INT_TYPE NOT NULL DEFAULT 0,
+  staffUnread INT_TYPE NOT NULL DEFAULT 0,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_conversation_rider ON Conversation(riderId);
+CREATE INDEX IF NOT EXISTS idx_conversation_partner ON Conversation(partnerId);
+CREATE INDEX IF NOT EXISTS idx_conversation_status ON Conversation(status);
+CREATE INDEX IF NOT EXISTS idx_conversation_last ON Conversation(lastMessageAt);
+
+CREATE TABLE IF NOT EXISTS ChatMessage (
+  id TEXT PRIMARY KEY,
+  conversationId TEXT NOT NULL REFERENCES Conversation(id) ON DELETE CASCADE,
+  senderType TEXT NOT NULL,
+  senderUserId TEXT REFERENCES AppUser(id) ON DELETE SET NULL,
+  senderName TEXT NOT NULL,
+  body TEXT NOT NULL,
+  createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_chatmessage_conversation ON ChatMessage(conversationId, createdAt);
+
+/* ── Rider signals ────────────────────────────────────────────────────────
+   Intent that the rider never explicitly declared: a module finished, a
+   goal set, a deposit streak, a product looked at twice. Scored so the
+   console can rank who is worth a call today. Append-only.
+   ──────────────────────────────────────────────────────────────────────── */
+CREATE TABLE IF NOT EXISTS RiderSignal (
+  id TEXT PRIMARY KEY,
+  riderId TEXT NOT NULL REFERENCES Rider(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL,
+  weight INT_TYPE NOT NULL DEFAULT 1,
+  productId TEXT REFERENCES Product(id) ON DELETE SET NULL,
+  detail TEXT,
+  createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_ridersignal_rider ON RiderSignal(riderId, createdAt);
+CREATE INDEX IF NOT EXISTS idx_ridersignal_kind ON RiderSignal(kind);
+
 CREATE TABLE IF NOT EXISTS SavingsGoal (
   id TEXT PRIMARY KEY,
   riderId TEXT NOT NULL REFERENCES Rider(id) ON DELETE CASCADE,
@@ -358,11 +415,11 @@ interface Driver {
 }
 
 function sqliteDdl(): string {
-  return `PRAGMA journal_mode = WAL;\nPRAGMA foreign_keys = ON;\n${BASE_DDL.replace(/REAL_TYPE/g, "REAL")}`;
+  return `PRAGMA journal_mode = WAL;\nPRAGMA foreign_keys = ON;\n${BASE_DDL.replace(/REAL_TYPE/g, "REAL").replace(/INT_TYPE/g, "INTEGER")}`;
 }
 
 function postgresDdl(): string {
-  return BASE_DDL.replace(/REAL_TYPE/g, "DOUBLE PRECISION");
+  return BASE_DDL.replace(/REAL_TYPE/g, "DOUBLE PRECISION").replace(/INT_TYPE/g, "INTEGER");
 }
 
 let sqliteQueue: Promise<void> = Promise.resolve();
@@ -612,6 +669,14 @@ const ADDITIVE_COLUMNS: { table: string; column: string; ddl: string }[] = [
   { table: "Lesson", column: "summaryEn", ddl: "TEXT NOT NULL DEFAULT ''" },
   { table: "Lesson", column: "summarySw", ddl: "TEXT NOT NULL DEFAULT ''" },
   { table: "Lesson", column: "summarySh", ddl: "TEXT NOT NULL DEFAULT ''" },
+
+  // A lead stops being a log entry and becomes a task: someone owns it, it is
+  // due on a date, and when it dies it says why.
+  { table: "Lead", column: "ownerId", ddl: "TEXT" },
+  { table: "Lead", column: "nextActionAt", ddl: "TEXT" },
+  { table: "Lead", column: "firstContactedAt", ddl: "TEXT" },
+  { table: "Lead", column: "outcomeReason", ddl: "TEXT" },
+  { table: "Lead", column: "conversationId", ddl: "TEXT" },
 ];
 
 async function existingColumns(d: Driver, table: string): Promise<Set<string>> {

@@ -1,12 +1,17 @@
 import { all } from "@/lib/db";
 import { requireRider } from "@/lib/rider";
 import { BadgeCheck, HeartHandshake } from "lucide-react";
+import type { Product } from "@/lib/types";
 import { CATEGORY_TONE, Pill, formatKes } from "@/components/ui";
 import { IconBadge } from "@/components/brand";
 import { ModuleIcon } from "@/components/rider";
 import { MODULE_THEME } from "@/lib/photos";
 import { pick, t } from "@/lib/i18n";
 import { expressInterestAction } from "@/lib/actions";
+import { rankProducts, reasonIn } from "@/lib/match";
+import { recordSignal } from "@/lib/signals";
+import Link from "next/link";
+import { MessageCircle } from "lucide-react";
 import type { Lang } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +60,18 @@ export default async function RiderProductsPage() {
   );
   const myLeads = new Set(leadRows.map((l) => l.productId));
 
+  // Ranked against what this rider told us at registration. The top match is
+  // surfaced with its reason; the categories below stay in their familiar
+  // order, because riders navigate the page by category.
+  const full = await all<Product>("SELECT * FROM Product WHERE active = 1");
+  const ranked = rankProducts(rider, full);
+  const best = ranked.find((m) => m.reason && !myLeads.has(m.product.id)) ?? null;
+  const bestCard = best ? products.find((p) => p.id === best.product.id) ?? null : null;
+  const bestReason = best ? reasonIn(best, lang) : null;
+  if (bestCard) {
+    await recordSignal({ riderId: rider.id, kind: "PRODUCT_VIEWED", productId: bestCard.id, dedupeHours: 12 });
+  }
+
   return (
     <div className="space-y-7" style={{ padding: "1.5rem 1.25rem 0" }}>
       <div className="animate-rise">
@@ -67,6 +84,32 @@ export default async function RiderProductsPage() {
               : "Kutoka Stima DT SACCO na Britam. Bonyeza “Ninavutiwa” na afisa atakupigia simu."}
         </p>
       </div>
+
+      {bestCard && bestReason ? (
+        <section
+          className="animate-rise"
+          style={{ borderTop: "2px solid var(--accent)", paddingTop: "1.1rem" }}
+        >
+          <p className="eyebrow" style={{ color: "var(--accent)" }}>
+            {lang === "EN" ? "Suggested for you" : lang === "SH" ? "Imependekezwa kwako" : "Imependekezwa kwako"}
+          </p>
+          <h2 className="display-sm" style={{ marginTop: "0.5rem" }}>
+            {bestCard.name}
+          </h2>
+          <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginTop: "0.5rem", lineHeight: 1.6 }}>
+            {bestReason}
+          </p>
+          <div style={{ display: "flex", gap: "0.6rem", marginTop: "1rem", flexWrap: "wrap" }}>
+            <a href={`#${bestCard.id}`} className="btn btn-accent btn-sm">
+              {lang === "EN" ? "See it" : "Iangalie"}
+            </a>
+            <Link href={`/rider/inbox/new?product=${bestCard.id}`} className="btn btn-ghost btn-sm">
+              <MessageCircle size={13} />{" "}
+              {lang === "EN" ? "Ask about it" : lang === "SH" ? "Uliza kuihusu" : "Uliza kuihusu"}
+            </Link>
+          </div>
+        </section>
+      ) : null}
 
       <nav className="flex gap-2 overflow-x-auto scroll-thin -mx-4 px-4 pb-1 sticky top-[64px] z-20 py-2" style={{ background: "var(--bg)" }}>
         {CATEGORIES.filter((c) => products.some((p) => p.category === c)).map((c) => {
@@ -163,6 +206,14 @@ export default async function RiderProductsPage() {
                             </button>
                           </form>
                         )}
+                        <Link
+                          href={`/rider/inbox/new?product=${p.id}`}
+                          className="btn btn-ghost btn-sm w-full"
+                          style={{ marginTop: "0.5rem" }}
+                        >
+                          <MessageCircle size={14} />{" "}
+                          {lang === "EN" ? "Ask a question" : lang === "SH" ? "Uliza swali" : "Uliza swali"}
+                        </Link>
                       </div>
                     </div>
                   </article>

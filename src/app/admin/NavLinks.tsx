@@ -11,7 +11,9 @@ import {
   LayoutDashboard,
   MapPin,
   Megaphone,
+  MessageCircle,
   Package,
+  Flame,
   Plug,
   Users,
 } from "lucide-react";
@@ -32,9 +34,11 @@ const GROUPS: { label: string; links: { href: string; label: string; icon: typeo
   {
     label: "Outreach",
     links: [
+      { href: "/admin/conversations", label: "Conversations", icon: MessageCircle },
+      { href: "/admin/leads", label: "Leads", icon: HeartHandshake },
+      { href: "/admin/warm", label: "Warm riders", icon: Flame },
       { href: "/admin/campaigns", label: "Campaigns", icon: Megaphone },
       { href: "/admin/messages", label: "Message log", icon: Inbox },
-      { href: "/admin/leads", label: "Leads", icon: HeartHandshake },
     ],
   },
   {

@@ -1,216 +1,295 @@
 import Link from "next/link";
+import { AlertTriangle, MessageCircle } from "lucide-react";
+
 import { all, count } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
-import { Card, Pill, Stat, STATUS_TONE, formatKes, timeAgo } from "@/components/ui";
+import { Pill, STATUS_TONE, formatKes, timeAgo } from "@/components/ui";
+import { PageHeader } from "@/components/admin";
 import { displayMsisdn } from "@/lib/i18n";
 import { updateLeadAction } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
 const STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CONVERTED", "DECLINED"];
+const OPEN = "('NEW','CONTACTED','QUALIFIED')";
+
+/** Anything open and untouched for longer than this is overdue. */
+const SLA_DAYS = 2;
+
+/**
+ * The SLA cutoff as an ISO timestamp, computed here rather than in SQL.
+ *
+ * `julianday()` is SQLite-only and this application runs Postgres in
+ * production, so date arithmetic stays in JavaScript and the query only ever
+ * compares two ISO strings — which sort correctly in both engines.
+ */
+function slaCutoff(): string {
+  return new Date(Date.now() - SLA_DAYS * 86_400_000).toISOString();
+}
+
+type Row = {
+  id: string;
+  status: string;
+  source: string;
+  createdAt: string;
+  updatedAt: string;
+  firstContactedAt: string | null;
+  nextActionAt: string | null;
+  outcomeReason: string | null;
+  valueKes: number | null;
+  riderId: string;
+  firstName: string;
+  lastName: string;
+  msisdn: string;
+  literacyScore: number;
+  stageName: string | null;
+  productName: string;
+  category: string;
+  partnerName: string;
+  ownerName: string | null;
+  conversationId: string | null;
+};
 
 export default async function LeadsPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | undefined>>;
+  searchParams: Promise<{ view?: string }>;
 }) {
-  const sp = await searchParams;
   const user = await currentUser();
-  const status = sp.status ?? "";
-  const partnerFilter = sp.partner ?? "";
+  const { view = "queue" } = await searchParams;
 
-  const clauses: string[] = [];
-  const params: unknown[] = [];
+  const scoped = user?.partnerId ? "l.partnerId = ?" : "1 = 1";
+  const scopeParams: unknown[] = user?.partnerId ? [user.partnerId] : [];
 
-  // Partner staff only ever see their own institution's pipeline.
-  if (user?.partnerId) {
-    clauses.push("l.partnerId = ?");
-    params.push(user.partnerId);
-  } else if (partnerFilter) {
-    clauses.push("pt.code = ?");
-    params.push(partnerFilter);
-  }
-  if (status) {
-    clauses.push("l.status = ?");
-    params.push(status);
-  }
-  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  const cutoff = slaCutoff();
+  const clause =
+    view === "all"
+      ? "1 = 1"
+      : view === "overdue"
+        ? `l.status IN ${OPEN} AND COALESCE(l.firstContactedAt, l.createdAt) < ?`
+        : view === "mine"
+          ? `l.ownerId = ? AND l.status IN ${OPEN}`
+          : view === "closed"
+            ? "l.status IN ('CONVERTED','DECLINED')"
+            : `l.status IN ${OPEN}`;
+  const clauseParams: unknown[] =
+    view === "mine" ? [user?.id ?? ""] : view === "overdue" ? [cutoff] : [];
 
-  const leads = await all<{
-    id: string;
-    status: string;
-    source: string;
-    createdAt: string;
-    valueKes: number | null;
-    riderId: string;
-    firstName: string;
-    lastName: string;
-    msisdn: string;
-    literacyScore: number;
-    stageName: string | null;
-    productName: string;
-    category: string;
-    partnerName: string;
-    accent: string;
-  }>(
-    `SELECT l.id, l.status, l.source, l.createdAt, l.valueKes, l.riderId,
+  const leads = await all<Row>(
+    `SELECT l.id, l.status, l.source, l.createdAt, l.updatedAt, l.firstContactedAt,
+            l.nextActionAt, l.outcomeReason, l.valueKes, l.riderId, l.conversationId,
             r.firstName, r.lastName, r.msisdn, r.literacyScore,
-            s.name AS stageName,
-            p.name AS productName, p.category,
-            pt.name AS partnerName, pt.accent
+            s.name AS stageName, p.name AS productName, p.category,
+            pt.name AS partnerName, u.name AS ownerName
        FROM Lead l
        JOIN Rider r ON r.id = l.riderId
        LEFT JOIN Stage s ON s.id = r.stageId
        JOIN Product p ON p.id = l.productId
        JOIN Partner pt ON pt.id = l.partnerId
-       ${where}
-      ORDER BY CASE l.status WHEN 'NEW' THEN 0 WHEN 'CONTACTED' THEN 1 WHEN 'QUALIFIED' THEN 2 ELSE 3 END,
-               l.createdAt DESC
-      LIMIT 100`,
-    params,
+       LEFT JOIN AppUser u ON u.id = l.ownerId
+      WHERE ${scoped} AND ${clause}
+      ORDER BY
+        CASE WHEN l.status IN ${OPEN} THEN 0 ELSE 1 END,
+        COALESCE(l.nextActionAt, l.createdAt) ASC
+      LIMIT 150`,
+    [...scopeParams, ...clauseParams],
   );
 
-  const totals = Object.fromEntries(
-    await Promise.all(
-      STATUSES.map(async (s) => [
-        s,
-        await count(
-          `SELECT COUNT(*) AS n FROM Lead l JOIN Partner pt ON pt.id = l.partnerId ${where ? `${where} AND` : "WHERE"} l.status = ?`,
-          [...params, s],
-        ),
-      ]),
-    ),
+  const openCount = await count(
+    `SELECT COUNT(*) AS n FROM Lead l WHERE ${scoped} AND l.status IN ${OPEN}`,
+    scopeParams,
+  );
+  const overdue = await count(
+    `SELECT COUNT(*) AS n FROM Lead l WHERE ${scoped} AND l.status IN ${OPEN}
+      AND COALESCE(l.firstContactedAt, l.createdAt) < ?`,
+    [...scopeParams, cutoff],
+  );
+  const unowned = await count(
+    `SELECT COUNT(*) AS n FROM Lead l WHERE ${scoped} AND l.status IN ${OPEN} AND l.ownerId IS NULL`,
+    scopeParams,
   );
   const convertedValue = await count(
-    `SELECT COALESCE(SUM(l.valueKes),0) AS n FROM Lead l JOIN Partner pt ON pt.id = l.partnerId ${where ? `${where} AND` : "WHERE"} l.status = 'CONVERTED'`,
-    params,
+    `SELECT COALESCE(SUM(l.valueKes),0) AS n FROM Lead l WHERE ${scoped} AND l.status = 'CONVERTED'`,
+    scopeParams,
   );
 
-  const partners = await all<{ code: string; name: string }>("SELECT code, name FROM Partner ORDER BY name");
+  const VIEWS = [
+    { key: "queue", label: `Open · ${openCount}` },
+    { key: "overdue", label: `Overdue · ${overdue}` },
+    { key: "mine", label: "Mine" },
+    { key: "closed", label: "Closed" },
+    { key: "all", label: "Everything" },
+  ];
 
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-[2rem] leading-tight">Lead pipeline</h1>
-        <p className="text-xs text-[var(--text-faint)] mt-0.5">
-          {user?.partnerName
-            ? `Riders who have asked to be contacted about a ${user.partnerName} product.`
-            : "Riders who have asked to be contacted about a partner product, routed to the institution that owns it."}
-        </p>
-      </header>
+    <div>
+      <PageHeader
+        title="Lead queue"
+        subtitle={
+          user?.partnerName
+            ? `Riders waiting to hear from ${user.partnerName}. ${overdue} past the ${SLA_DAYS}-day mark, ${unowned} with nobody's name on them.`
+            : `${openCount} open. ${overdue} past the ${SLA_DAYS}-day mark, ${unowned} with nobody's name on them. ${formatKes(convertedValue)} converted.`
+        }
+      />
 
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-6">
-        {STATUSES.map((s) => (
-          <Stat
-            key={s}
-            label={s.toLowerCase()}
-            value={(totals[s] ?? 0).toLocaleString()}
-            tone={s === "CONVERTED" ? "brand" : s === "DECLINED" ? "danger" : "default"}
-          />
-        ))}
-        <Stat label="Converted value" value={formatKes(convertedValue)} tone="brand" />
+      <nav style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", borderBottom: "1px solid var(--border)" }}>
+        {VIEWS.map((v) => {
+          const active = v.key === view;
+          return (
+            <Link
+              key={v.key}
+              href={`/admin/leads?view=${v.key}`}
+              className="stat-label"
+              style={{
+                padding: "0.9rem 0",
+                textDecoration: "none",
+                color: active ? "var(--text)" : "var(--text-faint)",
+                borderBottom: `2px solid ${active ? "var(--accent)" : "transparent"}`,
+                marginBottom: "-1px",
+              }}
+            >
+              {v.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {leads.length ? (
+        <div className="stagger">
+          {leads.map((l) => {
+            const open = ["NEW", "CONTACTED", "QUALIFIED"].includes(l.status);
+            const sinceTouch = l.firstContactedAt ?? l.createdAt;
+            const late = open && sinceTouch < cutoff;
+            const ageDays = Math.floor((Date.now() - new Date(l.createdAt).getTime()) / 86_400_000);
+
+            return (
+              <div key={l.id} style={{ padding: "1.25rem 0", borderBottom: "1px solid var(--border)" }}>
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {late ? (
+                        <AlertTriangle size={15} style={{ color: "var(--danger)", flexShrink: 0 }} />
+                      ) : null}
+                      <Link
+                        href={`/admin/riders/${l.riderId}`}
+                        style={{ fontSize: "0.95rem", fontWeight: 700, textDecoration: "none" }}
+                      >
+                        {l.firstName} {l.lastName}
+                      </Link>
+                      <Pill tone={STATUS_TONE[l.status]}>{l.status}</Pill>
+                      {late ? <Pill tone="danger">{ageDays} days</Pill> : null}
+                      {l.conversationId ? (
+                        <Link
+                          href={`/admin/conversations/${l.conversationId}`}
+                          className="stat-label"
+                          style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", color: "var(--accent)" }}
+                        >
+                          <MessageCircle size={12} /> Read the thread
+                        </Link>
+                      ) : null}
+                    </div>
+
+                    <p style={{ fontSize: "0.86rem", marginTop: "0.35rem" }}>
+                      {l.productName} <span style={{ color: "var(--text-faint)" }}>· {l.partnerName}</span>
+                    </p>
+
+                    <p className="stat-label" style={{ marginTop: "0.45rem" }}>
+                      {displayMsisdn(l.msisdn)} · {l.stageName ?? "No stage"} · raised {timeAgo(l.createdAt)} ·{" "}
+                      {l.firstContactedAt ? `first contact ${timeAgo(l.firstContactedAt)}` : "never contacted"} ·{" "}
+                      {l.ownerName ? `owned by ${l.ownerName}` : "unowned"}
+                      {l.nextActionAt ? ` · next action ${new Date(l.nextActionAt).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : ""}
+                    </p>
+
+                    {l.outcomeReason ? (
+                      <p style={{ fontSize: "0.8rem", marginTop: "0.5rem", color: "var(--text-muted)" }}>
+                        “{l.outcomeReason}”
+                      </p>
+                    ) : null}
+                    {l.valueKes ? (
+                      <p className="stat-label" style={{ marginTop: "0.4rem", color: "var(--success)" }}>
+                        {formatKes(l.valueKes)}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  {open ? <LeadControls leadId={l.id} status={l.status} owned={Boolean(l.ownerName)} /> : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p style={{ padding: "2.5rem 0", color: "var(--text-faint)", fontSize: "0.88rem" }}>
+          {view === "overdue"
+            ? "Nothing overdue. That is the number to keep at zero."
+            : "No leads match this view."}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The row's controls.
+ *
+ * Declining asks for a reason in the same breath, because a decline without
+ * one is a lost lesson — and the reason box is the cheapest product research
+ * the programme will ever run.
+ */
+function LeadControls({ leadId, status, owned }: { leadId: string; status: string; owned: boolean }) {
+  const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+  return (
+    <form
+      action={updateLeadAction}
+      style={{ display: "grid", gap: "0.5rem", minWidth: "19rem" }}
+    >
+      <input type="hidden" name="leadId" value={leadId} />
+
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <select name="status" defaultValue={status} className="select" style={{ flex: "1 1 8rem", padding: "0.4rem 0.6rem", fontSize: "0.78rem" }}>
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        <input
+          type="date"
+          name="nextActionAt"
+          defaultValue={tomorrow}
+          className="input"
+          style={{ flex: "1 1 8rem", padding: "0.4rem 0.6rem", fontSize: "0.78rem" }}
+          aria-label="Next action"
+        />
       </div>
 
-      <Card padded={false}>
-        <form className="p-3 flex flex-wrap gap-2 items-end border-b">
-          <div className="min-w-[150px]">
-            <label className="label" htmlFor="status">Status</label>
-            <select id="status" name="status" defaultValue={status} className="select">
-              <option value="">All statuses</option>
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-          {!user?.partnerId ? (
-            <div className="min-w-[160px]">
-              <label className="label" htmlFor="partner">Institution</label>
-              <select id="partner" name="partner" defaultValue={partnerFilter} className="select">
-                <option value="">Both partners</option>
-                {partners.map((p) => (
-                  <option key={p.code} value={p.code}>{p.name}</option>
-                ))}
-              </select>
-            </div>
-          ) : null}
-          <button className="btn btn-ghost btn-sm">Apply</button>
-          {status || partnerFilter ? (
-            <Link href="/admin/leads" className="btn btn-ghost btn-sm">Clear</Link>
-          ) : null}
-        </form>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <input
+          name="outcomeReason"
+          placeholder="Reason, if declined"
+          className="input"
+          style={{ flex: "2 1 10rem", padding: "0.4rem 0.6rem", fontSize: "0.78rem" }}
+        />
+        <input
+          name="valueKes"
+          type="number"
+          placeholder="KSh"
+          className="input"
+          style={{ flex: "1 1 5rem", padding: "0.4rem 0.6rem", fontSize: "0.78rem" }}
+        />
+      </div>
 
-        <div className="overflow-x-auto scroll-thin">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Rider</th>
-                <th>Product</th>
-                <th>Source</th>
-                <th>Raised</th>
-                <th>Status</th>
-                <th>Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leads.map((l) => (
-                <tr key={l.id}>
-                  <td>
-                    <Link href={`/admin/riders/${l.riderId}`} className="font-medium hover:underline">
-                      {l.firstName} {l.lastName}
-                    </Link>
-                    <div className="text-[0.7rem] text-[var(--text-faint)] tabular-nums">
-                      {displayMsisdn(l.msisdn)} · {l.stageName ?? "no stage"} · score {l.literacyScore}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-none shrink-0" style={{ background: l.accent }} />
-                      <span className="text-[0.82rem]">{l.productName}</span>
-                    </div>
-                    <div className="text-[0.7rem] text-[var(--text-faint)]">
-                      {l.partnerName} · {l.category.toLowerCase()}
-                    </div>
-                  </td>
-                  <td className="text-[0.8rem]">{l.source}</td>
-                  <td className="text-[0.78rem] text-[var(--text-muted)]">{timeAgo(l.createdAt)}</td>
-                  <td>
-                    <Pill tone={STATUS_TONE[l.status]}>{l.status}</Pill>
-                    {l.valueKes ? (
-                      <div className="text-[0.7rem] mt-0.5" style={{ color: "var(--brand)" }}>
-                        {formatKes(l.valueKes)}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td>
-                    <form action={updateLeadAction} className="flex gap-1.5 items-center">
-                      <input type="hidden" name="leadId" value={l.id} />
-                      <select name="status" defaultValue={l.status} className="select !py-1 !text-[0.78rem] w-[118px]">
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      <input
-                        name="valueKes"
-                        type="number"
-                        placeholder="KSh"
-                        className="input !py-1 !text-[0.78rem] w-[80px]"
-                      />
-                      <button className="btn btn-ghost btn-sm">Save</button>
-                    </form>
-                  </td>
-                </tr>
-              ))}
-              {!leads.length ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-[var(--text-faint)] py-8">
-                    No leads match those filters.
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-    </div>
+      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+        {!owned ? (
+          <label className="stat-label" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", cursor: "pointer" }}>
+            <input type="checkbox" name="claim" value="1" defaultChecked />
+            Put my name on it
+          </label>
+        ) : null}
+        <button type="submit" className="btn btn-ghost btn-sm" style={{ marginLeft: "auto" }}>
+          Save
+        </button>
+      </div>
+    </form>
   );
 }

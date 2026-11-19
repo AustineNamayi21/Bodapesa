@@ -24,10 +24,14 @@ export async function requireRider(): Promise<RiderContext> {
     lang: rider.language,
     lessonsDone: await count("SELECT COUNT(*) AS n FROM LessonProgress WHERE riderId = ?", [riderId]),
     lessonsTotal: await count("SELECT COUNT(*) AS n FROM Lesson WHERE active = 1"),
-    unread: await count(
-      "SELECT COUNT(*) AS n FROM Message WHERE riderId = ? AND direction = 'OUT' AND readAt IS NULL",
-      [riderId],
-    ),
+    // The badge covers both kinds of unread: broadcast updates and replies
+    // waiting in a conversation.
+    unread:
+      (await count(
+        "SELECT COUNT(*) AS n FROM Message WHERE riderId = ? AND direction = 'OUT' AND readAt IS NULL",
+        [riderId],
+      )) +
+      (await count("SELECT COALESCE(SUM(riderUnread), 0) AS n FROM Conversation WHERE riderId = ?", [riderId])),
   };
 }
 
