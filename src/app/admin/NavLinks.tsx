@@ -74,7 +74,7 @@ export default function NavLinks({ role }: { role: string }) {
 
   return (
     <nav
-      className="flex lg:flex-col gap-5 lg:gap-0 overflow-x-auto lg:overflow-visible no-scrollbar"
+      className="flex lg:flex-col gap-5 lg:gap-0 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto lg:flex-1 lg:min-h-0 no-scrollbar"
       style={{ padding: "1rem 1.25rem" }}
     >
       {GROUPS.map((group) => {

@@ -33,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen flex flex-col lg:flex-row" data-theme-surface style={{ background: "var(--ground)" }}>
       <aside
-        className="lg:w-[248px] lg:h-screen lg:sticky lg:top-0 flex flex-col shrink-0"
+        className="lg:w-[248px] lg:h-screen lg:sticky lg:top-0 flex flex-col shrink-0 lg:overflow-hidden"
         style={
           {
             background: "var(--ground)",
@@ -44,7 +44,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         }
       >
         <div
-          className="flex items-center justify-between gap-3 lg:block"
+          className="flex items-center justify-between gap-3 lg:block shrink-0"
           style={{ padding: "1.25rem", borderBottom: "1px solid var(--rule)" }}
         >
           <Logo tone="light" size={30} sub={user.partnerName ?? "Programme console"} />
@@ -66,7 +66,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         <NavLinks role={user.role} />
 
-        <div className="mt-auto hidden lg:block" style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--rule)" }}>
+        <div className="mt-auto shrink-0 hidden lg:block" style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--rule)" }}>
           <div className="flex items-center gap-3">
             <span
               className="grid place-items-center shrink-0"
