@@ -48,9 +48,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           style={{ padding: "1.25rem", borderBottom: "1px solid var(--rule)" }}
         >
           <Logo tone="light" size={30} sub={user.partnerName ?? "Programme console"} />
-          <span className="pill lg:hidden" style={{ borderColor: "var(--accent)", color: "var(--accent)" }}>
-            {user.partnerCode ?? "Admin"}
-          </span>
+
+          {/* Below lg the sidebar is a top strip and the account footer is out
+              of reach, so the way out lives up here instead. */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <span className="pill" style={{ borderColor: "var(--accent)", color: "var(--accent)" }}>
+              {user.partnerCode ?? "Admin"}
+            </span>
+            <ThemeToggle size={32} />
+            <form action={logoutAction}>
+              <button type="submit" className="btn btn-ghost btn-sm" style={{ whiteSpace: "nowrap" }}>
+                <LogOut size={13} /> Sign out
+              </button>
+            </form>
+          </div>
         </div>
 
         <NavLinks role={user.role} />
@@ -82,17 +93,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </div>
             </div>
             <ThemeToggle size={32} />
-            <form action={logoutAction}>
-              <button
-                className="grid place-items-center"
-                style={{ width: 34, height: 34, color: "var(--text-faint)", background: "transparent", border: 0 }}
-                title="Sign out"
-                aria-label="Sign out"
-              >
-                <LogOut size={15} />
-              </button>
-            </form>
           </div>
+
+          <form action={logoutAction} style={{ marginTop: "0.9rem" }}>
+            <button type="submit" className="btn btn-ghost btn-sm" style={{ width: "100%", whiteSpace: "nowrap" }}>
+              <LogOut size={13} /> Sign out
+            </button>
+          </form>
         </div>
       </aside>
 
