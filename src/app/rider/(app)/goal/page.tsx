@@ -34,8 +34,8 @@ export default async function GoalPage() {
   const pct = goal ? Math.min(100, Math.round((saved / goal.targetAmount) * 100)) : 0;
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-[1.9rem] leading-tight animate-rise">{t("myGoals", lang)}</h1>
+    <div className="space-y-6" style={{ padding: "1.5rem 1.25rem 0" }}>
+      <h1 className="display-lg animate-rise">{t("myGoals", lang)}</h1>
 
       {goal ? (
         <>

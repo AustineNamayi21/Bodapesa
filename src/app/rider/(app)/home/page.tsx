@@ -78,9 +78,9 @@ export default async function RiderHomePage() {
   const theme = next ? MODULE_THEME[next.moduleKey] : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6" style={{ padding: "1.5rem 1.25rem 0" }}>
       <div className="animate-rise">
-        <h1 className="text-[1.9rem] leading-tight">
+        <h1 className="display-lg">
           {GREETING[lang](rider.firstName)}
         </h1>
         <p className="text-[0.85rem] text-[var(--text-muted)]">{t("tagline", lang)}</p>

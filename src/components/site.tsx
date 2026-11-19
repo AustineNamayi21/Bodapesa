@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, Menu, X } from "lucide-react";
+import ThemeToggle from "@/components/theme";
 import { Logo, Photo } from "./brand";
 import type { PhotoKey } from "@/lib/photos";
 
@@ -14,85 +15,144 @@ const NAV = [
   { href: "/#how", label: "How it works" },
   { href: "/#products", label: "Products" },
   { href: "/#channels", label: "Channels" },
-  { href: "/ussd", label: "USSD" },
 ];
 
-/** Black, sticky site header with a constant green rule and a mobile menu. */
+/**
+ * The site header.
+ *
+ * Transparent over the hero photograph so the frame runs edge to edge, then
+ * resolving to solid black once the page scrolls — the behaviour the
+ * reference design uses to let its opening image fill the viewport. Nav is
+ * 11px tracked capitals; nothing competes with the headline beneath it.
+ */
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Over the hero the header is transparent and its type is white, whatever
+  // the theme: it is sitting on a photograph. Once it has a ground under it,
+  // it follows the theme.
+  const solid = scrolled || open;
+  const fg = solid ? "var(--on-ground)" : "#fff";
+  const fgMuted = solid ? "var(--text-muted)" : "rgba(255,255,255,0.72)";
+
   return (
     <header
-      className="sticky top-0 z-50 transition-shadow duration-300"
-      style={{ background: "var(--ink)", boxShadow: scrolled ? "0 10px 30px -12px rgba(0,0,0,0.6)" : "none" }}
+      className="fixed top-0 inset-x-0 z-50"
+      data-theme-surface
+      style={{
+        background: solid ? "var(--ground)" : "transparent",
+        borderBottom: `1px solid ${solid ? "var(--rule)" : "rgba(255,255,255,0.16)"}`,
+        transition: "background 0.6s var(--ease), border-color 0.6s var(--ease)",
+      }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[68px] flex items-center justify-between gap-4">
-        <Logo tone="light" size={36} />
+      <div
+        className="flex items-center justify-between gap-6"
+        style={{ paddingInline: "var(--gutter)", height: "72px" }}
+      >
+        <Logo tone={solid ? "default" : "light"} size={30} />
 
-        <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
-          {NAV.map((n) => {
-            const active = n.href === pathname;
-            return (
-              <Link
-                key={n.href}
-                href={n.href}
-                className="relative px-3.5 py-2 text-[0.92rem] font-medium text-white/80 hover:text-white transition-colors group"
-              >
-                {n.label}
-                <span
-                  className="absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-none origin-left transition-transform duration-300 group-hover:scale-x-100"
-                  style={{ background: "var(--green-bright)", transform: active ? "scaleX(1)" : "scaleX(0)" }}
-                />
-              </Link>
-            );
-          })}
+        <nav className="hidden lg:flex items-center" style={{ gap: "2.25rem" }} aria-label="Main">
+          {NAV.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="underline-wipe"
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: n.href === pathname ? fg : fgMuted,
+              }}
+            >
+              {n.label}
+            </Link>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link href="/admin" className="hidden sm:inline-flex btn btn-sm btn-outline-light">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin"
+            className="hidden sm:inline-flex underline-wipe"
+            style={{
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: fgMuted,
+            }}
+          >
             Console
           </Link>
-          <Link href="/rider" className="btn btn-sm btn-primary">
-            Rider portal <ArrowRight size={15} />
+          <ThemeToggle
+            size={38}
+            style={{
+              color: fg,
+              borderColor: solid ? "var(--border-strong)" : "rgba(255,255,255,0.45)",
+            }}
+          />
+          <Link
+            href="/rider"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              minHeight: "44px",
+              padding: "0 1.2rem",
+              background: solid ? "var(--on-ground)" : "#fff",
+              color: solid ? "var(--ground)" : "#000",
+              fontSize: "0.6875rem",
+              fontWeight: 700,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+            }}
+          >
+            Rider portal
           </Link>
           <button
             type="button"
-            className="lg:hidden w-10 h-10 grid place-items-center rounded-none text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden grid place-items-center"
+            style={{ width: 44, height: 44, color: fg, background: "transparent", border: 0, cursor: "pointer" }}
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? "Close menu" : "Open menu"}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
       </div>
-      <div className="stripe" />
 
-      {/* mobile menu */}
       <div
-        className="lg:hidden overflow-hidden transition-[max-height] duration-300 ease-out"
-        style={{ maxHeight: open ? 420 : 0, background: "var(--ink)" }}
+        className="lg:hidden overflow-hidden"
+        style={{ maxHeight: open ? 420 : 0, background: "var(--ground)", transition: "max-height 0.6s var(--ease)" }}
       >
-        <nav className="px-4 py-3 flex flex-col" aria-label="Mobile">
+        <nav style={{ paddingInline: "var(--gutter)", paddingBottom: "1rem" }} aria-label="Mobile">
           {[...NAV, { href: "/admin", label: "Console" }].map((n) => (
             <Link
               key={n.href}
               href={n.href}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-between py-3 border-b text-[1rem] font-medium text-white/90"
-              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+              className="flex items-center justify-between"
+              style={{
+                padding: "1rem 0",
+                borderBottom: "1px solid var(--rule)",
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--on-ground)",
+              }}
             >
               {n.label}
-              <ArrowRight size={16} style={{ color: "var(--green-bright)" }} />
+              <ArrowRight size={15} style={{ color: "var(--accent)" }} />
             </Link>
           ))}
         </nav>
@@ -186,7 +246,7 @@ export function HeroCarousel({ slides, interval = 6500 }: { slides: Slide[]; int
                   {s.card ? (
                     <div
                       className="absolute -bottom-6 left-4 sm:-left-6 rounded-none px-4 py-3 flex items-center gap-3 animate-float"
-                      style={{ background: "#fff", color: "var(--ink)", boxShadow: "0 20px 40px -16px rgba(0,0,0,0.5)" }}
+                      style={{ background: "#fff", color: "#000", boxShadow: "0 20px 40px -16px rgba(0,0,0,0.5)" }}
                     >
                       <span className="w-10 h-10 rounded-none grid place-items-center text-white font-display font-bold" style={{ background: "var(--green)" }}>
                         ✓

@@ -1,4 +1,5 @@
 import { LogOut } from "lucide-react";
+import ThemeToggle from "@/components/theme";
 import { requireRider } from "@/lib/rider";
 import { ensureSeeded } from "@/lib/seed";
 import { riderLogoutAction, setRiderLanguageAction } from "@/lib/actions";
@@ -12,32 +13,62 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
   const { rider, unread } = await requireRider();
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--surface-2)" }}>
-      <div className="min-h-screen flex flex-col max-w-md mx-auto relative sm:border-x" style={{ background: "var(--bg)" }}>
-        <header className="sticky top-0 z-30" style={{ background: "var(--ink)", color: "#fff" }}>
-          <div className="px-4 py-3 flex items-center justify-between gap-2">
+    <div className="min-h-screen" data-theme-surface style={{ background: "var(--ground)" }}>
+      <div
+        className="min-h-screen flex flex-col max-w-md mx-auto relative"
+        style={{ background: "var(--ground)", borderInline: "1px solid var(--rule)" }}
+      >
+        {/* The bar is a thin rule of information, not a coloured band: the
+            content below it should be the first thing the eye lands on. */}
+        <header
+          className="sticky top-0 z-30"
+          data-theme-surface
+          style={{ background: "var(--ground)", borderBottom: "1px solid var(--rule)" }}
+        >
+          <div className="px-4 flex items-center justify-between gap-3" style={{ minHeight: "56px" }}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <LogoMark size={34} className="shrink-0" />
+              <LogoMark size={26} className="shrink-0" />
               <div className="min-w-0">
-                <div className="text-[0.9rem] font-display font-bold truncate leading-tight">{rider.firstName}</div>
-                <div className="text-[0.68rem] leading-tight flex items-center gap-1" style={{ color: "var(--matatu)" }}>
-                  ★ {rider.literacyScore}/100
+                <div
+                  className="truncate"
+                  style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
+                >
+                  {rider.firstName}
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.625rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.12em",
+                    color: "var(--accent)",
+                    fontVariantNumeric: "tabular-nums",
+                    marginTop: "1px",
+                  }}
+                >
+                  {rider.literacyScore}/100
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <form action={setRiderLanguageAction} className="flex rounded-none p-0.5" style={{ background: "rgba(255,255,255,0.12)" }}>
+              <ThemeToggle size={32} />
+              <form action={setRiderLanguageAction} className="flex" style={{ border: "1px solid var(--rule)" }}>
                 <input type="hidden" name="riderId" value={rider.id} />
-                {(["SW", "EN", "SH"] as const).map((l) => (
+                {(["SW", "EN", "SH"] as const).map((l, i) => (
                   <button
                     key={l}
                     name="language"
                     value={l}
-                    className="px-2.5 py-1 rounded-none text-[0.7rem] font-extrabold transition-colors"
                     style={{
-                      background: rider.language === l ? "var(--matatu)" : "transparent",
-                      color: rider.language === l ? "var(--ink)" : "rgba(255,255,255,0.7)",
+                      minWidth: "34px",
+                      minHeight: "32px",
+                      fontSize: "0.625rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      borderLeft: i === 0 ? "none" : "1px solid var(--rule)",
+                      background: rider.language === l ? "var(--on-ground)" : "transparent",
+                      color: rider.language === l ? "var(--ground)" : "var(--text-faint)",
+                      transition: "background 0.35s var(--ease), color 0.35s var(--ease)",
                     }}
                   >
                     {l}
@@ -46,19 +77,21 @@ export default async function RiderAppLayout({ children }: { children: React.Rea
               </form>
               <form action={riderLogoutAction}>
                 <button
-                  className="w-8 h-8 rounded-none grid place-items-center transition-colors hover:bg-white/10"
+                  className="grid place-items-center"
+                  style={{ width: 36, height: 36, color: "var(--text-faint)", background: "transparent", border: 0 }}
                   aria-label="Toka · Sign out"
                   title="Toka · Sign out"
                 >
-                  <LogOut size={16} />
+                  <LogOut size={15} />
                 </button>
               </form>
             </div>
           </div>
-          <div className="stripe stripe-animated" />
         </header>
 
-        <main className="flex-1 px-4 py-5 pb-28">{children}</main>
+        <main className="flex-1" style={{ paddingBottom: "6.5rem" }}>
+          {children}
+        </main>
 
         <RiderNav lang={rider.language} unread={unread} />
       </div>

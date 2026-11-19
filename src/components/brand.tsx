@@ -40,14 +40,14 @@ export function Logo({
       <span className="leading-none">
         <span
           className="font-display font-bold tracking-tight block"
-          style={{ fontSize: size * 0.54, color: tone === "light" ? "#fff" : "var(--text)" }}
+          style={{ fontSize: size * 0.54, color: tone === "light" ? "var(--on-black)" : "var(--text)" }}
         >
           Boda<span style={{ color: tone === "light" ? "var(--green-bright)" : "var(--green)" }}>Pesa</span>
         </span>
         {sub ? (
           <span
             className="block text-[0.66rem] font-semibold mt-1"
-            style={{ color: tone === "light" ? "rgba(255,255,255,0.6)" : "var(--text-faint)" }}
+            style={{ color: tone === "light" ? "var(--on-black-3)" : "var(--text-faint)" }}
           >
             {sub}
           </span>

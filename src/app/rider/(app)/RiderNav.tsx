@@ -13,13 +13,21 @@ const ITEMS: { href: string; icon: typeof House; label: Record<Lang, string> }[]
   { href: "/rider/inbox", icon: Inbox, label: { EN: "Inbox", SW: "Ujumbe", SH: "Messages" } },
 ];
 
+/**
+ * The bottom bar, flush to the edge rather than a floating pill.
+ *
+ * The active item is marked by a single accent rule above it and by weight,
+ * not by a filled block — at this size a filled tab reads as a button and
+ * competes with the content above it.
+ */
 export default function RiderNav({ lang, unread }: { lang: Lang; unread: number }) {
   const pathname = usePathname();
 
   return (
     <nav
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-[calc(28rem-1.5rem)] grid grid-cols-5 z-30 rounded-none p-1.5 border-2"
-      style={{ background: "var(--ink)", borderColor: "var(--ink)", boxShadow: "0 12px 30px -8px rgba(0,0,0,0.45)" }}
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md grid grid-cols-5 z-30"
+      data-theme-surface
+      style={{ background: "var(--ground)", borderTop: "1px solid var(--rule)" }}
     >
       {ITEMS.map((item) => {
         const active = pathname.startsWith(item.href);
@@ -28,18 +36,46 @@ export default function RiderNav({ lang, unread }: { lang: Lang; unread: number 
           <Link
             key={item.href}
             href={item.href}
-            className="flex flex-col items-center gap-0.5 py-1.5 relative rounded-none transition-all duration-200"
+            aria-current={active ? "page" : undefined}
+            className="flex flex-col items-center justify-center gap-1.5 relative"
             style={{
-              color: active ? "#fff" : "rgba(255,255,255,0.6)",
-              background: active ? "var(--green)" : "transparent",
+              minHeight: "60px",
+              paddingBottom: "0.5rem",
+              paddingTop: "0.6rem",
+              color: active ? "var(--on-ground)" : "var(--on-black-4)",
+              borderTop: `1px solid ${active ? "var(--accent)" : "transparent"}`,
+              marginTop: "-1px",
+              textDecoration: "none",
+              transition: "color 0.35s var(--ease), border-color 0.35s var(--ease)",
             }}
           >
-            <Icon size={19} strokeWidth={active ? 2.6 : 2} className={active ? "animate-pop" : ""} />
-            <span className="text-[0.6rem] font-bold">{item.label[lang]}</span>
+            <Icon size={17} strokeWidth={1.9} />
+            <span
+              style={{
+                fontSize: "0.5rem",
+                fontWeight: active ? 700 : 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+              }}
+            >
+              {item.label[lang]}
+            </span>
             {item.href === "/rider/inbox" && unread > 0 ? (
               <span
-                className="absolute top-0.5 right-[18%] min-w-[16px] h-[16px] rounded-none text-[0.58rem] grid place-items-center px-1 font-extrabold border-2 animate-pulse-ring"
-                style={{ background: "var(--green-bright)", color: "var(--ink)", borderColor: "var(--ink)" }}
+                className="absolute"
+                style={{
+                  top: "0.5rem",
+                  right: "22%",
+                  minWidth: "15px",
+                  height: "15px",
+                  background: "var(--accent)",
+                  color: "#fff",
+                  fontSize: "0.5rem",
+                  fontWeight: 700,
+                  display: "grid",
+                  placeItems: "center",
+                  padding: "0 3px",
+                }}
               >
                 {unread > 9 ? "9+" : unread}
               </span>

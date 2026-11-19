@@ -24,7 +24,7 @@ export function SectionTitle({
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
       <div>
-        <h2 className="text-[1.15rem] leading-tight">{title}</h2>
+        <h2 className="display-sm">{title}</h2>
         {subtitle ? <p className="text-xs text-[var(--text-faint)] mt-1">{subtitle}</p> : null}
       </div>
       {action}
@@ -33,13 +33,13 @@ export function SectionTitle({
 }
 
 const STAT_MARK: Record<string, string> = {
-  default: "var(--border-strong)",
-  brand: "var(--sunset)",
-  accent: "var(--matatu)",
-  success: "var(--mpesa)",
-  info: "var(--sky)",
-  pink: "var(--kanga)",
+  brand: "#ffffff",
+  accent: "var(--accent)",
+  success: "var(--success)",
+  info: "var(--text-muted)",
+  pink: "var(--text-muted)",
   danger: "var(--danger)",
+  default: "var(--text-faint)",
 };
 
 /**
@@ -61,33 +61,33 @@ export function Stat({
 }) {
   const mark = STAT_MARK[tone] ?? STAT_MARK.default;
   return (
-    <div className="card p-4 relative overflow-hidden lift">
-      <span className="absolute inset-x-0 top-0 h-1" style={{ background: mark }} />
+    <div style={{ borderTop: "1px solid var(--border-strong)", paddingTop: "1rem" }}>
       <div className="flex items-start justify-between gap-2">
         <div className="stat-label">{label}</div>
         {icon ? (
-          <span
-            className="w-8 h-8 rounded-none grid place-items-center shrink-0 -mt-1 -mr-1"
-            style={{ background: `color-mix(in oklab, ${mark} 22%, var(--surface))`, color: "var(--text)" }}
-          >
+          <span className="shrink-0" style={{ color: mark, marginTop: "-0.15rem" }}>
             {icon}
           </span>
         ) : null}
       </div>
-      <div className="stat-value mt-1">{value}</div>
-      {hint ? <div className="text-[0.72rem] text-[var(--text-faint)] mt-1">{hint}</div> : null}
+      <div className="stat-value" style={{ marginTop: "0.9rem" }}>
+        {value}
+      </div>
+      {hint ? (
+        <div style={{ fontSize: "0.72rem", color: "var(--text-faint)", marginTop: "0.45rem" }}>{hint}</div>
+      ) : null}
     </div>
   );
 }
 
 const TONES: Record<string, { bg: string; fg: string }> = {
-  brand: { bg: "var(--brand-soft)", fg: "var(--brand-strong)" },
-  success: { bg: "var(--success-soft)", fg: "var(--success)" },
-  pink: { bg: "var(--pink-soft)", fg: "var(--pink)" },
-  accent: { bg: "var(--accent-soft)", fg: "var(--accent)" },
-  danger: { bg: "var(--danger-soft)", fg: "var(--danger)" },
-  info: { bg: "var(--info-soft)", fg: "var(--info)" },
-  neutral: { bg: "var(--surface-2)", fg: "var(--text-muted)" },
+  brand: { bg: "transparent", fg: "var(--brand-strong)" },
+  success: { bg: "transparent", fg: "var(--success)" },
+  pink: { bg: "transparent", fg: "var(--text-muted)" },
+  accent: { bg: "transparent", fg: "var(--accent)" },
+  danger: { bg: "transparent", fg: "var(--danger)" },
+  info: { bg: "transparent", fg: "var(--text-muted)" },
+  neutral: { bg: "transparent", fg: "var(--text-faint)" },
 };
 
 export function Pill({
@@ -101,7 +101,7 @@ export function Pill({
 }) {
   const t = TONES[tone] ?? TONES.neutral;
   return (
-    <span className="pill" style={{ background: t.bg, color: t.fg }}>
+    <span className="pill" style={{ background: t.bg, color: t.fg, borderColor: "currentColor" }}>
       {dot ? <span className="w-1.5 h-1.5 rounded-none" style={{ background: t.fg }} /> : null}
       {children}
     </span>
@@ -143,15 +143,15 @@ export function Bar({ value, max, tone = "brand" }: { value: number; max: number
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
   const colour =
     tone === "accent"
-      ? "var(--matatu)"
+      ? "var(--accent)"
       : tone === "info"
-        ? "var(--sky)"
+        ? "var(--text-muted)"
         : tone === "success"
-          ? "var(--mpesa)"
-          : "var(--sunset)";
+          ? "var(--success)"
+          : "#ffffff";
   return (
-    <div className="h-2 rounded-none w-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
-      <div className="h-full rounded-none bar-fill" style={{ width: `${pct}%`, background: colour }} />
+    <div style={{ height: "3px", width: "100%", background: "var(--rule)", overflow: "hidden" }}>
+      <div className="bar-fill" style={{ height: "100%", width: `${pct}%`, background: colour }} />
     </div>
   );
 }

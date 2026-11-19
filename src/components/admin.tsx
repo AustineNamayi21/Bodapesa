@@ -81,9 +81,9 @@ export function PageHeader({
         style={{ borderTop: "2px solid var(--ink)", paddingTop: "0.9rem" }}
       >
         <div className="min-w-0">
-          <h1 className="text-[1.9rem] leading-none">{title}</h1>
+          <h1 className="display-md">{title}</h1>
           {subtitle ? (
-            <p className="text-[0.82rem] mt-2 max-w-prose" style={{ color: "var(--text-muted)" }}>
+            <p className="copy-sm mt-3" style={{ maxWidth: "58ch" }}>
               {subtitle}
             </p>
           ) : null}
@@ -107,7 +107,7 @@ export function FieldSet({
   cols?: 1 | 2 | 3;
 }) {
   return (
-    <fieldset className="pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+    <fieldset className="field-boxed pt-5" style={{ borderTop: "1px solid var(--border)" }}>
       <legend className="sr-only">{legend}</legend>
       <div className="mb-3">
         <span className="eyebrow">{legend}</span>

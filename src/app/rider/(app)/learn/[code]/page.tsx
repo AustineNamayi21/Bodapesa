@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, BadgeCheck, Clock, List } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { all, one } from "@/lib/db";
 import { completedLessonIds, requireRider } from "@/lib/rider";
 import { MODULE_LABELS, pick, t } from "@/lib/i18n";
@@ -26,17 +26,15 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
   const lesson = await one<Lesson>("SELECT * FROM Lesson WHERE code = ? AND active = 1", [code]);
   if (!lesson) notFound();
 
-  const questions = await all<QuizQuestion>(
-    `SELECT * FROM QuizQuestion WHERE lessonId = ? ORDER BY "order"`,
-    [lesson.id],
-  );
+  const questions = await all<QuizQuestion>(`SELECT * FROM QuizQuestion WHERE lessonId = ? ORDER BY "order"`, [
+    lesson.id,
+  ]);
 
   const done = (await completedLessonIds(rider.id)).has(lesson.id);
 
   const next = await one<{ code: string; titleEn: string; titleSw: string; titleSh: string }>(
     `SELECT code, titleEn, titleSw, titleSh FROM Lesson
-      WHERE active = 1
-        AND (moduleKey = ? AND "order" > ?)
+      WHERE active = 1 AND moduleKey = ? AND "order" > ?
       ORDER BY "order" LIMIT 1`,
     [lesson.moduleKey, lesson.order],
   );
@@ -48,106 +46,86 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
   const summary = pick(lesson, "summary", lang);
 
   return (
-    <div className="-mt-5 -mx-4">
-      {/* ── masthead ─────────────────────────────────────────────────────── */}
-      <header className="relative overflow-hidden" style={{ background: "var(--ink)" }}>
-        <div className="absolute inset-0">
+    <article>
+      {/* ── the masthead carries the module photograph at full bleed ──── */}
+      <header className="frame-hero" style={{ minHeight: "clamp(300px, 44vh, 400px)" }}>
+        <div className="frame-media animate-kenburns">
           <Photo name={MODULE_PHOTO[lesson.moduleKey] ?? "stage"} sizes="448px" priority />
         </div>
-        {/* The module photograph reads in full colour behind the title; the
-            gradient only deepens where the type sits. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 35%, rgba(0,0,0,0.88) 100%)",
-          }}
-        />
-        <div className="relative px-4 pt-4 pb-7">
-          <Link
-            href="/rider/learn"
-            className="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase"
-            style={{
-              color: "rgba(255,255,255,0.72)",
-              letterSpacing: "0.16em",
-              fontFamily: "var(--font-display)",
-            }}
-          >
-            <ArrowLeft size={13} /> {t("learn", lang)}
+        <div className="scrim" />
+
+        <div style={{ position: "absolute", top: "1rem", left: "1.25rem", zIndex: 1 }}>
+          <Link href="/rider/learn" className="cta" style={{ fontSize: "0.625rem", color: "rgba(255,255,255,0.8)" }}>
+            <ArrowLeft size={13} />
+            <span>{t("learn", lang)}</span>
           </Link>
+        </div>
 
-          <div className="mt-6 flex items-center gap-2 flex-wrap">
-            <span
-              className="pill"
-              style={{ background: "var(--ember)", color: "#000", borderColor: "transparent" }}
-            >
-              {MODULE_LABELS[lesson.moduleKey]?.[lang] ?? lesson.moduleKey}
-            </span>
-            <span
-              className="inline-flex items-center gap-1 text-[0.62rem] font-semibold uppercase"
-              style={{
-                color: "rgba(255,255,255,0.7)",
-                letterSpacing: "0.14em",
-                fontFamily: "var(--font-display)",
-              }}
-            >
-              <Clock size={11} /> {lesson.durationMin} {t("minRead", lang)}
-            </span>
-            {done ? (
-              <span
-                className="inline-flex items-center gap-1 text-[0.62rem] font-semibold uppercase"
-                style={{ color: "var(--jade)", letterSpacing: "0.14em", fontFamily: "var(--font-display)" }}
-              >
-                <BadgeCheck size={12} /> {t("done", lang)}
-              </span>
-            ) : null}
-          </div>
-
-          <h1 className="mt-3 text-[1.85rem] leading-[1.12]" style={{ color: "#fff" }}>
+        <div style={{ width: "100%", padding: "0 1.25rem 1.5rem" }}>
+          <p className="eyebrow eyebrow-rule animate-rise" style={{ color: "#fff" }}>
+            {MODULE_LABELS[lesson.moduleKey]?.[lang] ?? lesson.moduleKey}
+          </p>
+          <h1 className="display-lg animate-rise d-1" style={{ marginTop: "0.9rem", color: "#fff" }}>
             {pick(lesson, "title", lang)}
           </h1>
-
-          {summary ? (
-            <p
-              className="mt-3 text-[0.95rem] leading-relaxed max-w-prose"
-              style={{ color: "rgba(255,255,255,0.78)", fontFamily: "var(--font-editorial)" }}
-            >
-              {summary}
-            </p>
-          ) : null}
+          <p
+            className="animate-rise d-2"
+            style={{
+              marginTop: "0.9rem",
+              display: "flex",
+              gap: "1.25rem",
+              fontSize: "0.625rem",
+              fontWeight: 600,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.62)",
+            }}
+          >
+            <span>
+              {lesson.durationMin} {t("minRead", lang)}
+            </span>
+            {done ? <span style={{ color: "var(--accent)" }}>{t("done", lang)}</span> : null}
+          </p>
         </div>
-        <div style={{ height: "3px", background: "var(--ember)" }} />
       </header>
 
-      <div className="px-4 py-6 space-y-7">
-        {/* ── contents ───────────────────────────────────────────────────── */}
+      <div style={{ padding: "1.75rem 1.25rem 0" }}>
+        {summary ? (
+          <p
+            style={{
+              fontSize: "1.0625rem",
+              lineHeight: 1.6,
+              color: "#fff",
+              fontWeight: 500,
+              paddingBottom: "1.75rem",
+              borderBottom: "1px solid var(--rule)",
+            }}
+          >
+            {summary}
+          </p>
+        ) : null}
+
+        {/* ── contents ─────────────────────────────────────────────────── */}
         {sections.length >= 3 ? (
-          <details className="card p-0">
-            <summary
-              className="flex items-center gap-2 px-4 py-3 cursor-pointer text-[0.62rem] font-semibold uppercase select-none"
-              style={{ letterSpacing: "0.16em", fontFamily: "var(--font-display)" }}
-            >
-              <List size={13} style={{ color: "var(--ember-deep)" }} />
-              {CONTENTS_LABEL[lang]}
-              <span className="ml-auto tabular-nums" style={{ color: "var(--text-faint)" }}>
-                {sections.length}
-              </span>
+          <details style={{ marginTop: "1.75rem", borderBottom: "1px solid var(--rule)", paddingBottom: "1rem" }}>
+            <summary className="lesson-kicker" style={{ cursor: "pointer", listStyle: "none", paddingBottom: "0.5rem" }}>
+              {CONTENTS_LABEL[lang]} — {sections.length}
             </summary>
-            <ol className="px-4 pb-3 pt-1 space-y-1.5">
+            <ol style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0", display: "grid", gap: "0.6rem" }}>
               {sections.map((s, i) => (
-                <li key={i} className="flex gap-2.5 text-[0.86rem]">
+                <li key={i} style={{ display: "flex", gap: "0.8rem", fontSize: "0.875rem" }}>
                   <span
-                    className="tabular-nums shrink-0 font-semibold"
                     style={{
-                      color: "var(--ember-deep)",
-                      fontFamily: "var(--font-display)",
-                      fontSize: "0.7rem",
+                      color: "var(--accent)",
+                      fontSize: "0.6875rem",
+                      fontWeight: 700,
+                      fontVariantNumeric: "tabular-nums",
                       paddingTop: "0.15rem",
                     }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <a href={`#s-${i}`} className="underline-wipe">
+                  <a href={`#s-${i}`} className="underline-wipe" style={{ color: "var(--text-muted)" }}>
                     {s.heading}
                   </a>
                 </li>
@@ -156,49 +134,56 @@ export default async function LessonPage({ params }: { params: Promise<{ code: s
           </details>
         ) : null}
 
-        {/* ── the lesson ─────────────────────────────────────────────────── */}
-        {sections.length ? (
-          <LessonBody sections={sections} />
-        ) : (
-          <article className="prose-body">
-            {paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </article>
-        )}
+        {/* ── the lesson ───────────────────────────────────────────────── */}
+        <div style={{ marginTop: "2rem" }}>
+          {sections.length ? (
+            <LessonBody sections={sections} />
+          ) : (
+            <div className="prose-body">
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          )}
+        </div>
 
-        {/* ── check your understanding ───────────────────────────────────── */}
+        {/* ── check your understanding ─────────────────────────────────── */}
         {questions.length ? (
-          <div className="card-pop p-4">
+          <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--border-strong)", paddingTop: "1.75rem" }}>
             <Quiz riderId={rider.id} lessonId={lesson.id} questions={questions} lang={lang} />
           </div>
         ) : null}
-
-        {/* ── next ───────────────────────────────────────────────────────── */}
-        {next ? (
-          <Link
-            href={`/rider/learn/${next.code}`}
-            className="flex items-center justify-between gap-3 p-4 lift"
-            style={{ background: "var(--ink)", color: "#fff", border: "2px solid var(--ink)" }}
-          >
-            <span className="min-w-0">
-              <span
-                className="block text-[0.6rem] font-semibold uppercase"
-                style={{ color: "var(--ember)", letterSpacing: "0.18em", fontFamily: "var(--font-display)" }}
-              >
-                {t("continue", lang)}
-              </span>
-              <span
-                className="block font-display text-[1.05rem] truncate mt-1"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {pick(next, "title", lang)}
-              </span>
-            </span>
-            <ArrowRight size={20} className="shrink-0" style={{ color: "var(--ember)" }} />
-          </Link>
-        ) : null}
       </div>
-    </div>
+
+      {/* ── next ───────────────────────────────────────────────────────── */}
+      {next ? (
+        <Link
+          href={`/rider/learn/${next.code}`}
+          className="lift"
+          style={{
+            marginTop: "2.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem",
+            padding: "1.5rem 1.25rem",
+            borderTop: "1px solid var(--border-strong)",
+            textDecoration: "none",
+          }}
+        >
+          <span style={{ minWidth: 0 }}>
+            <span className="eyebrow" style={{ color: "var(--accent)" }}>
+              {t("continue", lang)}
+            </span>
+            <span className="display-sm" style={{ display: "block", marginTop: "0.5rem", color: "var(--text)" }}>
+              {pick(next, "title", lang)}
+            </span>
+          </span>
+          <span className="cta-ring" style={{ flexShrink: 0, borderColor: "var(--accent)", color: "var(--accent)" }}>
+            <ArrowRight size={15} />
+          </span>
+        </Link>
+      ) : null}
+    </article>
   );
 }

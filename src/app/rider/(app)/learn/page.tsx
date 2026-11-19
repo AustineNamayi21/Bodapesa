@@ -42,9 +42,9 @@ export default async function LearnPage() {
   const pct = lessonsTotal ? Math.round((lessonsDone / lessonsTotal) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7" style={{ padding: "1.5rem 1.25rem 0" }}>
       <div className="animate-rise">
-        <h1 className="text-[1.9rem] leading-tight">{t("learn", lang)}</h1>
+        <h1 className="display-lg">{t("learn", lang)}</h1>
         <div className="mt-2 flex items-center gap-3">
           <div className="flex-1 h-2.5 rounded-none overflow-hidden" style={{ background: "var(--surface-2)" }}>
             <div className="h-full rounded-none bar-fill progress-stripes" style={{ width: `${pct}%`, backgroundColor: "var(--sunset)" }} />

@@ -53,42 +53,44 @@ export default async function DashboardPage() {
   const LANG_NAMES: Record<string, string> = { EN: "English", SW: "Kiswahili", SH: "Sheng" };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header
-        className="relative rounded-none overflow-hidden animate-rise"
-        style={{ background: "var(--ink)", boxShadow: "var(--shadow-lg)" }}
+        className="frame-hero animate-rise"
+        style={{
+          minHeight: "clamp(280px, 34vh, 380px)",
+          marginInline: "calc(clamp(20px, 3vw, 44px) * -1)",
+          marginTop: "calc(clamp(28px, 4vh, 48px) * -1)",
+        }}
       >
-        <div className="absolute inset-y-0 right-0 w-full md:w-[58%]">
-          <Photo name="matatus" sizes="(max-width: 768px) 100vw, 60vw" priority />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, var(--ink) 0%, rgba(0,0,0,0.75) 35%, rgba(0,0,0,0.2) 100%)" }} />
+        <div className="frame-media animate-kenburns">
+          <Photo name="matatus" sizes="100vw" priority />
         </div>
-        <div className="relative p-6 sm:p-8 max-w-2xl" style={{ color: "var(--cream)" }}>
-          <span className="eyebrow" style={{ color: "var(--matatu)" }}>
+        <div className="scrim scrim-left" />
+        <div style={{ paddingInline: "clamp(20px, 3vw, 44px)", paddingBottom: "clamp(24px, 3vh, 40px)", maxWidth: "46rem" }}>
+          <span className="eyebrow eyebrow-rule" style={{ color: "#fff" }}>
             {user?.partnerName ? `Viewing as ${user.partnerName}` : "Platform-wide view"}
           </span>
-          <h1 className="mt-2 text-3xl sm:text-[2.6rem] leading-[1.05]" style={{ color: "var(--cream)" }}>
+          <h1 className="display-lg" style={{ marginTop: "1rem", color: "#fff" }}>
             Habari, {user?.name?.split(" ")[0] ?? "team"}
           </h1>
-          <p className="mt-2 text-[0.9rem]" style={{ color: "rgba(255,255,255,0.75)" }}>
-            <span className="font-bold" style={{ color: "var(--cream)" }}>
-              {k.riders.toLocaleString()} riders
-            </span>{" "}
-            on the register, <span className="font-bold" style={{ color: "var(--cream)" }}>{k.converted.toLocaleString()}</span> onboarded to a
-            product. Updated {new Date().toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })}.
+          <p className="copy" style={{ marginTop: "1rem", color: "rgba(255,255,255,0.78)" }}>
+            <strong style={{ color: "#fff" }}>{k.riders.toLocaleString()} riders</strong> on the register,{" "}
+            <strong style={{ color: "#fff" }}>{k.converted.toLocaleString()}</strong> onboarded to a product. Updated{" "}
+            {new Date().toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })}.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <Link href="/admin/campaigns/new" className="btn btn-primary">
-              <Megaphone size={16} /> New campaign
+          <div style={{ marginTop: "1.75rem", display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+            <Link href="/admin/campaigns/new" className="btn btn-primary btn-sm">
+              <Megaphone size={14} /> New campaign
             </Link>
-            <Link href="/admin/riders/new" className="btn" style={{ background: "rgba(255,255,255,0.1)", color: "var(--cream)", borderColor: "rgba(255,255,255,0.35)" }}>
-              <UserPlus size={16} /> Register a rider
+            <Link href="/admin/riders/new" className="btn btn-outline-light btn-sm">
+              <UserPlus size={14} /> Register a rider
             </Link>
           </div>
         </div>
       </header>
 
       {/* ------------------------------------------------------------ KPIs */}
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 stagger">
+      <div className="grid gap-x-6 gap-y-7 grid-cols-2 lg:grid-cols-4 stagger">
         <Stat label="Riders registered" value={k.riders.toLocaleString()} hint={`${k.consented.toLocaleString()} consented to messaging`} tone="brand" icon={<Users size={16} />} />
         <Stat label="Riders reached" value={k.reached.toLocaleString()} hint={`${k.deliveryRate}% delivery rate`} tone="success" icon={<Send size={16} />} />
         <Stat

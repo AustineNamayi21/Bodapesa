@@ -1,206 +1,268 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   BodaPesa design system — "Muze" edition.
+   BodaPesa design system.
 
-   The language is borrowed from muzeclub.com: cool paper, pure black ink,
-   a burnt-ember accent, a jade secondary, and — the defining move — square
-   corners everywhere. Type is a three-voice system: a wide geometric sans
-   set in tracked capitals for labels and chrome, a serif display for
-   headings, and an editorial serif for long-form reading.
+   The language is taken from ferrari.com, sampled directly. Three things
+   carry it, and only three:
 
-   Every legacy token name from the previous green theme is still defined
-   below, remapped onto the new palette. Nothing that referenced --sunset,
-   --mpesa, --matatu, --kanga, --green or --cream breaks; it simply changes
-   colour. That is what makes this a retheme rather than a rewrite.
+     1. SCALE.  A frame is the unit of design, not a card. Sections fill the
+        viewport. Display type runs 48–120px at 0.88–0.96 line-height.
+     2. RATIO.  An 11px label tracked to 0.22em sits against a 92px headline.
+        That 8:1 contrast between the smallest and largest type is the whole
+        effect; nothing in between competes.
+     3. PHOTOGRAPHY.  Black grounds exist to let photographs carry the page.
+        Every hero is an image with a scrim, never a colour field.
+
+   Everything else is deliberately almost absent: one typeface, no corner
+   radius except circular icon buttons, no shadows, no gradients as
+   decoration, one accent colour used sparingly.
+
+   Every legacy token from the previous themes is still defined and remapped,
+   so no existing className breaks.
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
   /* ── type ─────────────────────────────────────────────────────────────── */
-  /* The three faces are imported in layout.tsx from @fontsource-variable.
-     Each stack falls back to a system face of the same class, so a font that
-     fails to load degrades to something of the right shape rather than to
-     the browser default. */
+  /* One family, as Ferrari does. Archivo's width axis gives the display
+     sizes a slightly expanded set without a second typeface. */
   --font-display: "Archivo Variable", "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ui: var(--font-display);
-  --font-heading: "Cinzel Variable", "Cinzel", Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-display);
   --font-body: var(--font-display);
-  --font-editorial: "Playfair Display Variable", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-editorial: var(--font-display);
 
-  /* ── the palette ──────────────────────────────────────────────────────── */
-  --paper: #f0f3f6;        /* cool off-white — the page */
-  --paper-2: #e4e9ef;      /* recessed fill */
-  --paper-3: #d7dde4;      /* rules, dividers */
-  --ink: #000000;          /* frames, primary fill */
-  --ink-2: #1a1a1a;
-  --ink-3: #292929;
-  --ink-4: #303131;
-  --ink-soft: #5c6166;     /* muted body text — 6.0:1 on paper */
-  --ink-faint: #767d84;    /* captions — 4.6:1 on paper */
+  /* ── ground ───────────────────────────────────────────────────────────── */
+  --black: #000000;
+  --panel: #181818;      /* raised panel on black */
+  --panel-2: #202020;    /* hover / nested */
+  --rule: #2c2c2c;       /* hairline divider on black */
+  --rule-soft: #1f1f1f;
   --white: #ffffff;
+  --paper: #ffffff;      /* the light sections */
+  --paper-2: #f2f2f2;
+  --paper-rule: #d8d8d8;
 
-  --ember: #e65212;        /* accent. Black on ember = 5.7:1 */
-  --ember-deep: #b8400c;   /* accessible action. White on it = 6.1:1 */
-  --ember-soft: #fbe6dc;
-  --jade: #05c8a1;         /* secondary. Black on jade = 9.5:1 */
-  --jade-deep: #046f5c;    /* White on it = 6.4:1 */
-  --jade-soft: #d9f7f0;
+  /* Text on black */
+  --on-black: #ffffff;
+  --on-black-2: #c4c4c4; /* body — 11.6:1 */
+  --on-black-3: #8a8a8a; /* labels — 5.3:1 */
+  --on-black-4: #6b6b6b; /* quiet, large sizes only */
+  /* Text on white */
+  --on-paper: #000000;
+  --on-paper-2: #3a3a3a;
+  --on-paper-3: #6b6b6b;
+
+  /* ── accent ───────────────────────────────────────────────────────────── */
+  /* One colour, used for the eyebrow rule, a single figure, and the primary
+     action. Deliberately not Ferrari's own red. */
+  --accent: #e8341f;
+  --accent-deep: #c0260f;  /* white on this = 5.4:1 */
+  --accent-soft: #2a0d08;
 
   /* ── legacy names, remapped ───────────────────────────────────────────── */
-  /* These kept the old theme coherent; they now point at the new palette so
-     every existing className and inline style stays valid. */
-  --green: var(--ember-deep);
-  --green-deep: var(--ink);
-  --green-bright: var(--ember);
-  --green-soft: var(--ember-soft);
-  --sunset: var(--ember-deep);
+  --ink: var(--black);
+  --ink-2: #141414;
+  --ink-3: #1f1f1f;
+  --ink-4: #2c2c2c;
+  --ink-soft: var(--on-paper-2);
+  --ink-faint: var(--on-paper-3);
+  --ember: var(--accent);
+  --ember-deep: var(--accent-deep);
+  --ember-soft: var(--accent-soft);
+  --jade: #2ad1a8;
+  --jade-deep: #0f7a62;
+  --jade-soft: #06231c;
+  --green: var(--accent-deep);
+  --green-deep: var(--black);
+  --green-bright: var(--accent);
+  --green-soft: var(--accent-soft);
+  --sunset: var(--accent);
   --mpesa: var(--jade-deep);
-  --matatu: var(--ember);
-  --kanga: var(--ink);
-  --sky: var(--ink-4);
+  --matatu: var(--accent);
+  --kanga: var(--black);
+  --sky: var(--on-black-3);
   --cream: #ffffff;
+  --paper-3: var(--paper-rule);
+  --tyre: var(--rule);
+  --line: var(--rule);
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
-  --bg: var(--paper);
-  --surface: #ffffff;
-  --surface-2: var(--paper-2);
-  --border: #c9d1d9;
-  --border-strong: var(--ink);
-  --text: var(--ink);
-  --text-muted: var(--ink-soft);
-  --text-faint: var(--ink-faint);
+  --bg: var(--black);
+  --surface: var(--panel);
+  --surface-2: var(--panel-2);
+  --border: var(--rule);
+  --border-strong: #4a4a4a;
+  --text: var(--on-black);
+  --text-muted: var(--on-black-2);
+  --text-faint: var(--on-black-3);
 
   /* ── semantic ─────────────────────────────────────────────────────────── */
-  --brand: var(--ink);
-  --brand-ink: #ffffff;
-  --brand-strong: var(--ember-deep);
-  --brand-soft: var(--ember-soft);
-  --accent: var(--ember-deep);
-  --accent-fill: var(--ember);
-  --accent-soft: var(--ember-soft);
-  --success: var(--jade-deep);
-  --success-fill: var(--jade);
-  --success-soft: var(--jade-soft);
-  --pink: var(--ink-4);
-  --pink-fill: var(--ink-4);
-  --pink-soft: var(--paper-2);
-  --info: var(--ink-3);
-  --info-fill: var(--ink-3);
-  --info-soft: var(--paper-2);
-  --danger: #b3261e;
-  --danger-soft: #fbe4e2;
+  --brand: var(--white);
+  --brand-ink: var(--black);
+  --brand-strong: var(--accent);
+  --brand-soft: var(--accent-soft);
+  --accent-fill: var(--accent);
+  --success: #2ad1a8;
+  --success-fill: #0f7a62;
+  --success-soft: #06231c;
+  --pink: #c4c4c4;
+  --pink-fill: #6b6b6b;
+  --pink-soft: var(--panel);
+  --info: #c4c4c4;
+  --info-fill: #6b6b6b;
+  --info-soft: var(--panel);
+  --danger: #ff6b5a;
+  --danger-soft: #2a0d08;
 
   /* ── form ─────────────────────────────────────────────────────────────── */
-  /* Square. This single pair of values is what carries the Muze look. */
   --radius: 0px;
   --radius-sm: 0px;
   --hair: 1px;
-  --rule: 2px;
-
-  /* Shadows are nearly absent: the language is drawn with rules, not depth. */
   --shadow: none;
-  --shadow-lg: 0 18px 40px -28px rgba(0, 0, 0, 0.45);
-  --pop-shadow: var(--shadow-lg);
-  --line: var(--ink);
-  --tyre: var(--ink);
+  --shadow-lg: none;
+  --pop-shadow: none;
 
   /* ── charts ───────────────────────────────────────────────────────────── */
-  --series-1: #1f2933;
-  --series-2: #e65212;
-  --series-3: #046f5c;
-  --grid: #cfd6dd;
+  --series-1: #ffffff;
+  --series-2: var(--accent);
+  --series-3: #6b6b6b;
+  --grid: var(--rule);
 
   /* ── motion ───────────────────────────────────────────────────────────── */
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Long and eased. Nothing snaps; nothing bounces. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── frame rhythm ─────────────────────────────────────────────────────── */
+  --gutter: clamp(20px, 4vw, 56px);
+  --frame: clamp(64px, 9vw, 112px);
+
+  /* ── the page ground, and what reads on it ────────────────────────────── */
+  /* These two are the only tokens the theme switch needs to flip for the
+     shells. Everything else resolves from the ramp above. */
+  --ground: #000000;
+  --on-ground: #ffffff;
+  color-scheme: dark;
 }
 
-/* Dark is a tonal inversion: paper becomes near-black, ink becomes paper.
-   Ember and jade are lifted so they stay legible on a dark field. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0b0d0f;
-    --surface: #131619;
-    --surface-2: #1b1f23;
-    --paper: #0b0d0f;
-    --paper-2: #1b1f23;
-    --paper-3: #272c31;
-    --border: #2b3136;
-    --border-strong: #f0f3f6;
-    --text: #f0f3f6;
-    --text-muted: #b4bcc4;
-    --text-faint: #8a939b;
-    --ember: #ff7a3d;
-    --ember-deep: #ff7a3d;
-    --ember-soft: #37190d;
-    --jade: #2ae0bd;
-    --jade-deep: #2ae0bd;
-    --jade-soft: #0b2e28;
-    --brand: #f0f3f6;
-    --brand-ink: #0b0d0f;
-    --brand-strong: var(--ember);
-    --brand-soft: var(--ember-soft);
-    --accent: var(--ember);
-    --accent-soft: var(--ember-soft);
-    --success: var(--jade);
-    --success-soft: var(--jade-soft);
-    --pink: #c9d1d9;
-    --pink-soft: #1b1f23;
-    --info: #c9d1d9;
-    --info-soft: #1b1f23;
-    --danger: #ff8a80;
-    --danger-soft: #3b1512;
-    --series-1: #c9d1d9;
-    --series-2: #ff7a3d;
-    --series-3: #2ae0bd;
-    --grid: #272c31;
-    --shadow: none;
-    --shadow-lg: 0 18px 40px -28px rgba(0, 0, 0, 0.9);
-    --line: #f0f3f6;
-    --tyre: #2b3136;
-    --cream: #f0f3f6;
+/* ═══ LIGHT ═════════════════════════════════════════════════════════════════
+   Not an inversion. Ferrari's light pages are paper-white with black type and
+   hairline rules — the same geometry, a different ground. Three things change
+   beyond the obvious:
+
+     · The accent drops to its deep variant. #e8341f on white is 3.5:1, which
+       fails for the 11px labels the language leans on; #c0260f is 5.4:1.
+     · Panels are barely-there greys, not boxes. Separation stays with rules.
+     · Photographic heroes do NOT follow the theme — see .frame-hero below.
+       White type on a scrimmed photograph is correct in both themes, so the
+       heroes pin the dark ramp locally.
+   ═════════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --ground: #ffffff;
+  --on-ground: #000000;
+
+  --panel: #f4f4f4;
+  --panel-2: #ebebeb;
+  --rule: #dcdcdc;
+  --rule-soft: #ebebeb;
+
+  --accent: #c0260f;
+  --accent-deep: #9e1f0c;
+  --accent-soft: #fbeae7;
+
+  /* The "on black" ramp means "on the page ground"; on paper it inverts. */
+  --on-black: #000000;
+  --on-black-2: #3a3a3a;
+  --on-black-3: #5e5e5e;
+  --on-black-4: #767676;
+
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: var(--panel);
+  --border: var(--rule);
+  --border-strong: #000000;
+  --text: #000000;
+  --text-muted: #3a3a3a;
+  --text-faint: #5e5e5e;
+
+  --brand: #000000;
+  --brand-ink: #ffffff;
+  --sky: var(--on-black-3);
+
+  --success: #0f7a62;
+  --success-fill: #0f7a62;
+  --success-soft: #e6f5f1;
+  --pink: #3a3a3a;
+  --pink-fill: #767676;
+  --pink-soft: var(--panel);
+  --info: #3a3a3a;
+  --info-fill: #767676;
+  --info-soft: var(--panel);
+  --danger: #c22a16;
+  --danger-soft: #fbeae7;
+
+  --series-1: #000000;
+  --series-3: #9a9a9a;
+  --grid: var(--rule);
+}
+
+/* .on-paper names the band that contrasts with the page ground, not a fixed
+   colour. The landing alternates grounds section by section, and that rhythm
+   is the point — so on a light page the alternating band is the dark one. */
+[data-theme="light"] .on-paper {
+  --bg: #000000;
+  --surface: #181818;
+  --surface-2: #202020;
+  --border: #2c2c2c;
+  --border-strong: #4a4a4a;
+  --text: #ffffff;
+  --text-muted: #c4c4c4;
+  --text-faint: #8a8a8a;
+  --on-black: #ffffff;
+  --on-black-2: #c4c4c4;
+  --on-black-3: #8a8a8a;
+  --on-black-4: #6b6b6b;
+  --accent: #e8341f;
+  --line: #2c2c2c;
+  --ground: #000000;
+  --on-ground: #ffffff;
+  background: #000000;
+  color: #ffffff;
+}
+
+/* The switch itself animates, so a theme change reads as a deliberate
+   transition rather than a flicker. Honour a reduced-motion preference. */
+html.theme-animating,
+html.theme-animating body,
+html.theme-animating [data-theme-surface] {
+  transition: background-color 0.45s var(--ease-soft), color 0.45s var(--ease-soft),
+    border-color 0.45s var(--ease-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-animating,
+  html.theme-animating body,
+  html.theme-animating [data-theme-surface] {
+    transition: none;
   }
 }
 
-:root[data-theme="dark"] {
-  --bg: #0b0d0f;
-  --surface: #131619;
-  --surface-2: #1b1f23;
-  --paper: #0b0d0f;
-  --paper-2: #1b1f23;
-  --paper-3: #272c31;
-  --border: #2b3136;
-  --border-strong: #f0f3f6;
-  --text: #f0f3f6;
-  --text-muted: #b4bcc4;
-  --text-faint: #8a939b;
-  --ember: #ff7a3d;
-  --ember-deep: #ff7a3d;
-  --ember-soft: #37190d;
-  --jade: #2ae0bd;
-  --jade-deep: #2ae0bd;
-  --jade-soft: #0b2e28;
-  --brand: #f0f3f6;
-  --brand-ink: #0b0d0f;
-  --brand-strong: var(--ember);
-  --brand-soft: var(--ember-soft);
-  --accent: var(--ember);
-  --accent-soft: var(--ember-soft);
-  --success: var(--jade);
-  --success-soft: var(--jade-soft);
-  --pink: #c9d1d9;
-  --pink-soft: #1b1f23;
-  --info: #c9d1d9;
-  --info-soft: #1b1f23;
-  --danger: #ff8a80;
-  --danger-soft: #3b1512;
-  --series-1: #c9d1d9;
-  --series-2: #ff7a3d;
-  --series-3: #2ae0bd;
-  --grid: #272c31;
-  --line: #f0f3f6;
-  --tyre: #2b3136;
-  --cream: #f0f3f6;
+/* The light sections invert the token set rather than defining a second
+   palette, so a component dropped into one adapts without a variant. */
+.on-paper {
+  --bg: var(--paper);
+  --surface: var(--paper);
+  --surface-2: var(--paper-2);
+  --border: var(--paper-rule);
+  --border-strong: var(--black);
+  --text: var(--on-paper);
+  --text-muted: var(--on-paper-2);
+  --text-faint: var(--on-paper-3);
+  --line: var(--paper-rule);
+  background: var(--paper);
+  color: var(--on-paper);
 }
 
 @theme inline {
@@ -215,13 +277,14 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-brand-strong: var(--brand-strong);
-  --color-ember: var(--ember);
+  --color-ember: var(--accent);
+  --color-accent: var(--accent);
   --color-jade: var(--jade);
   --color-paper: var(--paper);
-  /* kept so existing utility classes resolve */
-  --color-green: var(--ember-deep);
-  --color-green-bright: var(--ember);
-  --color-ink: var(--ink);
+  --color-panel: var(--panel);
+  --color-green: var(--accent-deep);
+  --color-green-bright: var(--accent);
+  --color-ink: var(--black);
   --color-danger: var(--danger);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
@@ -237,173 +300,446 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--black);
 }
 
-html,
 body {
   background: var(--bg);
   color: var(--text);
-}
-
-body {
   font-family: var(--font-body);
-  font-feature-settings: "kern" 1;
+  font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Headings take the serif display face, set tight and a touch tracked —
-   the Muze masthead treatment. */
-h1,
-h2,
-h3,
-.font-display {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  letter-spacing: 0.004em;
-  text-wrap: balance;
-}
-h1 {
-  font-weight: 700;
-}
-h4,
-h5,
-h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
 ::selection {
-  background: var(--ember);
-  color: #000;
+  background: var(--accent);
+  color: #fff;
 }
 
 :focus-visible {
-  outline: var(--rule) solid var(--ember-deep);
-  outline-offset: 2px;
-  border-radius: 0;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
-/* ─────────────────────────────────────────────────────────── components ── */
+/* ─────────────────────────────────────────────────────── type system ── */
+/* Two registers and nothing between them: a tracked micro-label, and
+   display type. Body copy sits quietly underneath. */
+
 @layer components {
-  /* ── surfaces ───────────────────────────────────────────────────────── */
-  /* A card is a hairline rectangle. No radius, no shadow — separation comes
-     from the rule and from whitespace. */
-  .card {
-    background: var(--surface);
-    border: var(--hair) solid var(--border);
-    border-radius: 0;
-    box-shadow: none;
+  /* The 11px uppercase label. Half of the Ferrari effect. */
+  .label,
+  .eyebrow,
+  .stat-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    line-height: 1.4;
   }
-  .card-pop {
-    background: var(--surface);
-    border: var(--rule) solid var(--ink);
-    border-radius: 0;
-    box-shadow: none;
-  }
-  /* A panel that reads as part of the paper rather than sitting on it. */
-  .panel {
-    background: transparent;
-    border-top: var(--rule) solid var(--ink);
-    border-radius: 0;
+  .label {
+    display: block;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.18em;
   }
 
-  .lift {
+  /* A label preceded by a short rule — the section marker. */
+  .eyebrow-rule::before {
+    content: "";
+    width: 2.4rem;
+    height: 1px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Display sizes. Uppercase, tight, slightly expanded. */
+  .display-xl,
+  .display-lg,
+  .display-md,
+  .display-sm {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    font-stretch: 110%;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .display-xl {
+    font-size: clamp(2.75rem, 7vw, 5.75rem);
+  }
+  .display-lg {
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 0.94;
+  }
+  .display-md {
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    line-height: 0.98;
+  }
+  .display-sm {
+    font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+  }
+
+  /* Figures carry the same weight as display type. */
+  .figure {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+  }
+  .figure-sm {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.75rem;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  /* Body copy. Never larger than 17px; its job is to stay out of the way. */
+  .copy {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 46ch;
+  }
+  .copy-sm {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  /* ── frames ─────────────────────────────────────────────────────────── */
+  /* A frame is a full-width band. This is the page's structural unit. */
+  .frame {
+    padding-block: var(--frame);
+    padding-inline: var(--gutter);
+  }
+  .frame-tight {
+    padding-block: clamp(40px, 5vw, 64px);
+    padding-inline: var(--gutter);
+  }
+  /* A hero that fills the viewport and holds a photograph. */
+  .frame-hero {
+    position: relative;
+    min-height: min(92vh, 860px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    isolation: isolate;
+
+    /* A scrimmed photograph is dark in either theme, so the type on it stays
+       light. Pinning the ramp here means every component dropped into a hero
+       reads correctly without a light-mode variant of its own. */
+    --on-black: #ffffff;
+    --on-black-2: #c4c4c4;
+    --on-black-3: #8a8a8a;
+    --on-black-4: #6b6b6b;
+    --text: #ffffff;
+    --text-muted: #c4c4c4;
+    --text-faint: #8a8a8a;
+    --border: rgba(255, 255, 255, 0.22);
+    --border-strong: rgba(255, 255, 255, 0.5);
+    --accent: #e8341f;
+    --ground: #000000;
+    --on-ground: #ffffff;
+    color: #ffffff;
+  }
+  .frame-media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .frame-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* The scrim. Full-strength photograph at the top, legible type at the
+     bottom. Never a flat opacity wash over the whole image. */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.42) 0%,
+      rgba(0, 0, 0, 0.12) 26%,
+      rgba(0, 0, 0, 0.62) 66%,
+      rgba(0, 0, 0, 0.94) 100%
+    );
+  }
+  .scrim-left {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.94) 0%,
+      rgba(0, 0, 0, 0.72) 42%,
+      rgba(0, 0, 0, 0.25) 100%
+    );
+  }
+
+  /* An asymmetric editorial split: copy one side, photograph bleeding off. */
+  .split {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .split > .split-copy {
+    flex: 999 1 min(560px, 100%);
+    min-width: 0;
+    padding: var(--frame) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .split > .split-media {
+    flex: 1 1 380px;
+    min-height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+  .split > .split-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Panels divided by hairlines — the module row. */
+  .panel-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--rule);
+  }
+  .panel-row > * {
+    flex: 1 1 260px;
+    min-width: 0;
+    background: var(--panel);
+  }
+
+  /* ── controls ───────────────────────────────────────────────────────── */
+  /* The signature action: tracked caps, then a circular arrow. */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.95rem;
+    text-decoration: none;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .cta-ring {
+    width: 2.875rem;
+    height: 2.875rem;
+    border: 1px solid currentColor;
+    border-radius: 100%;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
     transition:
-      transform 0.45s var(--ease),
-      border-color 0.3s var(--ease-soft),
-      background 0.3s var(--ease-soft),
-      color 0.3s var(--ease-soft);
+      background 0.5s var(--ease),
+      color 0.5s var(--ease);
   }
-  .lift:hover {
-    transform: translateY(-2px);
-    border-color: var(--ink);
+  .cta:hover .cta-ring {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .cta svg {
+    transition: transform 0.5s var(--ease);
+  }
+  .cta:hover svg {
+    transform: translateX(3px);
   }
 
-  /* ── buttons ────────────────────────────────────────────────────────── */
-  /* Square, tracked capitals, hairline rule. The ink fill is the primary
-     action; the ember fill is the accent; the ghost is the Muze "FAQS" box. */
+  /* A solid bar action with the arrow in its own divided cell. */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.7rem;
+    border: 1px solid transparent;
     border-radius: 0;
-    padding: 0.78rem 1.5rem;
+    padding: 0 1.4rem;
+    min-height: 3.25rem;
     font-family: var(--font-display);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    line-height: 1;
-    transition:
-      background 0.28s var(--ease-soft),
-      color 0.28s var(--ease-soft),
-      border-color 0.28s var(--ease-soft),
-      transform 0.12s var(--ease-soft);
+    text-decoration: none;
     cursor: pointer;
-    border: var(--rule) solid transparent;
-    white-space: nowrap;
-    user-select: none;
-    position: relative;
-  }
-  .btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  .btn:active:not(:disabled) {
-    transform: translateY(1px);
+    transition:
+      background 0.45s var(--ease),
+      color 0.45s var(--ease),
+      border-color 0.45s var(--ease);
   }
   .btn svg {
-    transition: transform 0.28s var(--ease);
+    flex-shrink: 0;
+    transition: transform 0.45s var(--ease);
   }
-  .btn:hover:not(:disabled) svg:last-child {
-    transform: translateX(4px);
+  .btn:hover svg:last-child {
+    transform: translateX(2px);
+  }
+  /* ── theme switch ─────────────────────────────────────────────────────
+     The same circle as the CTA ring. The two icons are stacked and swapped
+     by rotation, so neither reflows the button. */
+  .theme-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background 0.45s var(--ease), border-color 0.45s var(--ease),
+      color 0.45s var(--ease);
+  }
+  .theme-toggle:hover {
+    background: var(--on-ground);
+    color: var(--ground);
+    border-color: var(--on-ground);
+  }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .theme-toggle-icon {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+    transition: opacity 0.4s var(--ease), transform 0.5s var(--ease);
+  }
+  .theme-toggle-icon[data-on="false"] {
+    opacity: 0;
+    transform: rotate(-75deg) scale(0.6);
+  }
+  .theme-toggle-icon[data-on="true"] {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle-icon {
+      transition: opacity 0.01s;
+      transform: none !important;
+    }
+  }
+
+  /* Opt-in: the arrow sits in its own divided cell at the right edge. */
+  .btn-arrow {
+    justify-content: space-between;
+    padding-right: 0;
+    gap: 1.5rem;
+  }
+  .btn-arrow > svg:last-child {
+    width: 3.25rem;
+    align-self: stretch;
+    height: auto;
+    padding-inline: 1.1rem;
+    box-sizing: content-box;
+    border-left: 1px solid currentColor;
+  }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   .btn-primary {
-    background: var(--ink);
-    color: var(--white);
-    border-color: var(--ink);
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
   }
   .btn-primary:hover:not(:disabled) {
-    background: transparent;
-    color: var(--text);
-    border-color: var(--ink);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
   }
-
   .btn-accent {
-    background: var(--ember);
-    color: #000;
-    border-color: var(--ember);
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
   }
   .btn-accent:hover:not(:disabled) {
-    background: transparent;
-    color: var(--text);
-    border-color: var(--ink);
+    background: var(--white);
+    border-color: var(--white);
+    color: var(--black);
   }
-
   .btn-ink {
-    background: var(--ink);
-    color: var(--white);
-    border-color: var(--ink);
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
   }
   .btn-ink:hover:not(:disabled) {
-    background: var(--ink-3);
+    background: var(--accent);
+    border-color: var(--accent);
   }
-
   .btn-ghost {
     background: transparent;
     color: var(--text);
     border-color: var(--border-strong);
   }
   .btn-ghost:hover:not(:disabled) {
-    background: var(--ink);
-    color: var(--white);
-    border-color: var(--ink);
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
   }
-
+  .btn-outline-light {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+  .btn-outline-light:hover:not(:disabled) {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
   .btn-danger {
     background: transparent;
     color: var(--danger);
@@ -411,70 +747,88 @@ h6 {
   }
   .btn-danger:hover:not(:disabled) {
     background: var(--danger);
-    color: var(--white);
-  }
-
-  .btn-outline-light {
-    background: transparent;
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.55);
   }
-  .btn-outline-light:hover:not(:disabled) {
-    background: #fff;
-    color: var(--ink);
-    border-color: #fff;
-  }
-
+  /* Small actions drop the divided arrow cell and read as plain tracked caps. */
   .btn-sm {
-    padding: 0.5rem 0.95rem;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.16em;
+    gap: 0.5rem;
   }
   .btn-lg {
-    padding: 1rem 2rem;
-    font-size: 0.78rem;
+    min-height: 3.75rem;
+    padding-left: 1.75rem;
+    font-size: 0.8125rem;
   }
 
-  /* ── links ──────────────────────────────────────────────────────────── */
   .link-arrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     font-family: var(--font-display);
+    font-size: 0.6875rem;
     font-weight: 600;
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text);
-    border-bottom: var(--rule) solid var(--ember);
-    padding-bottom: 0.2rem;
+    text-decoration: none;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--accent);
   }
   .link-arrow svg {
-    transition: transform 0.28s var(--ease);
+    transition: transform 0.45s var(--ease);
   }
   .link-arrow:hover svg {
-    transform: translateX(5px);
+    transform: translateX(4px);
   }
 
-  /* An underline that wipes in from the left on hover. */
   .underline-wipe {
     position: relative;
+    text-decoration: none;
   }
   .underline-wipe::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -3px;
-    height: var(--rule);
+    bottom: -2px;
+    height: 1px;
     background: currentColor;
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 0.4s var(--ease);
+    transition: transform 0.55s var(--ease);
   }
   .underline-wipe:hover::after {
     transform: scaleX(1);
     transform-origin: left;
+  }
+
+  /* ── surfaces ───────────────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+  }
+  .card-pop {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 0;
+  }
+  .panel {
+    background: transparent;
+    border-top: 1px solid var(--rule);
+  }
+  .lift {
+    transition:
+      background 0.45s var(--ease),
+      border-color 0.45s var(--ease),
+      transform 0.6s var(--ease);
+  }
+  .lift:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
   }
 
   /* ── form controls ──────────────────────────────────────────────────── */
@@ -482,17 +836,20 @@ h6 {
   .select,
   .textarea {
     width: 100%;
-    background: var(--surface);
-    border: var(--hair) solid var(--border-strong);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--border-strong);
     border-radius: 0;
-    padding: 0.72rem 0.9rem;
-    font-family: var(--font-ui);
-    font-size: 0.9rem;
+    padding: 0.85rem 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
     color: var(--text);
     outline: none;
-    transition:
-      border-color 0.2s var(--ease-soft),
-      box-shadow 0.2s var(--ease-soft);
+    min-height: 3rem;
+    transition: border-color 0.35s var(--ease);
+  }
+  .select {
+    padding-right: 1.5rem;
   }
   .input::placeholder,
   .textarea::placeholder {
@@ -501,77 +858,76 @@ h6 {
   .input:focus,
   .select:focus,
   .textarea:focus {
-    border-color: var(--ink);
-    box-shadow: inset 0 -3px 0 var(--ember);
+    border-bottom-color: var(--accent);
   }
   .input[aria-invalid="true"],
   .select[aria-invalid="true"],
   .textarea[aria-invalid="true"] {
-    border-color: var(--danger);
+    border-bottom-color: var(--danger);
   }
   .textarea {
     resize: vertical;
-    min-height: 92px;
+    min-height: 5.5rem;
     line-height: 1.6;
   }
-
-  .label {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 0.45rem;
+  /* The admin console packs many fields together, where a boxed control
+     reads more clearly than a rule. */
+  .field-boxed .input,
+  .field-boxed .select,
+  .field-boxed .textarea {
+    border: 1px solid var(--border);
+    padding: 0.75rem 0.9rem;
+    background: var(--bg);
+  }
+  .field-boxed .input:focus,
+  .field-boxed .select:focus,
+  .field-boxed .textarea:focus {
+    border-color: var(--accent);
   }
 
-  /* Square checkbox / radio that matches the rule-drawn language. */
   .check {
     appearance: none;
-    width: 1.05rem;
-    height: 1.05rem;
-    border: var(--rule) solid var(--border-strong);
-    background: var(--surface);
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1px solid var(--border-strong);
+    background: transparent;
     display: inline-grid;
     place-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.2s var(--ease-soft), border-color 0.2s var(--ease-soft);
+    transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
   }
   .check::after {
     content: "";
-    width: 0.52rem;
-    height: 0.52rem;
-    background: var(--ember);
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--accent);
     transform: scale(0);
-    transition: transform 0.2s var(--ease);
+    transition: transform 0.3s var(--ease);
   }
   .check:checked {
-    border-color: var(--ink);
+    border-color: var(--accent);
   }
   .check:checked::after {
     transform: scale(1);
   }
 
-  /* A whole-row selectable control — the pattern used in the rider forms. */
   .choice {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.7rem 0.85rem;
-    border: var(--hair) solid var(--border);
-    background: var(--surface);
+    gap: 0.8rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: border-color 0.2s var(--ease-soft), background 0.2s var(--ease-soft);
+    font-size: 0.9375rem;
+    min-height: 3rem;
+    transition: border-color 0.3s var(--ease);
   }
   .choice:hover {
-    border-color: var(--ink);
+    border-bottom-color: var(--border-strong);
   }
   .choice:has(input:checked) {
-    border-color: var(--ink);
-    background: var(--surface-2);
+    border-bottom-color: var(--accent);
   }
 
   /* ── markers ────────────────────────────────────────────────────────── */
@@ -580,169 +936,124 @@ h6 {
     align-items: center;
     gap: 0.35rem;
     border-radius: 0;
-    padding: 0.26rem 0.6rem;
+    padding: 0.3rem 0.6rem;
     font-family: var(--font-display);
-    font-size: 0.6rem;
+    font-size: 0.625rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     white-space: nowrap;
-    border: var(--hair) solid transparent;
+    border: 1px solid transparent;
   }
-
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-display);
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  /* The Muze "FAQS" box: a tracked caption inside a square rule. */
   .sticker {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.55rem 1.1rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid currentColor;
     border-radius: 0;
-    border: var(--rule) solid currentColor;
-    color: var(--text);
     background: transparent;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.64rem;
-    letter-spacing: 0.16em;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
   }
-
-  /* A rule with a tracked caption sitting on it — the main section divider. */
   .rule-head {
     display: flex;
     align-items: baseline;
-    gap: 1rem;
-    border-top: var(--rule) solid var(--ink);
-    padding-top: 0.75rem;
+    gap: 1.25rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1rem;
   }
 
   /* ── tables ─────────────────────────────────────────────────────────── */
   .table {
     width: 100%;
     border-collapse: collapse;
-    font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
   }
   .table th {
     text-align: left;
-    font-family: var(--font-display);
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-faint);
     font-weight: 600;
-    padding: 0.7rem 0.8rem;
-    border-bottom: var(--rule) solid var(--ink);
+    padding: 0.9rem 0.85rem;
+    border-bottom: 1px solid var(--border-strong);
     white-space: nowrap;
   }
   .table td {
-    padding: 0.8rem;
-    border-bottom: var(--hair) solid var(--border);
+    padding: 0.95rem 0.85rem;
+    border-bottom: 1px solid var(--border);
     vertical-align: middle;
   }
-  .table tbody tr:last-child td {
-    border-bottom: none;
-  }
   .table tbody tr {
-    transition: background 0.18s var(--ease-soft);
+    transition: background 0.3s var(--ease);
   }
   .table tbody tr:hover {
     background: var(--surface-2);
+  }
+  .table tbody tr:last-child td {
+    border-bottom: none;
   }
 
   /* ── navigation ─────────────────────────────────────────────────────── */
   .nav-link {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.62rem 0.85rem;
+    gap: 0.8rem;
+    padding: 0.75rem 0;
     border-radius: 0;
     font-family: var(--font-display);
-    font-size: 0.66rem;
+    font-size: 0.6875rem;
     font-weight: 600;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--nav-fg, var(--text-muted));
-    border-left: 3px solid transparent;
-    transition:
-      background 0.2s var(--ease-soft),
-      color 0.2s var(--ease-soft),
-      border-color 0.2s var(--ease-soft);
+    color: var(--nav-fg, var(--text-faint));
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.35s var(--ease), border-color 0.35s var(--ease);
   }
   .nav-link:hover {
-    background: var(--nav-hover, var(--surface-2));
     color: var(--nav-fg-strong, var(--text));
   }
   .nav-link[data-active="true"] {
-    background: var(--nav-hover, var(--surface-2));
     color: var(--nav-fg-strong, var(--text));
-    border-left-color: var(--ember);
+    border-bottom-color: var(--accent);
   }
 
-  /* ── numbers ────────────────────────────────────────────────────────── */
-  .stat-value {
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-  .stat-label {
-    font-family: var(--font-display);
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    font-weight: 600;
-  }
-
-  /* ── long-form reading ──────────────────────────────────────────────── */
-  /* Editorial serif, generous measure and leading. This is where riders
-     actually read, so it gets the most typographic care. */
+  /* ── reading ────────────────────────────────────────────────────────── */
   .prose-body {
-    font-family: var(--font-editorial);
-    font-size: 1.02rem;
+    font-size: 1.0625rem;
     line-height: 1.75;
-    color: var(--text);
-    max-width: 68ch;
+    color: var(--text-muted);
+    max-width: 62ch;
   }
   .prose-body p + p {
-    margin-top: 1.15rem;
+    margin-top: 1.25rem;
   }
   .prose-body strong {
-    font-weight: 700;
+    color: var(--text);
+    font-weight: 600;
   }
-  /* The drop cap is a Muze-ish editorial flourish, kept but squared off. */
   .prose-lede::first-letter {
-    font-family: var(--font-heading);
     float: left;
-    font-size: 3.4em;
+    font-size: 3.1em;
     line-height: 0.82;
     font-weight: 700;
-    padding: 0.08em 0.14em 0 0;
+    padding: 0.06em 0.12em 0 0;
     color: var(--text);
   }
 
   .scroll-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   .scroll-thin::-webkit-scrollbar-thumb {
     background: var(--border-strong);
-    border-radius: 0;
   }
   .scroll-thin::-webkit-scrollbar-track {
     background: transparent;
@@ -755,67 +1066,34 @@ h6 {
   }
 
   .stripe {
-    height: var(--rule);
-    background: var(--ink);
+    height: 1px;
+    background: var(--rule);
   }
   .stripe-animated {
   }
-
   .dots {
-    background-image: radial-gradient(color-mix(in oklab, var(--text) 10%, transparent) 1px, transparent 1px);
-    background-size: 22px 22px;
   }
-
-  /* A squared-off ember marker that wipes in beneath a word. */
   .highlight {
-    position: relative;
-    white-space: nowrap;
-    display: inline-block;
+    color: var(--accent);
   }
-  .highlight::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0.02em;
-    height: 0.32em;
-    background: var(--ember);
-    opacity: 0.85;
-    z-index: -1;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: highlight-draw 0.8s 0.35s var(--ease) forwards;
-  }
-
   .count-sup {
     font-family: var(--font-display);
-    font-size: 0.38em;
+    font-size: 0.36em;
     vertical-align: super;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     color: var(--text-faint);
-    margin-left: 0.3em;
+    margin-left: 0.35em;
   }
 }
 
 /* ────────────────────────────────────────────────────────────── motion ── */
-/* Restrained and editorial: things fade and rise a short distance, rules
-   wipe in, nothing bounces. */
+/* Slow, eased, single-axis. A frame resolves; it does not perform. */
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes pop-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(26px);
   }
   to {
     opacity: 1;
@@ -830,6 +1108,16 @@ h6 {
     opacity: 1;
   }
 }
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes wipe-right {
   from {
     transform: scaleX(0);
@@ -838,16 +1126,81 @@ h6 {
     transform: scaleX(1);
   }
 }
+/* The photograph settles as the frame arrives. */
+@keyframes kenburns {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 @keyframes float {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
   }
 }
-@keyframes marquee {
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+@keyframes fill-up {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes progress-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes ring-draw {
+  from {
+    stroke-dashoffset: var(--c);
+  }
+}
+@keyframes ride-in {
+  from {
+    left: 0%;
+  }
+}
+@keyframes jar-fill {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes wave {
   from {
     transform: translateX(0);
   }
@@ -863,69 +1216,9 @@ h6 {
     background-position: 22px 0;
   }
 }
-@keyframes highlight-draw {
-  to {
-    transform: scaleX(1);
-  }
-}
-@keyframes kenburns {
-  from {
-    transform: scale(1.08);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes ride {
-  0% {
-    transform: translateX(-80px);
-  }
-  100% {
-    transform: translateX(calc(100vw + 80px));
-  }
-}
-@keyframes bounce-soft {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
+@keyframes blink-caret {
   50% {
-    transform: translateY(-2px);
-  }
-}
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in oklab, var(--ember) 50%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 10px transparent;
-  }
-}
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  20%,
-  60% {
-    transform: translateX(-5px);
-  }
-  40%,
-  80% {
-    transform: translateX(5px);
-  }
-}
-@keyframes fill-up {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
+    opacity: 0;
   }
 }
 @keyframes confetti-fall {
@@ -938,148 +1231,133 @@ h6 {
     transform: translate(var(--dx), 220px) rotate(var(--rot));
   }
 }
-@keyframes blink-caret {
-  50% {
-    opacity: 0;
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 52, 31, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
   }
 }
 @keyframes glow {
   0%,
   100% {
-    box-shadow:
-      0 0 0 1px rgba(230, 82, 18, 0.18),
-      0 0 24px rgba(230, 82, 18, 0.12) inset;
+    opacity: 0.86;
   }
   50% {
-    box-shadow:
-      0 0 0 1px rgba(230, 82, 18, 0.28),
-      0 0 34px rgba(230, 82, 18, 0.22) inset;
-  }
-}
-@keyframes progress-x {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
+    opacity: 1;
   }
 }
 
 .animate-rise {
-  animation: rise 0.7s var(--ease) both;
-}
-.animate-pop {
-  animation: pop-in 0.5s var(--ease) both;
+  animation: rise 1s var(--ease) both;
 }
 .animate-fade {
-  animation: fade-in 0.6s var(--ease-soft) both;
+  animation: fade-in 0.9s var(--ease) both;
+}
+.animate-pop {
+  animation: pop-in 0.7s var(--ease) both;
+}
+.animate-kenburns {
+  animation: kenburns 14s var(--ease) both;
+}
+.animate-wipe {
+  transform-origin: left;
+  animation: wipe-right 1.1s var(--ease) both;
 }
 .animate-float {
   animation: float 7s ease-in-out infinite;
 }
-.animate-wipe {
-  transform-origin: left;
-  animation: wipe-right 0.8s var(--ease) both;
+.animate-spin-slow {
+  animation: spin 22s linear infinite;
+}
+.animate-shake {
+  animation: shake 0.4s var(--ease-soft);
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.4s ease-out infinite;
 }
 .animate-wiggle {
 }
 .animate-blob {
 }
-.animate-spin-slow {
-  animation: spin 20s linear infinite;
-}
-.animate-shake {
-  animation: shake 0.45s var(--ease-soft);
-}
-.animate-pulse-ring {
-  animation: pulse-ring 2s ease-out infinite;
-}
-.animate-kenburns {
-  animation: kenburns 9s var(--ease) both;
-}
 .bar-fill {
   transform-origin: left;
-  animation: fill-up 1s 0.15s var(--ease) both;
+  animation: fill-up 1.4s 0.2s var(--ease) both;
+}
+.ring-draw {
+  animation: ring-draw 1.8s 0.2s var(--ease) both;
+}
+.ride-in {
+  animation: ride-in 1.8s 0.2s var(--ease) both;
+}
+.jar-fill {
+  animation: jar-fill 1.8s 0.2s var(--ease) both;
+}
+.jar-wave {
+  animation: wave 3s linear infinite;
+}
+.progress-stripes {
 }
 
-.d-1 {
-  animation-delay: 70ms;
-}
-.d-2 {
-  animation-delay: 140ms;
-}
-.d-3 {
-  animation-delay: 210ms;
-}
-.d-4 {
-  animation-delay: 280ms;
-}
-.d-5 {
-  animation-delay: 350ms;
-}
-.d-6 {
-  animation-delay: 420ms;
-}
+.d-1 { animation-delay: 90ms; }
+.d-2 { animation-delay: 180ms; }
+.d-3 { animation-delay: 270ms; }
+.d-4 { animation-delay: 360ms; }
+.d-5 { animation-delay: 450ms; }
+.d-6 { animation-delay: 540ms; }
 
 .stagger > * {
-  animation: rise 0.65s var(--ease) both;
+  animation: rise 0.95s var(--ease) both;
 }
-.stagger > *:nth-child(2) {
-  animation-delay: 70ms;
-}
-.stagger > *:nth-child(3) {
-  animation-delay: 140ms;
-}
-.stagger > *:nth-child(4) {
-  animation-delay: 210ms;
-}
-.stagger > *:nth-child(5) {
-  animation-delay: 280ms;
-}
-.stagger > *:nth-child(6) {
-  animation-delay: 350ms;
-}
-.stagger > *:nth-child(n + 7) {
-  animation-delay: 400ms;
-}
+.stagger > *:nth-child(2) { animation-delay: 90ms; }
+.stagger > *:nth-child(3) { animation-delay: 180ms; }
+.stagger > *:nth-child(4) { animation-delay: 270ms; }
+.stagger > *:nth-child(5) { animation-delay: 360ms; }
+.stagger > *:nth-child(6) { animation-delay: 450ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 520ms; }
 
-/* Scroll-linked reveal. Fills forwards only, so content is never blank in a
-   full-page capture or in print. */
+/* Scroll-linked reveal — each frame resolves as it enters. Fills forwards,
+   so nothing is ever left invisible in a capture or in print. */
 @supports (animation-timeline: view()) {
   .reveal {
     animation: rise linear forwards;
     animation-timeline: view();
-    animation-range: entry 0% entry 40%;
+    animation-range: entry 0% entry 45%;
   }
   .reveal-rule {
     transform-origin: left;
     animation: wipe-right linear forwards;
     animation-timeline: view();
-    animation-range: entry 0% entry 35%;
+    animation-range: entry 0% entry 40%;
+  }
+  /* The photograph drifts a little as the frame scrolls past it. */
+  .parallax-media img {
+    animation: kenburns linear forwards;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
   }
 }
 
 .marquee {
   display: flex;
   width: max-content;
-  animation: marquee 44s linear infinite;
+  animation: marquee 52s linear infinite;
 }
 .marquee:hover {
   animation-play-state: paused;
 }
 
 .photo-zoom img {
-  transition: transform 1.4s var(--ease);
+  transition: transform 1.8s var(--ease);
 }
 .photo-zoom:hover img,
 .group:hover .photo-zoom img {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
-
-/* Greyscale-to-colour on hover: the gallery treatment on the reference site. */
 .photo-mono img {
-  filter: grayscale(100%) contrast(1.05);
-  transition: filter 0.7s var(--ease), transform 1.4s var(--ease);
+  filter: grayscale(100%);
+  transition: filter 0.9s var(--ease), transform 1.8s var(--ease);
 }
 .photo-mono:hover img,
 .group:hover .photo-mono img {
@@ -1089,10 +1367,9 @@ h6 {
 .confetti-piece {
   position: absolute;
   top: 0;
-  width: 7px;
-  height: 11px;
-  border-radius: 0;
-  animation: confetti-fall 1.4s var(--ease-soft) forwards;
+  width: 6px;
+  height: 10px;
+  animation: confetti-fall 1.5s var(--ease-soft) forwards;
   pointer-events: none;
 }
 
@@ -1116,14 +1393,13 @@ h6 {
 /* ──────────────────────────────────────────────────────── USSD handset ── */
 
 .ussd-screen {
-  background: #0b0d0f;
-  color: #ffb08a;
+  background: #000;
+  color: #ff7a63;
   font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  font-size: 0.82rem;
-  line-height: 1.55;
+  font-size: 0.8125rem;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  text-shadow: 0 0 8px rgba(230, 82, 18, 0.45);
   animation: glow 4s ease-in-out infinite;
 }
 .ussd-caret::after {
@@ -1131,253 +1407,201 @@ h6 {
   margin-left: 2px;
   animation: blink-caret 1s steps(1) infinite;
 }
-
 .keypad-key {
   display: grid;
   place-items: center;
   height: 2.6rem;
   border-radius: 0;
-  background: #1b1f23;
-  border: 1px solid #2b3136;
-  color: #f0f3f6;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  color: #fff;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1rem;
-  transition: background 0.15s var(--ease-soft), transform 0.08s var(--ease-soft);
+  transition: background 0.3s var(--ease);
 }
 .keypad-key small {
   display: block;
   font-size: 0.5rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  opacity: 0.55;
+  letter-spacing: 0.14em;
+  opacity: 0.5;
   margin-top: -4px;
 }
 .keypad-key:hover {
-  background: #272c31;
+  background: var(--panel-2);
 }
 .keypad-key:active {
-  transform: translateY(1px);
-  background: var(--ember);
-  color: #000;
-}
-
-/* ───────────────────────────────────────────────────── rider progress ── */
-
-@keyframes ring-draw {
-  from {
-    stroke-dashoffset: var(--c);
-  }
-}
-.ring-draw {
-  animation: ring-draw 1.4s 0.2s var(--ease) both;
-}
-
-@keyframes ride-in {
-  from {
-    left: 0%;
-  }
-}
-.ride-in {
-  animation: ride-in 1.5s 0.2s var(--ease) both;
-}
-
-@keyframes jar-fill {
-  from {
-    transform: translateY(100%);
-  }
-}
-.jar-fill {
-  animation: jar-fill 1.5s 0.2s var(--ease) both;
-}
-
-@keyframes wave {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-.jar-wave {
-  animation: wave 3s linear infinite;
-}
-
-.progress-stripes {
-  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 0 8px, transparent 8px 16px);
-  background-size: 22px 22px;
-  animation: stripe-slide 1.2s linear infinite;
+  background: var(--accent);
+  color: #fff;
 }
 
 /* ──────────────────────────────────────────────────────────── lessons ── */
-/* Structured lesson sections: each is introduced by a tracked caption over a
-   rule, so a long lesson scans as a sequence of labelled blocks rather than
-   an undifferentiated wall of text. */
 
 .lesson-section {
-  border-top: var(--rule) solid var(--ink);
-  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.6rem;
 }
 .lesson-kicker {
   font-family: var(--font-display);
-  font-size: 0.58rem;
+  font-size: 0.625rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--text-faint);
 }
 .lesson-h {
-  font-family: var(--font-heading);
-  font-size: 1.22rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.4vw, 1.75rem);
   font-weight: 700;
-  line-height: 1.25;
-  margin-top: 0.3rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-top: 0.7rem;
 }
 
-/* Numbered key points. The counter is set in the display face so it reads as
-   a label rather than part of the sentence. */
 .lesson-points {
   counter-reset: pt;
   display: grid;
-  gap: 0.9rem;
+  gap: 1.4rem;
 }
 .lesson-points > li {
   counter-increment: pt;
   display: grid;
-  grid-template-columns: 2rem 1fr;
-  gap: 0.85rem;
+  grid-template-columns: 2.6rem 1fr;
+  gap: 1rem;
   align-items: start;
   list-style: none;
 }
 .lesson-points > li::before {
   content: counter(pt, decimal-leading-zero);
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--ember-deep);
-  border-top: var(--rule) solid var(--ember);
-  padding-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  padding-top: 0.25rem;
 }
 
-/* A worked example: ledger-style rows with tabular figures. */
 .lesson-ledger {
-  border: var(--hair) solid var(--border);
-  font-family: var(--font-ui);
+  border-top: 1px solid var(--border-strong);
+  font-variant-numeric: tabular-nums;
 }
 .lesson-ledger-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 1rem;
-  padding: 0.6rem 0.85rem;
-  border-bottom: var(--hair) solid var(--border);
-  font-size: 0.85rem;
-}
-.lesson-ledger-row:last-child {
-  border-bottom: none;
+  gap: 1.25rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9375rem;
 }
 .lesson-ledger-row[data-total="true"] {
-  border-top: var(--rule) solid var(--ink);
-  background: var(--surface-2);
+  border-top: 1px solid var(--border-strong);
+  border-bottom: none;
   font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--text);
+}
+.lesson-ledger-row > span:first-child {
+  color: var(--text-muted);
+}
+.lesson-ledger-row[data-total="true"] > span {
+  color: var(--text);
 }
 .lesson-ledger-row > span:last-child {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* Glossary terms. */
 .lesson-terms {
   display: grid;
-  gap: 0.7rem;
+  gap: 1.1rem;
 }
 .lesson-term {
-  border-left: 3px solid var(--ember);
-  padding-left: 0.85rem;
+  border-left: 1px solid var(--accent);
+  padding-left: 1rem;
 }
 .lesson-term dt {
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  color: var(--text);
 }
 .lesson-term dd {
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   color: var(--text-muted);
-  line-height: 1.6;
-  margin-top: 0.2rem;
+  line-height: 1.65;
+  margin: 0.4rem 0 0;
 }
 
-/* "Do this today" — a checklist the rider can act on before closing the app. */
 .lesson-do {
-  border: var(--rule) solid var(--ink);
-  padding: 1rem 1.1rem;
-  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  padding: 1.4rem;
 }
 .lesson-do ol {
   counter-reset: doit;
   display: grid;
-  gap: 0.7rem;
-  margin-top: 0.7rem;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
 }
 .lesson-do li {
   counter-increment: doit;
   display: grid;
-  grid-template-columns: 1.6rem 1fr;
-  gap: 0.7rem;
-  font-size: 0.9rem;
-  line-height: 1.55;
+  grid-template-columns: 1.9rem 1fr;
+  gap: 0.85rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
   list-style: none;
+  color: var(--text-muted);
 }
 .lesson-do li::before {
-  content: counter(doit);
-  display: grid;
-  place-items: center;
-  width: 1.45rem;
-  height: 1.45rem;
-  background: var(--ink);
-  color: var(--white);
+  content: counter(doit, decimal-leading-zero);
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  padding-top: 0.2rem;
 }
 
-/* Watch-out box. */
 .lesson-warn {
-  border: var(--hair) solid var(--danger);
-  border-left: 4px solid var(--danger);
-  padding: 0.9rem 1rem;
-  background: var(--danger-soft);
-  font-size: 0.88rem;
-  line-height: 1.6;
+  border-left: 1px solid var(--danger);
+  padding: 0.3rem 0 0.3rem 1.1rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
-/* The one-line recap that closes every lesson. */
 .lesson-recap {
-  border-top: var(--rule) solid var(--ink);
-  border-bottom: var(--rule) solid var(--ink);
-  padding: 1.1rem 0;
-  font-family: var(--font-editorial);
-  font-size: 1.1rem;
-  line-height: 1.5;
-  font-style: italic;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+  padding: 1.6rem 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
-/* Sticky in-lesson contents rail (desktop only). */
 .lesson-toc a {
   display: block;
   font-family: var(--font-display);
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-faint);
-  padding: 0.4rem 0 0.4rem 0.75rem;
-  border-left: var(--rule) solid var(--border);
-  transition: color 0.2s var(--ease-soft), border-color 0.2s var(--ease-soft);
+  text-decoration: none;
+  padding: 0.5rem 0 0.5rem 0.9rem;
+  border-left: 1px solid var(--border);
+  transition: color 0.35s var(--ease), border-color 0.35s var(--ease);
 }
 .lesson-toc a:hover {
   color: var(--text);
-  border-left-color: var(--ember);
+  border-left-color: var(--accent);
 }

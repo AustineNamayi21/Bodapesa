@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";
+import ThemeToggle from "@/components/theme";
 import { currentUser } from "@/lib/auth";
 import { ensureSeeded } from "@/lib/seed";
 import { logoutAction } from "@/lib/actions";
@@ -8,6 +9,15 @@ import NavLinks from "./NavLinks";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * The console shell.
+ *
+ * Same language as the public site, at working density: black ground,
+ * hairline rules instead of panels, 11px tracked capitals for every label.
+ * The sidebar is separated from the content by a single rule rather than a
+ * change of colour — on a data screen a second background tone reads as
+ * clutter, and the rule is enough.
+ */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await ensureSeeded();
   const user = await currentUser();
@@ -21,57 +31,77 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .toUpperCase();
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* sidebar */}
+    <div className="min-h-screen flex flex-col lg:flex-row" data-theme-surface style={{ background: "var(--ground)" }}>
       <aside
-        className="lg:w-64 lg:h-screen lg:sticky lg:top-0 flex flex-col relative"
+        className="lg:w-[248px] lg:h-screen lg:sticky lg:top-0 flex flex-col shrink-0"
         style={
           {
-            background: "var(--ink)",
-            color: "var(--cream)",
-            "--nav-fg": "rgba(255,255,255,0.66)",
-            "--nav-fg-strong": "var(--cream)",
-            "--nav-hover": "rgba(255,255,255,0.08)",
+            background: "var(--ground)",
+            borderRight: "1px solid var(--rule)",
+            "--nav-fg": "var(--on-black-3)",
+            "--nav-fg-strong": "var(--on-ground)",
           } as React.CSSProperties
         }
       >
-        <div className="p-5 flex items-center justify-between lg:block">
-          <Logo tone="light" size={34} sub={user.partnerName ?? "Programme console"} />
-          <span className="pill lg:hidden" style={{ background: "var(--green)", color: "#fff" }}>
+        <div
+          className="flex items-center justify-between gap-3 lg:block"
+          style={{ padding: "1.25rem", borderBottom: "1px solid var(--rule)" }}
+        >
+          <Logo tone="light" size={30} sub={user.partnerName ?? "Programme console"} />
+          <span className="pill lg:hidden" style={{ borderColor: "var(--accent)", color: "var(--accent)" }}>
             {user.partnerCode ?? "Admin"}
           </span>
         </div>
 
         <NavLinks role={user.role} />
 
-        <div className="mt-auto p-3 hidden lg:block">
-          <div className="rounded-none p-3 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.06)" }}>
+        <div className="mt-auto hidden lg:block" style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--rule)" }}>
+          <div className="flex items-center gap-3">
             <span
-              className="w-10 h-10 rounded-none grid place-items-center font-display font-extrabold text-sm shrink-0 border-2"
-              style={{ background: "var(--green)", color: "#fff", borderColor: "transparent" }}
+              className="grid place-items-center shrink-0"
+              style={{
+                width: 36,
+                height: 36,
+                border: "1px solid var(--border-strong)",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+              }}
             >
               {initials}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[0.8rem] font-bold truncate">{user.name}</div>
-              <div className="text-[0.68rem] truncate" style={{ color: "rgba(255,255,255,0.55)" }}>
+              <div
+                className="truncate"
+                style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}
+              >
+                {user.name}
+              </div>
+              <div className="truncate" style={{ fontSize: "0.6875rem", color: "var(--text-faint)", marginTop: "2px" }}>
                 {user.partnerName ?? "Platform team"}
               </div>
             </div>
+            <ThemeToggle size={32} />
             <form action={logoutAction}>
               <button
-                className="w-8 h-8 rounded-none grid place-items-center transition-colors hover:bg-white/10"
+                className="grid place-items-center"
+                style={{ width: 34, height: 34, color: "var(--text-faint)", background: "transparent", border: 0 }}
                 title="Sign out"
                 aria-label="Sign out"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
               </button>
             </form>
           </div>
         </div>
       </aside>
 
-      <main className="flex-1 min-w-0 px-4 sm:px-8 py-7 max-w-[1440px]">{children}</main>
+      <main
+        className="flex-1 min-w-0"
+        style={{ paddingInline: "clamp(20px, 3vw, 44px)", paddingBlock: "clamp(28px, 4vh, 48px)", maxWidth: "1560px" }}
+      >
+        {children}
+      </main>
     </div>
   );
 }

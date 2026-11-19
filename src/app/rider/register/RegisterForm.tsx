@@ -120,7 +120,7 @@ export default function RegisterForm({ stages }: { stages: StageOption[] }) {
                             ? "var(--ember)"
                             : "var(--ink)",
                       border: state_ === "todo" ? "1.5px solid var(--border-strong)" : "none",
-                      color: state_ === "current" ? "#000" : "#fff",
+                      color: state_ === "todo" ? "var(--text-faint)" : "#fff",
                       fontFamily: "var(--font-display)",
                       fontSize: "0.56rem",
                       fontWeight: 700,

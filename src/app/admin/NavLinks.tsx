@@ -69,7 +69,10 @@ export default function NavLinks({ role }: { role: string }) {
   const partner = role === "PARTNER_ADMIN";
 
   return (
-    <nav className="px-3 pb-3 flex lg:flex-col gap-1 lg:gap-0 overflow-x-auto lg:overflow-visible no-scrollbar">
+    <nav
+      className="flex lg:flex-col gap-5 lg:gap-0 overflow-x-auto lg:overflow-visible no-scrollbar"
+      style={{ padding: "1rem 1.25rem" }}
+    >
       {GROUPS.map((group) => {
         const links = partner ? group.links.filter((l) => !PLATFORM_ONLY.has(l.href)) : group.links;
         if (!links.length) return null;
@@ -77,12 +80,14 @@ export default function NavLinks({ role }: { role: string }) {
         return (
           <div key={group.label} className="contents lg:block lg:mb-4">
             <span
-              className="hidden lg:block px-3 pb-1.5 pt-1 text-[0.54rem] uppercase"
+              className="hidden lg:block"
               style={{
-                letterSpacing: "0.2em",
-                fontFamily: "var(--font-display)",
+                fontSize: "0.5625rem",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
                 fontWeight: 600,
-                color: "rgba(255,255,255,0.32)",
+                color: "var(--on-black-4)",
+                paddingBottom: "0.5rem",
               }}
             >
               {group.label}
@@ -92,7 +97,7 @@ export default function NavLinks({ role }: { role: string }) {
               const Icon = l.icon;
               return (
                 <Link key={l.href} href={l.href} className="nav-link shrink-0" data-active={active}>
-                  <Icon size={15} strokeWidth={active ? 2.4 : 1.9} />
+                  <Icon size={14} strokeWidth={active ? 2.2 : 1.7} />
                   {l.label}
                 </Link>
               );
