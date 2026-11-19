@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { currentUser } from "@/lib/auth";
 import { all, count, id, insert, now, one, run, update } from "@/lib/db";
 import { CATALOGUE } from "@/lib/catalogue";
+import { CAMPAIGNS } from "@/lib/catalogue/campaigns";
 import type { FormState } from "@/lib/form-state";
 import { PURGE_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
 
@@ -265,4 +266,95 @@ export async function installCatalogueAction(
   ].filter(Boolean);
 
   return { ok: parts.join(", ") + "." };
+}
+
+/**
+ * Installs one draft campaign per product.
+ *
+ * Everything lands as a DRAFT. Nothing here sends a message: an operator
+ * still has to open the campaign, look at the audience count the segment
+ * resolves to, and press send. That is deliberate — these go to real
+ * phones, cost real money per rider, and a bulk installer that also
+ * dispatched would be a loaded gun.
+ *
+ * Campaigns are matched to products by product code and skipped if the
+ * product is not installed, so running the catalogue installer first is a
+ * prerequisite rather than an assumption.
+ */
+export async function installCampaignsAction(
+  _prev: FormState | undefined,
+  formData: FormData,
+): Promise<FormState> {
+  const admin = await currentUser();
+  if (!admin || admin.role !== "PLATFORM_ADMIN") {
+    return { error: "Only a platform admin can add campaigns." };
+  }
+  if (String(formData.get("confirm") ?? "") !== "1") {
+    return { error: "Tick the box to confirm." };
+  }
+
+  const products = await all<{ id: string; code: string }>("SELECT id, code FROM Product");
+  const byCode = new Map(products.map((p) => [p.code, p.id]));
+
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const c of CAMPAIGNS) {
+    const productId = byCode.get(c.productCode);
+    if (!productId) {
+      skipped++;
+      continue;
+    }
+
+    const row = {
+      name: c.name,
+      objective: c.objective,
+      productId,
+      bodyEn: c.bodyEn,
+      bodySw: c.bodySw,
+      bodySh: c.bodySh,
+      channels: c.channels,
+      segmentJson: JSON.stringify(c.segment),
+      updatedAt: now(),
+    };
+
+    // Matched on name so a re-run updates the wording rather than stacking
+    // a second copy. A campaign already sent is left alone — rewriting the
+    // body of something riders have received would falsify the record.
+    const existing = await one<{ id: string; status: string }>(
+      "SELECT id, status FROM Campaign WHERE name = ?",
+      [c.name],
+    );
+    if (existing) {
+      if (existing.status === "SENT") continue;
+      await update("Campaign", existing.id, row);
+      updated++;
+    } else {
+      await insert("Campaign", {
+        id: id("cmp"),
+        status: "DRAFT",
+        scheduledAt: null,
+        sentAt: null,
+        createdById: admin.id,
+        createdAt: now(),
+        ...row,
+      });
+      created++;
+    }
+  }
+
+  for (const path of ["/admin/campaigns", "/admin/maintenance", "/admin"]) {
+    revalidatePath(path);
+  }
+
+  const parts = [
+    `${created} campaigns drafted`,
+    updated ? `${updated} updated` : null,
+    skipped ? `${skipped} skipped — install the product catalogue first` : null,
+  ].filter(Boolean);
+
+  return {
+    ok: `${parts.join(", ")}. Nothing has been sent — open each one, check the audience, then send.`,
+  };
 }

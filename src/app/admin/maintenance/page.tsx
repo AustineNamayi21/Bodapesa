@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/admin";
 import { Pill } from "@/components/ui";
 import { PurgeForm } from "./PurgeForm";
 import { CatalogueForm } from "./CatalogueForm";
+import { CampaignsForm } from "./CampaignsForm";
+import { CAMPAIGNS } from "@/lib/catalogue/campaigns";
 import { CATALOGUE, catalogueSize } from "@/lib/catalogue";
 import { all, count } from "@/lib/db";
 
@@ -66,6 +68,13 @@ export default async function MaintenancePage({
             byPartner={byPartner}
             currentActive={activeProducts}
           />
+        </section>
+
+        <section>
+          <p className="stat-label" style={{ marginBottom: "1rem" }}>
+            Campaigns
+          </p>
+          <CampaignsForm total={CAMPAIGNS.length} existing={preview.campaigns} />
         </section>
 
         <section>
