@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { currentUser } from "@/lib/auth";
-import { all, count, one, run } from "@/lib/db";
+import { all, count, id, insert, now, one, run, update } from "@/lib/db";
+import { CATALOGUE } from "@/lib/catalogue";
 import type { FormState } from "@/lib/form-state";
 import { PURGE_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
 
@@ -161,4 +162,107 @@ export async function purgeDemoDataAction(
       `Removed ${removed}. ${after.riders} riders remain.` +
       (orphanCount ? ` ${orphanCount} orphaned rows were left behind — tell your developer.` : ""),
   };
+}
+
+/* ═══════════════════════════════════════════════ verified catalogue ══ */
+
+/**
+ * Replaces the seeded demonstration products with the researched ones.
+ *
+ * Matching is by product code, so this is an upsert: run it again after a
+ * partner changes its terms and the existing rows are updated in place,
+ * keeping their ids and therefore the enquiries and conversations already
+ * attached to them.
+ *
+ * Seeded products not in the catalogue are deactivated rather than deleted.
+ * A deleted product would take its enquiry history with it; a deactivated
+ * one disappears from the rider's list but the record of who asked about
+ * what survives.
+ */
+export async function installCatalogueAction(
+  _prev: FormState | undefined,
+  formData: FormData,
+): Promise<FormState> {
+  const admin = await currentUser();
+  if (!admin || admin.role !== "PLATFORM_ADMIN") {
+    return { error: "Only a platform admin can change the catalogue." };
+  }
+  if (String(formData.get("confirm") ?? "") !== "1") {
+    return { error: "Tick the box to confirm." };
+  }
+
+  const partners = await all<{ id: string; code: string }>("SELECT id, code FROM Partner");
+  const byCode = new Map(partners.map((p) => [p.code.toUpperCase(), p.id]));
+
+  let created = 0;
+  let updated = 0;
+  const missing: string[] = [];
+  const installedCodes: string[] = [];
+
+  for (const [partnerCode, entries] of Object.entries(CATALOGUE)) {
+    const partnerId = byCode.get(partnerCode);
+    if (!partnerId) {
+      missing.push(partnerCode);
+      continue;
+    }
+
+    for (const e of entries) {
+      installedCodes.push(e.code);
+      const row = {
+        partnerId,
+        name: e.name,
+        category: e.category,
+        icon: e.icon,
+        summaryEn: e.summaryEn,
+        summarySw: e.summarySw,
+        summarySh: e.summarySh,
+        detailsEn: e.detailsEn,
+        detailsSw: e.detailsSw,
+        minAmount: e.minAmount ?? null,
+        maxAmount: e.maxAmount ?? null,
+        interestRate: e.interestRate ?? null,
+        premium: e.premium ?? null,
+        termLabel: e.termLabel ?? null,
+        eligibility: e.eligibility ?? null,
+        requiresMembership: e.requiresMembership,
+        featured: e.featured,
+        active: 1,
+        sourceUrl: e.sourceUrl,
+        verifiedOn: e.verifiedOn,
+      };
+
+      const existing = await one<{ id: string }>("SELECT id FROM Product WHERE code = ?", [e.code]);
+      if (existing) {
+        await update("Product", existing.id, row);
+        updated++;
+      } else {
+        await insert("Product", { id: id("prd"), code: e.code, createdAt: now(), ...row });
+        created++;
+      }
+    }
+  }
+
+  // Anything left over is seeded demonstration stock. Retire it quietly.
+  let retired = 0;
+  if (installedCodes.length) {
+    const marks = installedCodes.map(() => "?").join(",");
+    retired = await count(
+      `SELECT COUNT(*) AS n FROM Product WHERE active = 1 AND code NOT IN (${marks})`,
+      installedCodes,
+    );
+    await run(`UPDATE Product SET active = 0 WHERE code NOT IN (${marks})`, installedCodes);
+  }
+
+  for (const path of ["/admin/products", "/admin/maintenance", "/rider/products", "/admin", "/"]) {
+    revalidatePath(path);
+  }
+
+  const parts = [
+    `${created} products added`,
+    `${updated} updated`,
+    retired ? `${retired} demonstration products retired` : null,
+    missing.length ? `No partner found with code ${missing.join(" or ")} — those products were skipped.` : null,
+  ].filter(Boolean);
+
+  return { ok: parts.join(", ") + "." };
 }

@@ -108,6 +108,8 @@ CREATE TABLE IF NOT EXISTS Product (
   requiresMembership INTEGER NOT NULL DEFAULT 0,
   featured INTEGER NOT NULL DEFAULT 0,
   active INTEGER NOT NULL DEFAULT 1,
+  sourceUrl TEXT,
+  verifiedOn TEXT,
   createdAt TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_product_category ON Product(category);
@@ -707,6 +709,8 @@ const ADDITIVE_COLUMNS: { table: string; column: string; ddl: string }[] = [
   { table: "Lead", column: "outcomeReason", ddl: "TEXT" },
   { table: "Lead", column: "conversationId", ddl: "TEXT" },
   { table: "AppUser", column: "active", ddl: "INTEGER NOT NULL DEFAULT 1" },
+  { table: "Product", column: "sourceUrl", ddl: "TEXT" },
+  { table: "Product", column: "verifiedOn", ddl: "TEXT" },
 ];
 
 async function existingColumns(d: Driver, table: string): Promise<Set<string>> {

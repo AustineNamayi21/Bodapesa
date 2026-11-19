@@ -86,6 +86,10 @@ export interface Product {
   requiresMembership: number;
   featured: number;
   active: number;
+  /** Where this product's published terms were read from. */
+  sourceUrl: string | null;
+  /** When those terms were last checked, so staff can see if they are stale. */
+  verifiedOn: string | null;
   createdAt: string;
 }
 

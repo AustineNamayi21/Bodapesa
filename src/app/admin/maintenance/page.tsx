@@ -5,6 +5,9 @@ import { purgePreview } from "@/lib/maintenance";
 import { PageHeader } from "@/components/admin";
 import { Pill } from "@/components/ui";
 import { PurgeForm } from "./PurgeForm";
+import { CatalogueForm } from "./CatalogueForm";
+import { CATALOGUE, catalogueSize } from "@/lib/catalogue";
+import { all, count } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +42,13 @@ export default async function MaintenancePage({
 
   const nothingToDo = preview.ridersToDelete === 0;
 
+  const partnerNames = await all<{ code: string; name: string }>("SELECT code, name FROM Partner");
+  const byPartner = Object.entries(CATALOGUE).map(([code, list]) => ({
+    partner: partnerNames.find((p) => p.code.toUpperCase() === code)?.name ?? code,
+    count: list.length,
+  }));
+  const activeProducts = await count("SELECT COUNT(*) AS n FROM Product WHERE active = 1");
+
   return (
     <div>
       <PageHeader
@@ -47,6 +57,17 @@ export default async function MaintenancePage({
       />
 
       <div style={{ display: "grid", gap: "2.5rem", maxWidth: "46rem" }}>
+        <section>
+          <p className="stat-label" style={{ marginBottom: "1rem" }}>
+            The product catalogue
+          </p>
+          <CatalogueForm
+            total={catalogueSize()}
+            byPartner={byPartner}
+            currentActive={activeProducts}
+          />
+        </section>
+
         <section>
           <p className="stat-label" style={{ marginBottom: "1rem" }}>
             What is in the database now
