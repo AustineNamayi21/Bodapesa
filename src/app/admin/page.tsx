@@ -29,12 +29,14 @@ import { all } from "@/lib/db";
 import { Card, Pill, SectionTitle, Stat, STATUS_TONE, formatKes, timeAgo } from "@/components/ui";
 import { BarList, Funnel, GroupedBars, TrendChart } from "@/components/charts";
 import { MODULE_LABELS } from "@/lib/i18n";
+import { smsMode } from "@/lib/channels/providers";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const user = await currentUser();
   const k = await kpis();
+  const mode = smsMode();
   const activity = await weeklyActivity(12);
   const channels = await channelBreakdown();
   const stages = await stageLeaderboard(8);
@@ -90,6 +92,21 @@ export default async function DashboardPage() {
       </header>
 
       {/* ------------------------------------------------------------ KPIs */}
+      {k.riders < 10 ? (
+        <p
+          className="copy-sm"
+          style={{
+            borderLeft: "2px solid var(--accent)",
+            paddingLeft: "1rem",
+            color: "var(--text-muted)",
+            maxWidth: "62ch",
+          }}
+        >
+          Only {k.riders} {k.riders === 1 ? "rider is" : "riders are"} on the register, so every figure below
+          is drawn from a handful of records. Treat the shapes as provisional until real sign-ups accumulate.
+        </p>
+      ) : null}
+
       <div className="grid gap-x-6 gap-y-7 grid-cols-2 lg:grid-cols-4 stagger">
         <Stat label="Riders registered" value={k.riders.toLocaleString()} hint={`${k.consented.toLocaleString()} consented to messaging`} tone="brand" icon={<Users size={16} />} />
         <Stat label="Riders reached" value={k.reached.toLocaleString()} hint={`${k.deliveryRate}% delivery rate`} tone="success" icon={<Send size={16} />} />
@@ -111,7 +128,18 @@ export default async function DashboardPage() {
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <Stat label="Messages sent" value={k.messagesSent.toLocaleString()} tone="info" icon={<MessageSquareText size={16} />} />
-        <Stat label="Messaging spend" value={formatKes(k.costKes)} hint="Sandbox pricing at KSh 0.80/SMS part" icon={<Wallet size={16} />} />
+        <Stat
+          label="Messaging spend"
+          value={formatKes(k.costKes)}
+          hint={
+            mode === "live"
+              ? "Billed by Africa\u2019s Talking"
+              : mode === "sandbox"
+                ? "Sandbox \u2014 not billed"
+                : "Simulated sends \u2014 nothing dispatched"
+          }
+          icon={<Wallet size={16} />}
+        />
         <Stat label="Cost per rider onboarded" value={formatKes(k.costPerOnboard)} icon={<Receipt size={16} />} />
         <Stat label="Lessons completed" value={k.lessonsCompleted.toLocaleString()} icon={<BookOpen size={16} />} />
       </div>

@@ -13,6 +13,7 @@ import {
   Megaphone,
   MessageCircle,
   UserCog,
+  Wrench,
   Package,
   Flame,
   Plug,
@@ -56,6 +57,7 @@ const GROUPS: { label: string; links: { href: string; label: string; icon: typeo
       { href: "/admin/users", label: "Console accounts", icon: UserCog },
       { href: "/admin/donations", label: "Donations", icon: HandCoins },
       { href: "/admin/integrations", label: "Integrations", icon: Plug },
+      { href: "/admin/maintenance", label: "Maintenance", icon: Wrench },
     ],
   },
 ];
@@ -64,6 +66,7 @@ const GROUPS: { label: string; links: { href: string; label: string; icon: typeo
 // donations and channel configuration belong to the platform team.
 const PLATFORM_ONLY = new Set([
   "/admin/users",
+  "/admin/maintenance",
   "/admin/curriculum",
   "/admin/partners",
   "/admin/stages",

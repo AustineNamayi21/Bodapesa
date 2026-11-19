@@ -58,6 +58,10 @@ export function TrendChart({
 
   const ticks = [0, 0.5, 1].map((f) => Math.round(maxValue * f));
 
+  if (!data.length) {
+    return <p className="text-sm text-[var(--text-faint)] py-4">No data yet.</p>;
+  }
+
   return (
     <figure className="m-0">
       {/* legend — always present for two or more series */}
@@ -259,6 +263,10 @@ export function GroupedBars({
   const [hover, setHover] = useState<string | null>(null);
   const max = Math.max(1, ...data.flatMap((d) => [d.a, d.b]));
 
+  if (!data.length) {
+    return <p className="text-sm text-[var(--text-faint)] py-4">No data yet.</p>;
+  }
+
   return (
     <div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
@@ -305,6 +313,10 @@ export function GroupedBars({
 export function Funnel({ data }: { data: { stage: string; value: number }[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.value));
+
+  if (!data.length) {
+    return <p className="text-sm text-[var(--text-faint)] py-4">No data yet.</p>;
+  }
 
   return (
     <div className="space-y-2">
