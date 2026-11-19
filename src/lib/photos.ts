@@ -1,9 +1,9 @@
 /**
  * Photography used across the platform.
  *
- * Every photo is published under the Unsplash License (free for commercial and
- * non-commercial use, no permission needed). Photographers are credited on the
- * landing page all the same.
+ * Every photo is published under the Unsplash or Pexels licence — both free
+ * for commercial and non-commercial use with no permission needed.
+ * Photographers are credited on the landing page all the same.
  */
 export interface Photo {
   src: string;
@@ -15,9 +15,20 @@ export interface Photo {
 }
 
 const u = (id: string) => `https://images.unsplash.com/${id}`;
+const px = (id: string) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg`;
 
 export const PHOTOS = {
   heroRider: {
+    src: px("30661393"),
+    alt: "A boda boda rider moving through a Nairobi street, with a hand-painted matatu behind",
+    credit: "MC G'Zay",
+    page: "https://www.pexels.com/photo/motorcyclist-in-nairobi-street-scene-with-unique-matatu-art-30661393/",
+    // The headline sits hard left, so the crop is pulled right to keep the
+    // rider clear of the type.
+    focus: "65% 50%",
+  },
+  /** The previous hero — a rural road. Kept so it can be swapped back in one line. */
+  heroRiderRural: {
     src: u("photo-1667844141318-ee2ba9d088d6"),
     alt: "A boda boda rider in a red jacket carrying a passenger down a dusty road",
     credit: "Zach Wear",
