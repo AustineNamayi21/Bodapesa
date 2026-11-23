@@ -1,4 +1,4 @@
-import { count, id, insert, now, run, bulkInsert, withLock, SEED_LOCK } from "./db";
+import { all, count, id, insert, now, one, run, bulkInsert, withLock, SEED_LOCK } from "./db";
 import { CATALOGUE, catalogueSize } from "./catalogue";
 import { SEED_LESSONS } from "./seed-lessons";
 import { enrichmentFor, syncCurriculum } from "./curriculum";
@@ -258,6 +258,59 @@ export async function seed() {
     };
   }
 
+  const demo = await seedDemoData();
+  return {
+    skipped: false,
+    demoData: true,
+    partners: 2,
+    stages: stageIds.length,
+    products: catalogueSize(),
+    lessons: SEED_LESSONS.length,
+    ...demo,
+  };
+}
+
+/**
+ * Writes the synthetic demonstration dataset on top of reference data that
+ * already exists.
+ *
+ * Split out of `seed()` so a populated database can be re-stocked without
+ * dropping it: partners, staff accounts, stages, products and the curriculum
+ * are read from the database rather than created, so an administrator keeps
+ * their login and the verified catalogue survives untouched. The caller is
+ * responsible for clearing the previous demonstration rows first.
+ */
+export async function seedDemoData() {
+  const partners = await all<{ id: string; code: string }>("SELECT id, code FROM Partner");
+  const partnerByCode: Record<string, string> = {};
+  for (const p of partners) partnerByCode[p.code.toUpperCase()] = p.id;
+  const stimaId = partnerByCode.STIMA;
+  const britamId = partnerByCode.BRITAM;
+  if (!stimaId || !britamId) throw new Error("Partners are missing — seed the reference data first.");
+
+  const stageIds = (await all<{ id: string }>("SELECT id FROM Stage")).map((r) => r.id);
+  const lessonIds = (await all<{ id: string }>('SELECT id FROM Lesson ORDER BY moduleKey, "order"')).map((r) => r.id);
+  if (!stageIds.length || !lessonIds.length) throw new Error("Stages or lessons are missing — seed the reference data first.");
+
+  const productIdByCode: Record<string, string> = {};
+  for (const p of await all<{ id: string; code: string }>("SELECT id, code FROM Product")) {
+    productIdByCode[p.code] = p.id;
+  }
+
+  const adminRow = await one<{ id: string }>("SELECT id FROM AppUser WHERE role = 'PLATFORM_ADMIN' ORDER BY createdAt LIMIT 1");
+  const adminId = adminRow?.id ?? null;
+
+  const partnerUserIds: Record<string, string> = {};
+  const partnerUserNames: Record<string, string> = {};
+  for (const u of await all<{ id: string; name: string; partnerId: string | null }>(
+    "SELECT id, name, partnerId FROM AppUser WHERE role = 'PARTNER_ADMIN'",
+  )) {
+    const code = u.partnerId === stimaId ? "STIMA" : u.partnerId === britamId ? "BRITAM" : null;
+    if (!code) continue;
+    partnerUserIds[code] = u.id;
+    partnerUserNames[code] = u.name;
+  }
+
   // ------------------------------------------------------------ riders ----
   // Demo rows are built in memory and written in batches. Against a hosted
   // database each statement is a network round trip, so row-by-row inserts
@@ -381,7 +434,7 @@ export async function seed() {
     // whichever module is most urgent for that rider, so the starting point is
     // rotated. Without this every rider would cluster in the savings module.
     const offset = Math.floor(rand() * lessonIds.length);
-    const order = lessonIds.map((_, i) => lessonIds[(i + offset) % lessonIds.length]);
+    const order = lessonIds.map((_: string, i: number) => lessonIds[(i + offset) % lessonIds.length]);
 
     for (let i = 0; i < lessonsDone; i++) {
       const completedAt = daysAgo(Math.floor(rand() * 80));
@@ -774,12 +827,6 @@ export async function seed() {
   await bulkInsert("Donation", donationRows);
 
   return {
-    skipped: false,
-    demoData: true,
-    partners: 2,
-    stages: stageIds.length,
-    products: catalogueSize(),
-    lessons: SEED_LESSONS.length,
     riders: riderRows.length,
     campaigns: campaignRows.length,
     messages: messageRows.length,
@@ -787,8 +834,11 @@ export async function seed() {
     conversations: convoRows.length,
     signals: signalRows.length,
     donations: donationRows.length,
+    goals: goalRows.length,
+    deposits: depositRows.length,
   };
 }
+
 
 /** Called on first request so the demo is always populated. */
 /**

@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui";
 import { PurgeForm } from "./PurgeForm";
 import { CatalogueForm } from "./CatalogueForm";
 import { CampaignsForm } from "./CampaignsForm";
+import { RestockForm } from "./RestockForm";
 import { CAMPAIGNS } from "@/lib/catalogue/campaigns";
 import { CATALOGUE, catalogueSize } from "@/lib/catalogue";
 import { all, count } from "@/lib/db";
@@ -50,6 +51,7 @@ export default async function MaintenancePage({
     count: list.length,
   }));
   const activeProducts = await count("SELECT COUNT(*) AS n FROM Product WHERE active = 1");
+  const ridersReal = preview.ridersTotal - preview.ridersSynthetic;
 
   return (
     <div>
@@ -75,6 +77,13 @@ export default async function MaintenancePage({
             Campaigns
           </p>
           <CampaignsForm total={CAMPAIGNS.length} existing={preview.campaigns} />
+        </section>
+
+        <section>
+          <p className="stat-label" style={{ marginBottom: "1rem" }}>
+            Demonstration data
+          </p>
+          <RestockForm ridersTotal={preview.ridersTotal} ridersReal={ridersReal} />
         </section>
 
         <section>

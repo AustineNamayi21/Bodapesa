@@ -7,7 +7,8 @@ import { all, count, id, insert, now, one, run, update } from "@/lib/db";
 import { CATALOGUE } from "@/lib/catalogue";
 import { CAMPAIGNS } from "@/lib/catalogue/campaigns";
 import type { FormState } from "@/lib/form-state";
-import { PURGE_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
+import { PURGE_PHRASE, RESTOCK_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
+import { seedDemoData } from "@/lib/seed";
 
 /**
  * Removing the demonstration data.
@@ -356,5 +357,80 @@ export async function installCampaignsAction(
 
   return {
     ok: `${parts.join(", ")}. Nothing has been sent — open each one, check the audience, then send.`,
+  };
+}
+
+
+/**
+ * Rebuilds the synthetic demonstration dataset.
+ *
+ * Written for the case the seed script cannot reach: a deployed database whose
+ * connection string the operator does not hold. It clears the previous
+ * demonstration rows and writes a fresh set in their place.
+ *
+ * Deliberately narrow about what it touches. Partners, staff accounts, stages,
+ * products and the curriculum are left alone — so the administrator running it
+ * keeps their own login and the verified catalogue survives. Only rider-side
+ * data is replaced, which is the only data that was ever invented.
+ *
+ * Platform admins only, behind a typed confirmation, and refuses outright if
+ * the register holds anyone real: synthetic rows are fair game, a real rider's
+ * record is not.
+ */
+export async function restockDemoDataAction(
+  _prev: FormState | undefined,
+  formData: FormData,
+): Promise<FormState> {
+  const admin = await currentUser();
+  if (!admin || admin.role !== "PLATFORM_ADMIN") {
+    return { error: "Only a platform admin can rebuild demonstration data." };
+  }
+
+  const phrase = String(formData.get("confirm") ?? "").trim();
+  if (phrase !== RESTOCK_PHRASE) {
+    return { error: `Type ${RESTOCK_PHRASE} exactly to confirm.`, field: "confirm" };
+  }
+
+  // A rider who signed up for real is not demonstration data. Refusing here
+  // rather than deleting is the whole reason this is safe to expose.
+  const real = await count("SELECT COUNT(*) AS n FROM Rider WHERE isSynthetic = 0");
+  if (real > 0) {
+    return {
+      error:
+        `${real} rider${real === 1 ? "" : "s"} in this register ${real === 1 ? "was" : "were"} not generated. ` +
+        "Rebuilding would delete them, so it has been refused — remove them deliberately first if that is what you want.",
+      field: "confirm",
+    };
+  }
+
+  const before = await count("SELECT COUNT(*) AS n FROM Rider");
+
+  // Riders cascade to progress, attempts, messages, leads, conversations,
+  // signals, goals and deposits. Campaigns and donations hang off no rider, so
+  // they are cleared by hand or the next run would double them.
+  await run("DELETE FROM UssdSession WHERE riderId IS NOT NULL", []);
+  await run("DELETE FROM Rider", []);
+  await run("DELETE FROM Message", []);
+  await run("DELETE FROM Campaign", []);
+  await run("DELETE FROM Donation", []);
+
+  let result;
+  try {
+    result = await seedDemoData();
+  } catch (e) {
+    return { error: `Could not rebuild: ${e instanceof Error ? e.message : String(e)}` };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/maintenance");
+  revalidatePath("/admin/riders");
+  revalidatePath("/admin/conversations");
+  revalidatePath("/admin/warm");
+
+  return {
+    ok:
+      `Replaced ${before} rider${before === 1 ? "" : "s"} with ${result.riders}. ` +
+      `${result.leads} leads, ${result.conversations} conversations, ${result.messages} messages, ` +
+      `${result.signals} signals, ${result.donations} donations.`,
   };
 }
