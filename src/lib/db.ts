@@ -372,9 +372,17 @@ const EXTRA_ALIASES = [
 
 /** Every table the DDL declares, lowercased as Postgres stores them. */
 function ddlTableNames(): string[] {
-  return [...BASE_DDL.matchAll(/CREATE TABLE IF NOT EXISTS\s+([A-Za-z_][A-Za-z0-9_]*)/g)].map((m) =>
-    m[1].toLowerCase(),
-  );
+  return declaredTableNames().map((t) => t.toLowerCase());
+}
+
+/**
+ * Every table the schema declares, in declaration order and with its real
+ * casing. Read out of the DDL rather than listed by hand: a table added to
+ * BASE_DDL is a table migrate() creates and resetDatabase() drops, with no
+ * second list to remember to update.
+ */
+function declaredTableNames(): string[] {
+  return [...BASE_DDL.matchAll(/CREATE TABLE IF NOT EXISTS\s+([A-Za-z_][A-Za-z0-9_]*)/g)].map((m) => m[1]);
 }
 
 function buildKeyMap(): Map<string, string> {
@@ -662,11 +670,12 @@ function driver(): Promise<Driver> {
  */
 export async function resetDatabase(): Promise<void> {
   const d = await driver();
-  const tables = [
-    "Donation", "SavingsDeposit", "SavingsGoal", "UssdSession", "Lead", "Message", "Campaign",
-    "QuizAttempt", "LessonProgress", "QuizQuestion", "Lesson", "Product", "Rider",
-    "Stage", "AppUser", "Partner",
-  ];
+  // Dropped in reverse declaration order, so a child table goes before the
+  // parent it references. Derived from the DDL: a hand-written list here went
+  // stale when Conversation, ChatMessage and RiderSignal were added, and a
+  // reset silently left those three populated with rows pointing at riders it
+  // had just deleted.
+  const tables = declaredTableNames().reverse();
   if (d.kind === "postgres") {
     // CASCADE removes dependent constraints, so order doesn't matter.
     for (const t of tables) await d.query(`DROP TABLE IF EXISTS ${t} CASCADE`, []);
