@@ -7,8 +7,8 @@ import { all, count, id, insert, now, one, run, update } from "@/lib/db";
 import { CATALOGUE } from "@/lib/catalogue";
 import { CAMPAIGNS } from "@/lib/catalogue/campaigns";
 import type { FormState } from "@/lib/form-state";
-import { PURGE_PHRASE, RESTOCK_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
-import { seedDemoData } from "@/lib/seed";
+import { PURGE_PHRASE, type PurgePreview } from "@/lib/maintenance-shared";
+import { DEMO_CAMPAIGN_NAMES, DEMO_TXREF_PREFIX, seedDemoData } from "@/lib/seed";
 
 /**
  * Removing the demonstration data.
@@ -362,20 +362,21 @@ export async function installCampaignsAction(
 
 
 /**
- * Rebuilds the synthetic demonstration dataset.
+ * Adds the synthetic demonstration dataset on top of whatever is already there.
  *
  * Written for the case the seed script cannot reach: a deployed database whose
- * connection string the operator does not hold. It clears the previous
- * demonstration rows and writes a fresh set in their place.
+ * connection string the operator does not hold.
  *
- * Deliberately narrow about what it touches. Partners, staff accounts, stages,
- * products and the curriculum are left alone — so the administrator running it
- * keeps their own login and the verified catalogue survives. Only rider-side
- * data is replaced, which is the only data that was ever invented.
+ * Strictly additive with respect to real data. It removes only rows it
+ * generated on a previous run — riders flagged synthetic, the campaigns it
+ * writes by name, and donations carrying its own reference prefix — so riders
+ * who actually signed up keep their records, their messages, their enquiries
+ * and their history. Partners, staff accounts, stages, products and the
+ * curriculum are never touched either, so the administrator running this keeps
+ * their own sign-in and the verified catalogue survives.
  *
- * Platform admins only, behind a typed confirmation, and refuses outright if
- * the register holds anyone real: synthetic rows are fair game, a real rider's
- * record is not.
+ * Re-running it replaces the generated set rather than stacking a second copy
+ * on top of the first.
  */
 export async function restockDemoDataAction(
   _prev: FormState | undefined,
@@ -383,54 +384,49 @@ export async function restockDemoDataAction(
 ): Promise<FormState> {
   const admin = await currentUser();
   if (!admin || admin.role !== "PLATFORM_ADMIN") {
-    return { error: "Only a platform admin can rebuild demonstration data." };
+    return { error: "Only a platform admin can add demonstration data." };
   }
 
-  const phrase = String(formData.get("confirm") ?? "").trim();
-  if (phrase !== RESTOCK_PHRASE) {
-    return { error: `Type ${RESTOCK_PHRASE} exactly to confirm.`, field: "confirm" };
+  if (String(formData.get("confirm") ?? "") !== "1") {
+    return { error: "Tick the box to confirm.", field: "confirm" };
   }
 
-  // A rider who signed up for real is not demonstration data. Refusing here
-  // rather than deleting is the whole reason this is safe to expose.
-  const real = await count("SELECT COUNT(*) AS n FROM Rider WHERE isSynthetic = 0");
-  if (real > 0) {
-    return {
-      error:
-        `${real} rider${real === 1 ? "" : "s"} in this register ${real === 1 ? "was" : "were"} not generated. ` +
-        "Rebuilding would delete them, so it has been refused — remove them deliberately first if that is what you want.",
-      field: "confirm",
-    };
-  }
+  const realRiders = await count("SELECT COUNT(*) AS n FROM Rider WHERE isSynthetic = 0");
+  const oldDemo = await count("SELECT COUNT(*) AS n FROM Rider WHERE isSynthetic = 1");
 
-  const before = await count("SELECT COUNT(*) AS n FROM Rider");
+  // Only previously generated rows. A rider who signed up for real is never in
+  // any of these sets, so nothing of theirs is at risk.
+  //
+  // UssdSession is cleared first because it holds no cascade back to Rider —
+  // deleting the rider would otherwise strand its rows.
+  await run("DELETE FROM UssdSession WHERE riderId IN (SELECT id FROM Rider WHERE isSynthetic = 1)", []);
+  await run("DELETE FROM Rider WHERE isSynthetic = 1", []);
 
-  // Riders cascade to progress, attempts, messages, leads, conversations,
-  // signals, goals and deposits. Campaigns and donations hang off no rider, so
-  // they are cleared by hand or the next run would double them.
-  await run("DELETE FROM UssdSession WHERE riderId IS NOT NULL", []);
-  await run("DELETE FROM Rider", []);
-  await run("DELETE FROM Message", []);
-  await run("DELETE FROM Campaign", []);
-  await run("DELETE FROM Donation", []);
+  const marks = DEMO_CAMPAIGN_NAMES.map(() => "?").join(",");
+  await run(`DELETE FROM Message WHERE campaignId IN (SELECT id FROM Campaign WHERE name IN (${marks}))`, DEMO_CAMPAIGN_NAMES);
+  await run(`DELETE FROM Campaign WHERE name IN (${marks})`, DEMO_CAMPAIGN_NAMES);
+  await run("DELETE FROM Donation WHERE txRef LIKE ?", [`${DEMO_TXREF_PREFIX}%`]);
 
   let result;
   try {
     result = await seedDemoData();
   } catch (e) {
-    return { error: `Could not rebuild: ${e instanceof Error ? e.message : String(e)}` };
+    return { error: `Could not add demonstration data: ${e instanceof Error ? e.message : String(e)}` };
   }
 
-  revalidatePath("/admin");
-  revalidatePath("/admin/maintenance");
-  revalidatePath("/admin/riders");
-  revalidatePath("/admin/conversations");
-  revalidatePath("/admin/warm");
+  for (const path of ["/admin", "/admin/maintenance", "/admin/riders", "/admin/conversations", "/admin/warm", "/admin/leads"]) {
+    revalidatePath(path);
+  }
+
+  const replaced = oldDemo ? `Replaced ${oldDemo} previously generated rider${oldDemo === 1 ? "" : "s"}. ` : "";
+  const kept = realRiders
+    ? `${realRiders} real sign-up${realRiders === 1 ? "" : "s"} left untouched.`
+    : "No real sign-ups were present.";
 
   return {
     ok:
-      `Replaced ${before} rider${before === 1 ? "" : "s"} with ${result.riders}. ` +
-      `${result.leads} leads, ${result.conversations} conversations, ${result.messages} messages, ` +
-      `${result.signals} signals, ${result.donations} donations.`,
+      `${replaced}Added ${result.riders} demonstration riders, ${result.leads} enquiries, ` +
+      `${result.conversations} conversations, ${result.messages} messages, ${result.signals} signals ` +
+      `and ${result.donations} donations. ${kept}`,
   };
 }

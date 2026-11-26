@@ -83,7 +83,7 @@ export default async function MaintenancePage({
           <p className="stat-label" style={{ marginBottom: "1rem" }}>
             Demonstration data
           </p>
-          <RestockForm ridersTotal={preview.ridersTotal} ridersReal={ridersReal} />
+          <RestockForm ridersReal={ridersReal} ridersDemo={preview.ridersSynthetic} />
         </section>
 
         <section>

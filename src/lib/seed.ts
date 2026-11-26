@@ -280,6 +280,25 @@ export async function seed() {
  * their login and the verified catalogue survives untouched. The caller is
  * responsible for clearing the previous demonstration rows first.
  */
+/**
+ * Marks a donation as generated.
+ *
+ * Deliberately unlike `newTxRef()`'s "BP-…": LIKE is case-insensitive on
+ * SQLite and `_` is a single-character wildcard, so a prefix such as "bp_"
+ * would also have matched every real reference. This one cannot.
+ */
+export const DEMO_TXREF_PREFIX = "DEMO-";
+
+/** The campaigns the generator writes, so they can be removed by name. */
+export const DEMO_CAMPAIGN_NAMES = [
+  "Save First — Week 1 nudge",
+  "Emergency fund challenge",
+  "Know what your loan costs",
+  "Stima Alpha Deposits — stage drive",
+  "Your passenger is not covered",
+  "Britam Connect — pay KSh 50 a week",
+];
+
 export async function seedDemoData() {
   const partners = await all<{ id: string; code: string }>("SELECT id, code FROM Partner");
   const partnerByCode: Record<string, string> = {};
@@ -325,7 +344,11 @@ export async function seedDemoData() {
   };
   const riderRows: Record<string, unknown>[] = [];
   const riders: SeedRider[] = [];
-  const used = new Set<string>();
+  // Numbers already in the register — a real rider's included — so a generated
+  // one can never collide with someone who actually signed up.
+  const used = new Set<string>(
+    (await all<{ msisdn: string }>("SELECT msisdn FROM Rider")).map((r) => r.msisdn),
+  );
 
   // ---------------------------------------------------------- demo scale ----
   // Sized for a demonstration rather than a load test: 30 riders keeps every
@@ -805,7 +828,7 @@ export async function seedDemoData() {
     const donor = pickOne(DONORS);
     donationRows.push({
       id: id("don"),
-      txRef: `bp_${Math.floor(rand() * 1e12).toString(36)}`,
+      txRef: `${DEMO_TXREF_PREFIX}${Math.floor(rand() * 1e12).toString(36).toUpperCase()}`,
       method: mpesa ? "MPESA" : "CARD",
       provider: mpesa ? "DARAJA" : pickOne(["FLUTTERWAVE", "PAYSTACK"]),
       live: 0,

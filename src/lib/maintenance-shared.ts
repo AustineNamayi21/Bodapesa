@@ -17,6 +17,3 @@ export type PurgePreview = {
   goals: number;
   campaigns: number;
 };
-
-/** Typed before the demonstration dataset is rebuilt. */
-export const RESTOCK_PHRASE = "REBUILD DEMO DATA";
